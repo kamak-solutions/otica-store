@@ -1,12 +1,10 @@
-import Fastify from 'fastify'
-import { env, isDevelopment } from './config/env.js';
-import { healthRoutes } from './routes/health.routes.js';
-
-
+import Fastify from "fastify";
+import { env, isDevelopment } from "./config/env.js";
+import { healthRoutes } from "./routes/health.routes.js";
 
 export const app = Fastify({
   logger: {
-    level: isDevelopment ? "debug" : (process.env.LOG_LEVEL || "info"), // debug em dev
+    level: isDevelopment ? "debug" : env.LOG_LEVEL,
     transport: isDevelopment
       ? {
           target: "pino-pretty",
@@ -20,4 +18,4 @@ export const app = Fastify({
   },
 });
 
-app.register(healthRoutes)
+app.register(healthRoutes);

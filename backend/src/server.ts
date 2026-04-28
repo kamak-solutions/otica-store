@@ -3,14 +3,12 @@ import { env } from "./config/env.js";
 
 const start = async () => {
   try {
-    const port = Number(process.env.PORT) || 3333;
-
     await app.listen({
-      port,
+      port: env.PORT,
       host: "0.0.0.0",
     });
 
-    app.log.info(`API running on port ${port}`);
+    app.log.info(`API running on port ${env.PORT}`);
   } catch (error) {
     app.log.error(error, "Failed to start server");
     process.exit(1);
