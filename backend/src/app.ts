@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import { env, isDevelopment } from "./config/env.js";
 import { healthRoutes } from "./routes/health.routes.js";
+import { productsRoutes } from "./modules/products/products.routes.js";
 
 export const app = Fastify({
   logger: {
@@ -19,3 +20,4 @@ export const app = Fastify({
 });
 
 app.register(healthRoutes);
+app.register(productsRoutes);
