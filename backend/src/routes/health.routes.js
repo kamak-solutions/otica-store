@@ -1,3 +1,5 @@
+import { env } from "../config/env.js";
+
 export async function healthRoutes(app) {
   app.get("/health", async (request, reply) => {
     request.log.info("Health check requested");
@@ -5,7 +7,7 @@ export async function healthRoutes(app) {
     return reply.send({
       status: "ok",
       service: "otica-showroom-api",
-      environment: process.env.NODE_ENV || "development",
+      environment: env.NODE_ENV,
       timestamp: new Date().toISOString(),
     });
   });
