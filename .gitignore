@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+
+# env
+.env
+.env.local
+.env.production
+.env.development
+
+# logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# build
+dist/
+build/
+
+# OS
+.DS_Store
+
+# Prisma
+backend/src/generated/prisma
+
+# Docker
+docker/postgres-data/
+
+# IDE
+.vscode/
+.idea/
