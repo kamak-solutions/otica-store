@@ -28,6 +28,7 @@ export function AdminLayout() {
 
           <nav className="admin-nav">
             <Link to="/admin/pedidos">Pedidos</Link>
+            <Link to="/admin/produtos">Produtos</Link>
             <Link to="/">Ver loja</Link>
           </nav>
         </div>

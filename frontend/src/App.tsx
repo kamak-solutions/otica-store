@@ -9,6 +9,7 @@ import { ProductDetail } from "./pages/ProductDetail";
 import { AdminLogin } from "./pages/admin/AdminLogin";
 import { AdminOrderDetail } from "./pages/admin/AdminOrderDetail";
 import { AdminOrders } from "./pages/admin/AdminOrders";
+import { AdminProducts } from "./pages/admin/AdminProducts";
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
           <Route element={<AdminLayout />}>
             <Route path="/admin/pedidos" element={<AdminOrders />} />
             <Route path="/admin/pedidos/:id" element={<AdminOrderDetail />} />
+            <Route path="/admin/produtos" element={<AdminProducts />} />
           </Route>
         </Route>
       </Routes>

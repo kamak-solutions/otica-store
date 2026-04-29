@@ -1122,3 +1122,158 @@ a {
   object-fit: cover;
   display: block;
 }
+
+.admin-products-list {
+  display: grid;
+  gap: 22px;
+}
+
+.admin-product-card {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 22px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 22px;
+  background: rgba(17, 17, 17, 0.88);
+}
+
+.admin-product-preview {
+  min-height: 240px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface-2);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.admin-product-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-product-content {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-product-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.admin-product-header h2 {
+  margin: 0 0 6px;
+}
+
+.admin-product-header p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.admin-product-price {
+  margin: 0;
+  color: var(--gold-strong);
+  font-size: 1.3rem;
+  font-weight: 900;
+}
+
+.active-pill,
+.inactive-pill {
+  align-self: start;
+  border-radius: 999px;
+  padding: 7px 11px;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.active-pill {
+  background: rgba(34, 197, 94, 0.12);
+  color: #86efac;
+}
+
+.inactive-pill {
+  background: rgba(248, 113, 113, 0.12);
+  color: #fca5a5;
+}
+
+.admin-image-form {
+  display: grid;
+  gap: 14px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  background: var(--surface-2);
+}
+
+.admin-image-form h3,
+.admin-product-images h3 {
+  margin: 0;
+}
+
+.admin-image-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.admin-image-form input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 13px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+.admin-image-form input:focus {
+  outline: 2px solid rgba(212, 175, 55, 0.35);
+  border-color: var(--gold);
+}
+
+.checkbox-label {
+  display: flex !important;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 10px !important;
+}
+
+.checkbox-label input {
+  width: auto;
+}
+
+.admin-product-images {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-product-images div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-product-images img {
+  width: 76px;
+  height: 76px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+@media (max-width: 850px) {
+  .admin-product-card {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-product-preview {
+    min-height: 280px;
+  }
+}
