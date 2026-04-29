@@ -1,4 +1,4 @@
-import { createContext, useMemo, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import type { Product } from "../../types/product";
 
@@ -16,18 +16,39 @@ type CartContextValue = {
   clearCart: () => void;
 };
 
-export const CartContext = createContext<CartContextValue | null>(null);
-
 type CartProviderProps = {
   children: ReactNode;
 };
+
+const CART_STORAGE_KEY = "@otica-showroom:cart";
+
+export const CartContext = createContext<CartContextValue | null>(null);
 
 function getProductPrice(product: Product) {
   return Number(product.salePrice ?? product.price);
 }
 
+function loadCartFromStorage(): CartItem[] {
+  const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+
+  if (!storedCart) {
+    return [];
+  }
+
+  try {
+    return JSON.parse(storedCart) as CartItem[];
+  } catch {
+    localStorage.removeItem(CART_STORAGE_KEY);
+    return [];
+  }
+}
+
 export function CartProvider({ children }: CartProviderProps) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>(() => loadCartFromStorage());
+
+  useEffect(() => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+  }, [items]);
 
   function addProduct(product: Product) {
     setItems((currentItems) => {
