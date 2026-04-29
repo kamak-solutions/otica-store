@@ -438,3 +438,314 @@ curl -s -X PUT http://localhost:3333/admin/products/COLE_O_ID_AQUI \
 ## Desativar produto
 
 curl -s -X DELETE http://localhost:3333/admin/products/COLE_O_ID_AQUI | python -m json.tool
+
+---
+
+# Pedidos - Rotas Públicas
+
+As rotas públicas de pedidos são usadas pelo checkout da loja.
+
+---
+
+## POST /orders
+
+Cria um novo pedido a partir dos dados do checkout.
+
+Essa rota cria:
+
+- Customer
+- Order
+- OrderItem
+
+### Exemplo
+
+POST /orders
+
+Header:
+
+Content-Type: application/json
+
+### Body
+
+{
+  "customer": {
+    "customerName": "Caio Marcio",
+    "customerEmail": "teste@teste.com",
+    "customerPhone": "11 99999-9999",
+    "zipcode": "00000-000",
+    "state": "SP",
+    "street": "Rua Teste",
+    "number": "123",
+    "complement": "Casa",
+    "district": "Centro",
+    "city": "São Paulo",
+    "notes": "Pedido teste"
+  },
+  "items": [
+    {
+      "productId": "uuid-do-produto",
+      "productName": "Armação Infantil Flex Confort",
+      "unitPrice": "109.90",
+      "quantity": 1
+    }
+  ],
+  "subtotal": 109.90
+}
+
+### Response 201
+
+{
+  "data": {
+    "id": "uuid-interno-do-pedido",
+    "orderNumber": "OSR-993464",
+    "status": "pending",
+    "subtotal": "109.90",
+    "notes": "Pedido teste",
+    "customer": {
+      "id": "uuid-do-cliente",
+      "name": "Caio Marcio",
+      "email": "teste@teste.com",
+      "phone": "11 99999-9999",
+      "zipcode": "00000-000",
+      "state": "SP",
+      "street": "Rua Teste",
+      "number": "123",
+      "complement": "Casa",
+      "district": "Centro",
+      "city": "São Paulo"
+    },
+    "items": [
+      {
+        "id": "uuid-do-item",
+        "productId": "uuid-do-produto",
+        "productName": "Armação Infantil Flex Confort",
+        "unitPrice": "109.90",
+        "quantity": 1
+      }
+    ],
+    "createdAt": "2026-04-29T15:03:13.464Z",
+    "updatedAt": "2026-04-29T15:03:13.464Z"
+  },
+  "message": "Pedido criado com sucesso."
+}
+
+### Observações
+
+- O campo id continua sendo o identificador interno.
+- O campo orderNumber é o código amigável exibido ao cliente.
+- O status inicial do pedido é pending.
+- O subtotal é salvo no pedido.
+- Cada item salva o nome e preço do produto no momento da compra.
+
+---
+
+# Pedidos - Rotas Administrativas
+
+As rotas administrativas de pedidos serão usadas pelo painel admin.
+
+No estado atual do projeto, ainda não possuem autenticação.
+
+---
+
+## GET /admin/orders
+
+Lista todos os pedidos.
+
+### Exemplo
+
+GET /admin/orders
+
+### Response 200
+
+{
+  "data": [
+    {
+      "id": "uuid-interno-do-pedido",
+      "orderNumber": "OSR-993464",
+      "status": "pending",
+      "subtotal": "109.90",
+      "notes": "Pedido teste",
+      "customer": {
+        "id": "uuid-do-cliente",
+        "name": "Caio Marcio",
+        "email": "teste@teste.com",
+        "phone": "11 99999-9999",
+        "zipcode": "00000-000",
+        "state": "SP",
+        "street": "Rua Teste",
+        "number": "123",
+        "complement": "Casa",
+        "district": "Centro",
+        "city": "São Paulo"
+      },
+      "items": [
+        {
+          "id": "uuid-do-item",
+          "productId": "uuid-do-produto",
+          "productName": "Armação Infantil Flex Confort",
+          "unitPrice": "109.90",
+          "quantity": 1
+        }
+      ],
+      "createdAt": "2026-04-29T15:03:13.464Z",
+      "updatedAt": "2026-04-29T15:03:13.464Z"
+    }
+  ]
+}
+
+---
+
+## GET /admin/orders/:id
+
+Busca detalhes de um pedido pelo ID interno.
+
+### Exemplo
+
+GET /admin/orders/uuid-do-pedido
+
+### Response 200
+
+{
+  "data": {
+    "id": "uuid-interno-do-pedido",
+    "orderNumber": "OSR-993464",
+    "status": "pending",
+    "subtotal": "109.90",
+    "notes": "Pedido teste",
+    "customer": {
+      "id": "uuid-do-cliente",
+      "name": "Caio Marcio",
+      "email": "teste@teste.com",
+      "phone": "11 99999-9999",
+      "zipcode": "00000-000",
+      "state": "SP",
+      "street": "Rua Teste",
+      "number": "123",
+      "complement": "Casa",
+      "district": "Centro",
+      "city": "São Paulo"
+    },
+    "items": [
+      {
+        "id": "uuid-do-item",
+        "productId": "uuid-do-produto",
+        "productName": "Armação Infantil Flex Confort",
+        "unitPrice": "109.90",
+        "quantity": 1
+      }
+    ],
+    "createdAt": "2026-04-29T15:03:13.464Z",
+    "updatedAt": "2026-04-29T15:03:13.464Z"
+  }
+}
+
+### Response 404
+
+{
+  "error": "Not found",
+  "message": "Pedido não encontrado."
+}
+
+---
+
+## PATCH /admin/orders/:id/status
+
+Atualiza o status de um pedido.
+
+### Status permitidos
+
+pending
+confirmed
+preparing
+delivered
+cancelled
+
+### Exemplo
+
+PATCH /admin/orders/uuid-do-pedido/status
+
+Header:
+
+Content-Type: application/json
+
+### Body
+
+{
+  "status": "confirmed"
+}
+
+### Response 200
+
+{
+  "data": {
+    "id": "uuid-interno-do-pedido",
+    "orderNumber": "OSR-993464",
+    "status": "confirmed",
+    "subtotal": "109.90",
+    "notes": "Pedido teste",
+    "customer": {
+      "id": "uuid-do-cliente",
+      "name": "Caio Marcio",
+      "email": "teste@teste.com",
+      "phone": "11 99999-9999",
+      "zipcode": "00000-000",
+      "state": "SP",
+      "street": "Rua Teste",
+      "number": "123",
+      "complement": "Casa",
+      "district": "Centro",
+      "city": "São Paulo"
+    },
+    "items": [
+      {
+        "id": "uuid-do-item",
+        "productId": "uuid-do-produto",
+        "productName": "Armação Infantil Flex Confort",
+        "unitPrice": "109.90",
+        "quantity": 1
+      }
+    ],
+    "createdAt": "2026-04-29T15:03:13.464Z",
+    "updatedAt": "2026-04-29T15:20:00.000Z"
+  },
+  "message": "Status do pedido atualizado com sucesso."
+}
+
+### Response 400
+
+{
+  "error": "Validation error",
+  "message": "Dados inválidos.",
+  "issues": []
+}
+
+### Response 404
+
+{
+  "error": "Not found",
+  "message": "Registro não encontrado."
+}
+
+---
+
+# Status de pedidos
+
+## pending
+
+Pedido criado, ainda aguardando confirmação.
+
+## confirmed
+
+Pedido confirmado pelo admin.
+
+## preparing
+
+Pedido em separação, preparo ou atendimento.
+
+## delivered
+
+Pedido entregue/concluído.
+
+## cancelled
+
+Pedido cancelado.
