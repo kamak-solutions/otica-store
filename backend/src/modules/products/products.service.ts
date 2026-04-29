@@ -46,3 +46,13 @@ export async function updateProduct(id: string, data: UpdateProductBody) {
     data,
   });
 }
+export async function deactivateProduct(id: string) {
+  return prisma.product.update({
+    where: {
+      id,
+    },
+    data: {
+      active: false,
+    },
+  });
+}

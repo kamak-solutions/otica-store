@@ -2,6 +2,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { ZodError } from "zod";
 import {
   createProduct,
+  deactivateProduct,
   findProductBySlug,
   listProducts,
   updateProduct,
@@ -152,6 +153,42 @@ export async function updateProductController(
       return reply.status(409).send({
         error: "Product already exists",
         message: "Já existe um produto cadastrado com este slug ou SKU.",
+      });
+    }
+
+    if (isPrismaRecordNotFoundError(error)) {
+      return reply.status(404).send({
+        error: "Product not found",
+        message: "Produto não encontrado.",
+      });
+    }
+
+    throw error;
+  }
+}
+export async function deleteProductController(
+  request: FastifyRequest<{
+    Params: ProductIdParams;
+  }>,
+  reply: FastifyReply,
+) {
+  try {
+    const { id } = productIdParamsSchema.parse(request.params);
+
+    request.log.info({ id }, "Deactivating product");
+
+    const product = await deactivateProduct(id);
+
+    return reply.send({
+      data: mapProductToHttp(product),
+      message: "Produto desativado com sucesso.",
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return reply.status(400).send({
+        error: "Validation error",
+        message: "Dados inválidos.",
+        issues: error.issues,
       });
     }
 
