@@ -101,9 +101,9 @@ export function Cart() {
             <strong>{formatCurrency(subtotal)}</strong>
           </div>
 
-          <button className="primary-button" type="button">
+          <Link className="primary-button text-center" to="/checkout">
             Finalizar pedido
-          </button>
+          </Link>
         </aside>
       </div>
     </section>

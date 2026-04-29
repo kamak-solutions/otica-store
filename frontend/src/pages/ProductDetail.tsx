@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getProductBySlug } from "../services/products.service";
-import type { Product } from "../types/product";
 import { useCart } from "../store/cart/use-cart";
+import type { Product } from "../types/product";
 
 export function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
+  const { addProduct, items } = useCart();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,9 +56,12 @@ export function ProductDetail() {
       </section>
     );
   }
-  const { addProduct } = useCart();
 
   const hasSalePrice = Boolean(product.salePrice);
+
+  const productAlreadyInCart = items.some(
+    (item) => item.product.id === product.id,
+  );
 
   return (
     <section className="product-detail">
@@ -112,13 +116,23 @@ export function ProductDetail() {
             )}
           </div>
 
-          <button
-            className="primary-button"
-            type="button"
-            onClick={() => addProduct(product)}
-          >
-            Adicionar ao carrinho
-          </button>
+          {productAlreadyInCart ? (
+            <div className="cart-feedback-box">
+              <p>Este produto já está no carrinho.</p>
+
+              <Link className="primary-button text-center" to="/carrinho">
+                Ver carrinho
+              </Link>
+            </div>
+          ) : (
+            <button
+              className="primary-button"
+              type="button"
+              onClick={() => addProduct(product)}
+            >
+              Adicionar ao carrinho
+            </button>
+          )}
 
           <p className="detail-note">
             Atendimento personalizado para ajudar você a escolher a melhor
