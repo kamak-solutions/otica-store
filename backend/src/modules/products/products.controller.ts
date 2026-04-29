@@ -1,10 +1,11 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { ZodError } from "zod";
 import { findProductBySlug, listProducts } from "./products.service.js";
 import { mapProductToHttp } from "./products.mapper.js";
-
-type GetProductBySlugParams = {
-  slug: string;
-};
+import {
+  getProductBySlugParamsSchema,
+  type GetProductBySlugParams,
+} from "./products.schemas.js";
 
 export async function getProductsController(
   request: FastifyRequest,
@@ -25,20 +26,32 @@ export async function getProductBySlugController(
   }>,
   reply: FastifyReply,
 ) {
-  const { slug } = request.params;
+  try {
+    const { slug } = getProductBySlugParamsSchema.parse(request.params);
 
-  request.log.info({ slug }, "Finding product by slug");
+    request.log.info({ slug }, "Finding product by slug");
 
-  const product = await findProductBySlug(slug);
+    const product = await findProductBySlug(slug);
 
-  if (!product) {
-    return reply.status(404).send({
-      error: "Product not found",
-      message: "Produto não encontrado.",
+    if (!product) {
+      return reply.status(404).send({
+        error: "Product not found",
+        message: "Produto não encontrado.",
+      });
+    }
+
+    return reply.send({
+      data: mapProductToHttp(product),
     });
-  }
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return reply.status(400).send({
+        error: "Validation error",
+        message: "Parâmetros inválidos.",
+        issues: error.issues,
+      });
+    }
 
-  return reply.send({
-    data: mapProductToHttp(product),
-  });
+    throw error;
+  }
 }
