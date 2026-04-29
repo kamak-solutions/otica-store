@@ -1,5 +1,5 @@
 import { apiFetch } from "./api";
-import type { Order } from "../types/order";
+import type { Order, OrderStatus } from "../types/order";
 
 type CreateOrderPayload = {
   customer: {
@@ -39,6 +39,11 @@ type AdminOrdersResponse = {
   data: Order[];
 };
 
+type UpdateOrderStatusResponse = {
+  data: Order;
+  message: string;
+};
+
 export function createOrder(payload: CreateOrderPayload) {
   return apiFetch<CreateOrderResponse>("/orders", {
     method: "POST",
@@ -48,4 +53,14 @@ export function createOrder(payload: CreateOrderPayload) {
 
 export function getAdminOrders() {
   return apiFetch<AdminOrdersResponse>("/admin/orders");
+}
+
+export function updateOrderStatus(orderId: string, status: OrderStatus) {
+  return apiFetch<UpdateOrderStatusResponse>(
+    `/admin/orders/${orderId}/status`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    },
+  );
 }

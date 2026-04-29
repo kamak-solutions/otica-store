@@ -788,3 +788,61 @@ a {
     justify-items: start;
   }
 }
+
+.admin-order-status-control {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+  background: var(--surface-2);
+}
+
+.admin-order-status-control label {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.admin-order-status-control select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 11px 12px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+.admin-order-status-control select:focus {
+  outline: 2px solid rgba(212, 175, 55, 0.35);
+  border-color: var(--gold);
+}
+
+.admin-order-status-control select:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.status-updating {
+  white-space: nowrap;
+  color: var(--gold-strong);
+  font-weight: 800;
+  padding-bottom: 12px;
+}
+
+@media (max-width: 700px) {
+  .admin-order-status-control {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .status-updating {
+    padding-bottom: 0;
+  }
+}
