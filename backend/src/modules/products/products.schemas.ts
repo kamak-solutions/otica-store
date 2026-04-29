@@ -1,10 +1,7 @@
 import { z } from "zod";
 
 export const getProductBySlugParamsSchema = z.object({
-  slug: z
-    .string()
-    .min(1, "Slug é obrigatório.")
-    .max(120, "Slug muito longo."),
+  slug: z.string().min(1, "Slug é obrigatório.").max(120, "Slug muito longo."),
 });
 
 export type GetProductBySlugParams = z.infer<
@@ -32,11 +29,21 @@ export const createProductBodySchema = z.object({
 
 export type CreateProductBody = z.infer<typeof createProductBodySchema>;
 
-export const updateProductBodySchema = createProductBodySchema.partial().refine(
-  (data) => Object.keys(data).length > 0,
-  {
+export const updateProductBodySchema = createProductBodySchema
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
     message: "Informe ao menos um campo para atualizar.",
-  },
-);
+  });
+export const createProductImageBodySchema = z.object({
+  url: z.string().url("URL da imagem inválida."),
+  publicId: z.string().max(255).optional(),
+  alt: z.string().max(160).optional(),
+  position: z.coerce.number().int().min(0).default(0),
+  isMain: z.boolean().default(false),
+});
+
+export type CreateProductImageBody = z.infer<
+  typeof createProductImageBodySchema
+>;
 
 export type UpdateProductBody = z.infer<typeof updateProductBodySchema>;

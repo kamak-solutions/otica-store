@@ -15,6 +15,14 @@ export function mapProductToHttp(product: ProductListItem) {
     stock: product.stock,
     active: product.active,
     featured: product.featured,
+    images: product.images.map((image) => ({
+      id: image.id,
+      url: image.url,
+      publicId: image.publicId,
+      alt: image.alt,
+      position: image.position,
+      isMain: image.isMain,
+    })),
     createdAt: product.createdAt.toISOString(),
     updatedAt: product.updatedAt.toISOString(),
   };

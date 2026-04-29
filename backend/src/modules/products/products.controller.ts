@@ -1,5 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import {
+  addProductImage,
   createProduct,
   deactivateProduct,
   findProductBySlug,
@@ -13,6 +14,8 @@ import {
   getProductBySlugParamsSchema,
   productIdParamsSchema,
   updateProductBodySchema,
+  createProductImageBodySchema,
+  type CreateProductImageBody,
   type CreateProductBody,
   type GetProductBySlugParams,
   type ProductIdParams,
@@ -118,5 +121,24 @@ export async function deleteProductController(
   return reply.send({
     data: mapProductToHttp(product),
     message: "Produto desativado com sucesso.",
+  });
+}
+export async function addProductImageController(
+  request: FastifyRequest<{
+    Params: ProductIdParams;
+    Body: CreateProductImageBody;
+  }>,
+  reply: FastifyReply,
+) {
+  const { id } = productIdParamsSchema.parse(request.params);
+  const body = createProductImageBodySchema.parse(request.body);
+
+  request.log.info({ productId: id }, "Adding product image");
+
+  const product = await addProductImage(id, body);
+
+  return reply.status(201).send({
+    data: mapProductToHttp(product),
+    message: "Imagem adicionada ao produto com sucesso.",
   });
 }

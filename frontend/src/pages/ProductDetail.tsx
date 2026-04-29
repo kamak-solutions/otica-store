@@ -59,6 +59,9 @@ export function ProductDetail() {
 
   const hasSalePrice = Boolean(product.salePrice);
 
+  const mainImage =
+    product.images.find((image) => image.isMain) ?? product.images[0];
+
   const productAlreadyInCart = items.some(
     (item) => item.product.id === product.id,
   );
@@ -72,9 +75,17 @@ export function ProductDetail() {
       <div className="product-detail-grid">
         <div className="product-detail-image">
           {product.featured && <span className="product-badge">Destaque</span>}
-          <span>Ótica ShowRoom</span>
-        </div>
 
+          {mainImage ? (
+            <img
+              className="product-detail-photo"
+              src={mainImage.url}
+              alt={mainImage.alt ?? product.name}
+            />
+          ) : (
+            <span>Ótica ShowRoom</span>
+          )}
+        </div>
         <div className="product-detail-content">
           {product.brand && (
             <span className="product-brand">{product.brand}</span>

@@ -1,3 +1,12 @@
+export type ProductImage = {
+  id: string;
+  url: string;
+  publicId: string | null;
+  alt: string | null;
+  position: number;
+  isMain: boolean;
+};
+
 export type Product = {
   id: string;
   name: string;
@@ -10,6 +19,7 @@ export type Product = {
   stock: number;
   active: boolean;
   featured: boolean;
+  images: ProductImage[];
   createdAt: string;
   updatedAt: string;
 };
