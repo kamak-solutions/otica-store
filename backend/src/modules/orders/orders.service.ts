@@ -1,5 +1,8 @@
 import { prisma } from "../../lib/prisma.js";
-import type { CreateOrderBody } from "./orders.schemas.js";
+import type {
+  CreateOrderBody,
+  OrderStatus,
+} from "./orders.schemas.js";
 
 function generateOrderNumber() {
   const timestamp = Date.now().toString().slice(-6);
@@ -65,6 +68,20 @@ export async function findAdminOrderById(id: string) {
   return prisma.order.findUnique({
     where: {
       id,
+    },
+    include: {
+      customer: true,
+      items: true,
+    },
+  });
+}
+export async function updateOrderStatus(id: string, status: OrderStatus) {
+  return prisma.order.update({
+    where: {
+      id,
+    },
+    data: {
+      status,
     },
     include: {
       customer: true,

@@ -4,11 +4,14 @@ import {
   createOrder,
   findAdminOrderById,
   listAdminOrders,
+  updateOrderStatus,
 } from "./orders.service.js";
 import { mapOrderToHttp } from "./orders.mapper.js";
 import {
   createOrderBodySchema,
   orderIdParamsSchema,
+  updateOrderStatusBodySchema,
+  type UpdateOrderStatusBody,
   type CreateOrderBody,
   type OrderIdParams,
 } from "./orders.schemas.js";
@@ -68,5 +71,24 @@ export async function getAdminOrderByIdController(
 
   return reply.send({
     data: mapOrderToHttp(order),
+  });
+}
+export async function updateOrderStatusController(
+  request: FastifyRequest<{
+    Params: OrderIdParams;
+    Body: UpdateOrderStatusBody;
+  }>,
+  reply: FastifyReply,
+) {
+  const { id } = orderIdParamsSchema.parse(request.params);
+  const { status } = updateOrderStatusBodySchema.parse(request.body);
+
+  request.log.info({ id, status }, "Updating order status");
+
+  const order = await updateOrderStatus(id, status);
+
+  return reply.send({
+    data: mapOrderToHttp(order),
+    message: "Status do pedido atualizado com sucesso.",
   });
 }

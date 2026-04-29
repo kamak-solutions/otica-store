@@ -3,6 +3,7 @@ import {
   createOrderController,
   getAdminOrderByIdController,
   getAdminOrdersController,
+  updateOrderStatusController,
 } from "./orders.controller.js";
 
 export async function ordersRoutes(app: FastifyInstance) {
@@ -10,4 +11,5 @@ export async function ordersRoutes(app: FastifyInstance) {
 
   app.get("/admin/orders", getAdminOrdersController);
   app.get("/admin/orders/:id", getAdminOrderByIdController);
+  app.patch("/admin/orders/:id/status", updateOrderStatusController);
 }
