@@ -56,6 +56,16 @@ export function errorHandler(
     });
   }
 
+  if ("statusCode" in error && typeof error.statusCode === "number") {
+    return reply.status(error.statusCode).send({
+      error: error.statusCode === 403 ? "Forbidden" : "Request error",
+      message:
+        error.statusCode === 403
+          ? "Origem não permitida pelo CORS."
+          : error.message,
+    });
+  }
+
   return reply.status(500).send({
     error: "Internal server error",
     message: "Erro interno do servidor.",

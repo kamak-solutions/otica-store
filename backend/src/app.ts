@@ -1,8 +1,9 @@
+import cors from "@fastify/cors";
 import Fastify from "fastify";
-import { env, isDevelopment } from "./config/env.js";
-import { healthRoutes } from "./routes/health.routes.js";
-import { productsRoutes } from "./modules/products/products.routes.js";
+import { allowedOrigins, env, isDevelopment } from "./config/env.js";
 import { errorHandler } from "./errors/error-handler.js";
+import { productsRoutes } from "./modules/products/products.routes.js";
+import { healthRoutes } from "./routes/health.routes.js";
 
 export const app = Fastify({
   logger: {
@@ -18,6 +19,29 @@ export const app = Fastify({
         }
       : undefined,
   },
+});
+
+await app.register(cors, {
+  origin(origin, callback) {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    const error = new Error("Not allowed by CORS") as Error & {
+      statusCode?: number;
+    };
+
+    error.statusCode = 403;
+
+    callback(error, false);
+  },
+  credentials: true,
 });
 
 app.setErrorHandler(errorHandler);
