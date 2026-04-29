@@ -37,7 +37,7 @@ export function errorHandler(
 
   if (error instanceof AppError) {
     return reply.status(error.statusCode).send({
-      error: "Application error",
+      error: error.error,
       message: error.message,
     });
   }

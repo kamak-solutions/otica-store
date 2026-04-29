@@ -59,7 +59,7 @@ export async function getProductBySlugController(
   const product = await findProductBySlug(slug);
 
   if (!product) {
-    throw new AppError("Produto não encontrado.", 404);
+    throw new AppError("Produto não encontrado.", 404, "Not found");
   }
 
   return reply.send({
