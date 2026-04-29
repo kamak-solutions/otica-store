@@ -5,6 +5,7 @@ import {
   deactivateProduct,
   findProductBySlug,
   listProducts,
+  listAdminProducts,
   updateProduct,
 } from "./products.service.js";
 import { mapProductToHttp } from "./products.mapper.js";
@@ -201,4 +202,16 @@ export async function deleteProductController(
 
     throw error;
   }
+}
+export async function getAdminProductsController(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  request.log.info("Listing admin products");
+
+  const products = await listAdminProducts();
+
+  return reply.send({
+    data: products.map(mapProductToHttp),
+  });
 }

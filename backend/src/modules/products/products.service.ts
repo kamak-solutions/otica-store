@@ -56,3 +56,10 @@ export async function deactivateProduct(id: string) {
     },
   });
 }
+export async function listAdminProducts() {
+  return prisma.product.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
