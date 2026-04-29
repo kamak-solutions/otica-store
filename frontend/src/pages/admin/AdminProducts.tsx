@@ -281,6 +281,12 @@ export function AdminProducts() {
                       ? "Salvando..."
                       : "Adicionar imagem"}
                   </button>
+                  <Link
+                    className="secondary-button admin-edit-product-link"
+                    to={`/admin/produtos/${product.id}/editar`}
+                  >
+                    Editar produto
+                  </Link>
                 </div>
 
                 {product.images.length > 0 && (

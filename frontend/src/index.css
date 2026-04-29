@@ -1312,3 +1312,9 @@ a {
   outline: 2px solid rgba(212, 175, 55, 0.35);
   border-color: var(--gold);
 }
+
+.admin-edit-product-link {
+  display: inline-flex;
+  justify-content: center;
+  width: fit-content;
+}

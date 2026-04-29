@@ -22,6 +22,8 @@ export type CreateAdminProductPayload = {
   featured: boolean;
 };
 
+export type UpdateAdminProductPayload = Partial<CreateAdminProductPayload>;
+
 type CreateProductImagePayload = {
   url: string;
   publicId?: string;
@@ -45,6 +47,16 @@ export function getAdminProducts() {
 export function createAdminProduct(payload: CreateAdminProductPayload) {
   return apiFetch<ProductResponse>("/admin/products", {
     method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateAdminProduct(
+  productId: string,
+  payload: UpdateAdminProductPayload,
+) {
+  return apiFetch<ProductResponse>(`/admin/products/${productId}`, {
+    method: "PUT",
     body: JSON.stringify(payload),
   });
 }
