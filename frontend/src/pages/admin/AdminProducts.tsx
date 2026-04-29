@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
   addProductImage,
   getAdminProducts,
@@ -56,9 +57,7 @@ export function AdminProducts() {
         setImageForms(forms);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error
-            ? error.message
-            : "Erro ao carregar produtos.",
+          error instanceof Error ? error.message : "Erro ao carregar produtos.",
         );
       } finally {
         setIsLoading(false);
@@ -81,6 +80,8 @@ export function AdminProducts() {
       },
     }));
   }
+  const location = useLocation();
+  const routeMessage = location.state as { message?: string } | null;
 
   async function handleAddImage(product: Product) {
     const form = imageForms[product.id];
@@ -120,9 +121,7 @@ export function AdminProducts() {
       setSuccessMessage("Imagem adicionada com sucesso.");
     } catch (error) {
       setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Erro ao adicionar imagem.",
+        error instanceof Error ? error.message : "Erro ao adicionar imagem.",
       );
     } finally {
       setSavingProductId(null);
@@ -145,10 +144,21 @@ export function AdminProducts() {
           <h1>Produtos</h1>
           <p>{products.length} produto(s) encontrado(s)</p>
         </div>
-      </div>
 
+        <Link
+          className="primary-button admin-heading-action"
+          to="/admin/produtos/novo"
+        >
+          Novo produto
+        </Link>
+      </div>
+      {routeMessage?.message && (
+        <div className="success-message">{routeMessage.message}</div>
+      )}
       {errorMessage && <div className="error-alert">{errorMessage}</div>}
-      {successMessage && <div className="success-message">{successMessage}</div>}
+      {successMessage && (
+        <div className="success-message">{successMessage}</div>
+      )}
 
       <div className="admin-products-list">
         {products.map((product) => {
@@ -159,7 +169,10 @@ export function AdminProducts() {
             <article className="admin-product-card" key={product.id}>
               <div className="admin-product-preview">
                 {mainImage ? (
-                  <img src={mainImage.url} alt={mainImage.alt ?? product.name} />
+                  <img
+                    src={mainImage.url}
+                    alt={mainImage.alt ?? product.name}
+                  />
                 ) : (
                   <span>Sem imagem</span>
                 )}
@@ -172,7 +185,9 @@ export function AdminProducts() {
                     <p>{product.slug}</p>
                   </div>
 
-                  <span className={product.active ? "active-pill" : "inactive-pill"}>
+                  <span
+                    className={product.active ? "active-pill" : "inactive-pill"}
+                  >
                     {product.active ? "Ativo" : "Inativo"}
                   </span>
                 </div>

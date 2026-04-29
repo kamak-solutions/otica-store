@@ -1277,3 +1277,38 @@ a {
     min-height: 280px;
   }
 }
+
+.admin-heading-action {
+  width: auto;
+  white-space: nowrap;
+}
+
+.admin-product-form {
+  display: grid;
+  gap: 18px;
+  max-width: 860px;
+}
+
+.admin-product-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.admin-product-form input,
+.admin-product-form textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 13px 14px;
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+}
+
+.admin-product-form input:focus,
+.admin-product-form textarea:focus {
+  outline: 2px solid rgba(212, 175, 55, 0.35);
+  border-color: var(--gold);
+}

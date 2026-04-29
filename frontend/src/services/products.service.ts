@@ -9,6 +9,19 @@ type ProductResponse = {
   data: Product;
 };
 
+export type CreateAdminProductPayload = {
+  name: string;
+  slug: string;
+  description?: string;
+  price: number;
+  salePrice?: number;
+  sku?: string;
+  brand?: string;
+  stock: number;
+  active: boolean;
+  featured: boolean;
+};
+
 type CreateProductImagePayload = {
   url: string;
   publicId?: string;
@@ -27,6 +40,13 @@ export function getProductBySlug(slug: string) {
 
 export function getAdminProducts() {
   return apiFetch<ProductsResponse>("/admin/products");
+}
+
+export function createAdminProduct(payload: CreateAdminProductPayload) {
+  return apiFetch<ProductResponse>("/admin/products", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
 
 export function addProductImage(
