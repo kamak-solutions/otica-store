@@ -1,4 +1,5 @@
 import { apiFetch } from "./api";
+import type { Order } from "../types/order";
 
 type CreateOrderPayload = {
   customer: {
@@ -34,9 +35,17 @@ type CreateOrderResponse = {
   message: string;
 };
 
+type AdminOrdersResponse = {
+  data: Order[];
+};
+
 export function createOrder(payload: CreateOrderPayload) {
   return apiFetch<CreateOrderResponse>("/orders", {
     method: "POST",
     body: JSON.stringify(payload),
   });
+}
+
+export function getAdminOrders() {
+  return apiFetch<AdminOrdersResponse>("/admin/orders");
 }

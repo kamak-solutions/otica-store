@@ -17,6 +17,7 @@ export function AppLayout() {
         <nav className="site-nav">
           <Link to="/">Produtos</Link>
           <Link to="/carrinho">Carrinho ({totalItems})</Link>
+          <Link to="/admin/pedidos">Admin Pedidos</Link>
           <a href="#contato">Contato</a>
         </nav>
       </header>

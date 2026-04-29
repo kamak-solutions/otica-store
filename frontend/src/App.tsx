@@ -4,6 +4,7 @@ import { Cart } from "./pages/Cart";
 import { Checkout } from "./pages/Checkout";
 import { Home } from "./pages/Home";
 import { ProductDetail } from "./pages/ProductDetail";
+import { AdminOrders } from "./pages/admin/AdminOrders";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
           <Route path="/produtos/:slug" element={<ProductDetail />} />
           <Route path="/carrinho" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/admin/pedidos" element={<AdminOrders />} />
         </Route>
       </Routes>
     </BrowserRouter>
