@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   addProductImage,
+  deactivateAdminProduct,
   getAdminProducts,
 } from "../../services/products.service";
 import type { Product } from "../../types/product";
@@ -134,6 +135,40 @@ export function AdminProducts() {
 
   if (errorMessage && products.length === 0) {
     return <p className="state-message error-message">{errorMessage}</p>;
+  }
+
+  async function handleDeactivateProduct(product: Product) {
+    const confirmDeactivate = window.confirm(
+      `Tem certeza que deseja desativar o produto "${product.name}"?`,
+    );
+
+    if (!confirmDeactivate) {
+      return;
+    }
+
+    try {
+      setSavingProductId(product.id);
+      setErrorMessage("");
+      setSuccessMessage("");
+
+      const response = await deactivateAdminProduct(product.id);
+
+      setProducts((currentProducts) =>
+        currentProducts.map((currentProduct) =>
+          currentProduct.id === product.id ? response.data : currentProduct,
+        ),
+      );
+
+      setSuccessMessage(
+        `Produto "${response.data.name}" desativado com sucesso.`,
+      );
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Erro ao desativar produto.",
+      );
+    } finally {
+      setSavingProductId(null);
+    }
   }
 
   return (
@@ -287,6 +322,19 @@ export function AdminProducts() {
                   >
                     Editar produto
                   </Link>
+
+                  {product.active && (
+                    <button
+                      className="danger-button"
+                      type="button"
+                      disabled={savingProductId === product.id}
+                      onClick={() => handleDeactivateProduct(product)}
+                    >
+                      {savingProductId === product.id
+                        ? "Desativando..."
+                        : "Desativar"}
+                    </button>
+                  )}
                 </div>
 
                 {product.images.length > 0 && (

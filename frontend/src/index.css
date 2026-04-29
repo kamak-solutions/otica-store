@@ -1318,3 +1318,15 @@ a {
   justify-content: center;
   width: fit-content;
 }
+
+.admin-product-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.admin-product-actions .danger-button,
+.admin-product-actions .secondary-button {
+  width: fit-content;
+}

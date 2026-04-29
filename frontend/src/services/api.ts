@@ -10,10 +10,12 @@ export async function apiFetch<T>(
 ): Promise<T> {
   const token = localStorage.getItem("@otica-showroom:admin-token");
 
+  const hasBody = Boolean(options?.body);
+
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
+      ...(hasBody ? { "Content-Type": "application/json" } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options?.headers,
     },

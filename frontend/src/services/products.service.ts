@@ -70,3 +70,8 @@ export function addProductImage(
     body: JSON.stringify(payload),
   });
 }
+export function deactivateAdminProduct(productId: string) {
+  return apiFetch<ProductResponse>(`/admin/products/${productId}`, {
+    method: "DELETE",
+  });
+}
