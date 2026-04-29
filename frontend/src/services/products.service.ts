@@ -75,3 +75,8 @@ export function deactivateAdminProduct(productId: string) {
     method: "DELETE",
   });
 }
+export function reactivateAdminProduct(productId: string) {
+  return updateAdminProduct(productId, {
+    active: true,
+  });
+}

@@ -4,6 +4,7 @@ import {
   addProductImage,
   deactivateAdminProduct,
   getAdminProducts,
+  reactivateAdminProduct,
 } from "../../services/products.service";
 import type { Product } from "../../types/product";
 
@@ -170,6 +171,31 @@ export function AdminProducts() {
       setSavingProductId(null);
     }
   }
+  async function handleReactivateProduct(product: Product) {
+    try {
+      setSavingProductId(product.id);
+      setErrorMessage("");
+      setSuccessMessage("");
+
+      const response = await reactivateAdminProduct(product.id);
+
+      setProducts((currentProducts) =>
+        currentProducts.map((currentProduct) =>
+          currentProduct.id === product.id ? response.data : currentProduct,
+        ),
+      );
+
+      setSuccessMessage(
+        `Produto "${response.data.name}" reativado com sucesso.`,
+      );
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Erro ao reativar produto.",
+      );
+    } finally {
+      setSavingProductId(null);
+    }
+  }
 
   return (
     <section>
@@ -316,25 +342,38 @@ export function AdminProducts() {
                       ? "Salvando..."
                       : "Adicionar imagem"}
                   </button>
-                  <Link
-                    className="secondary-button admin-edit-product-link"
-                    to={`/admin/produtos/${product.id}/editar`}
-                  >
-                    Editar produto
-                  </Link>
-
-                  {product.active && (
-                    <button
-                      className="danger-button"
-                      type="button"
-                      disabled={savingProductId === product.id}
-                      onClick={() => handleDeactivateProduct(product)}
+                  <div className="admin-product-actions">
+                    <Link
+                      className="secondary-button admin-edit-product-link"
+                      to={`/admin/produtos/${product.id}/editar`}
                     >
-                      {savingProductId === product.id
-                        ? "Desativando..."
-                        : "Desativar"}
-                    </button>
-                  )}
+                      Editar produto
+                    </Link>
+
+                    {product.active ? (
+                      <button
+                        className="danger-button"
+                        type="button"
+                        disabled={savingProductId === product.id}
+                        onClick={() => handleDeactivateProduct(product)}
+                      >
+                        {savingProductId === product.id
+                          ? "Desativando..."
+                          : "Desativar"}
+                      </button>
+                    ) : (
+                      <button
+                        className="secondary-button"
+                        type="button"
+                        disabled={savingProductId === product.id}
+                        onClick={() => handleReactivateProduct(product)}
+                      >
+                        {savingProductId === product.id
+                          ? "Reativando..."
+                          : "Reativar"}
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {product.images.length > 0 && (
