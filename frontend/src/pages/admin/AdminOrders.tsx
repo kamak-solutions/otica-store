@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   getAdminOrders,
@@ -170,6 +171,12 @@ export function AdminOrders() {
                 <strong>Observações:</strong> {order.notes}
               </p>
             )}
+            <Link
+              className="product-link admin-detail-link"
+              to={`/admin/pedidos/${order.id}`}
+            >
+              Ver detalhes
+            </Link>
           </article>
         ))}
       </div>

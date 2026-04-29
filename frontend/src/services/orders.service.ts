@@ -55,6 +55,10 @@ export function getAdminOrders() {
   return apiFetch<AdminOrdersResponse>("/admin/orders");
 }
 
+export function getAdminOrderById(orderId: string) {
+  return apiFetch<{ data: Order }>(`/admin/orders/${orderId}`);
+}
+
 export function updateOrderStatus(orderId: string, status: OrderStatus) {
   return apiFetch<UpdateOrderStatusResponse>(
     `/admin/orders/${orderId}/status`,
