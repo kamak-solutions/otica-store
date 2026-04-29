@@ -20,6 +20,58 @@ model Product {
   active      Boolean  @default(true)
   featured    Boolean  @default(false)
 
+  orderItems  OrderItem[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String
+  zipcode   String
+  state     String
+  street    String
+  number    String
+  complement String?
+  district  String
+  city      String
+
+  orders    Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id         String   @id @default(uuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  status     String   @default("pending")
+  subtotal   Decimal  @db.Decimal(10, 2)
+  notes      String?
+
+  items      OrderItem[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  productName String
+  unitPrice   Decimal @db.Decimal(10, 2)
+  quantity    Int
+
+  createdAt DateTime @default(now())
 }
