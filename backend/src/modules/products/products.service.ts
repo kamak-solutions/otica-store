@@ -10,3 +10,12 @@ export async function listProducts() {
     },
   });
 }
+
+export async function findProductBySlug(slug: string) {
+  return prisma.product.findFirst({
+    where: {
+      slug,
+      active: true,
+    },
+  });
+}
