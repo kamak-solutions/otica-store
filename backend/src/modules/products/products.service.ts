@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma.js";
+import type { CreateProductBody } from "./products.schemas.js";
 
 export async function listProducts() {
   return prisma.product.findMany({
@@ -17,5 +18,11 @@ export async function findProductBySlug(slug: string) {
       slug,
       active: true,
     },
+  });
+}
+
+export async function createProduct(data: CreateProductBody) {
+  return prisma.product.create({
+    data,
   });
 }
