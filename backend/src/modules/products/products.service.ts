@@ -1,5 +1,8 @@
 import { prisma } from "../../lib/prisma.js";
-import type { CreateProductBody } from "./products.schemas.js";
+import type {
+  CreateProductBody,
+  UpdateProductBody,
+} from "./products.schemas.js";
 
 export async function listProducts() {
   return prisma.product.findMany({
@@ -21,8 +24,25 @@ export async function findProductBySlug(slug: string) {
   });
 }
 
+export async function findProductById(id: string) {
+  return prisma.product.findUnique({
+    where: {
+      id,
+    },
+  });
+}
+
 export async function createProduct(data: CreateProductBody) {
   return prisma.product.create({
+    data,
+  });
+}
+
+export async function updateProduct(id: string, data: UpdateProductBody) {
+  return prisma.product.update({
+    where: {
+      id,
+    },
     data,
   });
 }

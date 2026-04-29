@@ -4,13 +4,18 @@ import {
   createProduct,
   findProductBySlug,
   listProducts,
+  updateProduct,
 } from "./products.service.js";
 import { mapProductToHttp } from "./products.mapper.js";
 import {
   createProductBodySchema,
   getProductBySlugParamsSchema,
+  productIdParamsSchema,
+  updateProductBodySchema,
   type CreateProductBody,
   type GetProductBySlugParams,
+  type ProductIdParams,
+  type UpdateProductBody,
 } from "./products.schemas.js";
 
 function isPrismaUniqueConstraintError(error: unknown) {
@@ -19,6 +24,15 @@ function isPrismaUniqueConstraintError(error: unknown) {
     error !== null &&
     "code" in error &&
     error.code === "P2002"
+  );
+}
+
+function isPrismaRecordNotFoundError(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === "P2025"
   );
 }
 
@@ -87,7 +101,7 @@ export async function createProductController(
     return reply.status(201).send({
       data: mapProductToHttp(product),
     });
-      } catch (error) {
+  } catch (error) {
     if (error instanceof ZodError) {
       return reply.status(400).send({
         error: "Validation error",
@@ -100,6 +114,51 @@ export async function createProductController(
       return reply.status(409).send({
         error: "Product already exists",
         message: "Já existe um produto cadastrado com este slug ou SKU.",
+      });
+    }
+
+    throw error;
+  }
+}
+
+export async function updateProductController(
+  request: FastifyRequest<{
+    Params: ProductIdParams;
+    Body: UpdateProductBody;
+  }>,
+  reply: FastifyReply,
+) {
+  try {
+    const { id } = productIdParamsSchema.parse(request.params);
+    const body = updateProductBodySchema.parse(request.body);
+
+    request.log.info({ id }, "Updating product");
+
+    const product = await updateProduct(id, body);
+
+    return reply.send({
+      data: mapProductToHttp(product),
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return reply.status(400).send({
+        error: "Validation error",
+        message: "Dados inválidos.",
+        issues: error.issues,
+      });
+    }
+
+    if (isPrismaUniqueConstraintError(error)) {
+      return reply.status(409).send({
+        error: "Product already exists",
+        message: "Já existe um produto cadastrado com este slug ou SKU.",
+      });
+    }
+
+    if (isPrismaRecordNotFoundError(error)) {
+      return reply.status(404).send({
+        error: "Product not found",
+        message: "Produto não encontrado.",
       });
     }
 

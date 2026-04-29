@@ -11,6 +11,12 @@ export type GetProductBySlugParams = z.infer<
   typeof getProductBySlugParamsSchema
 >;
 
+export const productIdParamsSchema = z.object({
+  id: z.string().uuid("ID do produto inválido."),
+});
+
+export type ProductIdParams = z.infer<typeof productIdParamsSchema>;
+
 export const createProductBodySchema = z.object({
   name: z.string().min(2, "Nome é obrigatório.").max(120),
   slug: z.string().min(2, "Slug é obrigatório.").max(120),
@@ -25,3 +31,12 @@ export const createProductBodySchema = z.object({
 });
 
 export type CreateProductBody = z.infer<typeof createProductBodySchema>;
+
+export const updateProductBodySchema = createProductBodySchema.partial().refine(
+  (data) => Object.keys(data).length > 0,
+  {
+    message: "Informe ao menos um campo para atualizar.",
+  },
+);
+
+export type UpdateProductBody = z.infer<typeof updateProductBodySchema>;
