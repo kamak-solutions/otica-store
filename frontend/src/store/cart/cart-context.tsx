@@ -13,6 +13,8 @@ type CartContextValue = {
   subtotal: number;
   addProduct: (product: Product) => void;
   removeProduct: (productId: string) => void;
+  increaseProductQuantity: (productId: string) => void;
+  decreaseProductQuantity: (productId: string) => void;
   clearCart: () => void;
 };
 
@@ -82,7 +84,33 @@ export function CartProvider({ children }: CartProviderProps) {
       currentItems.filter((item) => item.product.id !== productId),
     );
   }
+  function increaseProductQuantity(productId: string) {
+    setItems((currentItems) =>
+      currentItems.map((item) =>
+        item.product.id === productId
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+            }
+          : item,
+      ),
+    );
+  }
 
+  function decreaseProductQuantity(productId: string) {
+    setItems((currentItems) =>
+      currentItems
+        .map((item) =>
+          item.product.id === productId
+            ? {
+                ...item,
+                quantity: item.quantity - 1,
+              }
+            : item,
+        )
+        .filter((item) => item.quantity > 0),
+    );
+  }
   function clearCart() {
     setItems([]);
   }
@@ -104,6 +132,8 @@ export function CartProvider({ children }: CartProviderProps) {
       subtotal,
       addProduct,
       removeProduct,
+      increaseProductQuantity,
+      decreaseProductQuantity,
       clearCart,
     }),
     [items, totalItems, subtotal],

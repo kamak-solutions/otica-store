@@ -9,7 +9,14 @@ function formatCurrency(value: number) {
 }
 
 export function Cart() {
-  const { clearCart, items, removeProduct, subtotal } = useCart();
+  const {
+    clearCart,
+    decreaseProductQuantity,
+    increaseProductQuantity,
+    items,
+    removeProduct,
+    subtotal,
+  } = useCart();
 
   if (items.length === 0) {
     return (
@@ -42,8 +49,33 @@ export function Cart() {
             <article className="cart-item" key={item.product.id}>
               <div>
                 <h2>{item.product.name}</h2>
-                <p>Quantidade: {item.quantity}</p>
+                <p>
+                  Preço unitário:{" "}
+                  {formatCurrency(
+                    Number(item.product.salePrice ?? item.product.price),
+                  )}
+                </p>
+
+                <div className="quantity-control">
+                  <button
+                    type="button"
+                    onClick={() => decreaseProductQuantity(item.product.id)}
+                  >
+                    -
+                  </button>
+
+                  <span>{item.quantity}</span>
+
+                  <button
+                    type="button"
+                    onClick={() => increaseProductQuantity(item.product.id)}
+                  >
+                    +
+                  </button>
+                </div>
+
                 <strong>
+                  Total:{" "}
                   {formatCurrency(
                     Number(item.product.salePrice ?? item.product.price) *
                       item.quantity,
