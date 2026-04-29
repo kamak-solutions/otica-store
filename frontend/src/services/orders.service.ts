@@ -26,6 +26,7 @@ type CreateOrderPayload = {
 type CreateOrderResponse = {
   data: {
     id: string;
+    orderNumber: string | null;
     status: string;
     subtotal: string;
     createdAt: string;

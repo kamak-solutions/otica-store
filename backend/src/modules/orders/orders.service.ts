@@ -1,6 +1,12 @@
 import { prisma } from "../../lib/prisma.js";
 import type { CreateOrderBody } from "./orders.schemas.js";
 
+function generateOrderNumber() {
+  const timestamp = Date.now().toString().slice(-6);
+
+  return `OSR-${timestamp}`;
+}
+
 export async function createOrder(data: CreateOrderBody) {
   return prisma.$transaction(async (tx) => {
     const customer = await tx.customer.create({
@@ -20,6 +26,7 @@ export async function createOrder(data: CreateOrderBody) {
 
     const order = await tx.order.create({
       data: {
+        orderNumber: generateOrderNumber(),
         customerId: customer.id,
         subtotal: data.subtotal,
         notes: data.customer.notes || null,
@@ -39,5 +46,29 @@ export async function createOrder(data: CreateOrderBody) {
     });
 
     return order;
+  });
+}
+
+export async function listAdminOrders() {
+  return prisma.order.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      customer: true,
+      items: true,
+    },
+  });
+}
+
+export async function findAdminOrderById(id: string) {
+  return prisma.order.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      customer: true,
+      items: true,
+    },
   });
 }

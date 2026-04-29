@@ -1,10 +1,41 @@
-import type { createOrder } from "./orders.service.js";
+type OrderHttp = {
+  id: string;
+  orderNumber: string | null;
+  status: string;
+  subtotal: {
+    toFixed: (digits: number) => string;
+  };
+  notes: string | null;
+  customer: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    zipcode: string;
+    state: string;
+    street: string;
+    number: string;
+    complement: string | null;
+    district: string;
+    city: string;
+  };
+  items: {
+    id: string;
+    productId: string;
+    productName: string;
+    unitPrice: {
+      toFixed: (digits: number) => string;
+    };
+    quantity: number;
+  }[];
+  createdAt: Date;
+  updatedAt: Date;
+};
 
-type OrderWithRelations = Awaited<ReturnType<typeof createOrder>>;
-
-export function mapOrderToHttp(order: OrderWithRelations) {
+export function mapOrderToHttp(order: OrderHttp) {
   return {
     id: order.id,
+    orderNumber: order.orderNumber,
     status: order.status,
     subtotal: order.subtotal.toFixed(2),
     notes: order.notes,

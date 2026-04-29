@@ -29,4 +29,10 @@ export const createOrderBodySchema = z.object({
   subtotal: z.coerce.number().positive(),
 });
 
+export const orderIdParamsSchema = z.object({
+  id: z.string().uuid("ID do pedido inválido."),
+});
+
+export type OrderIdParams = z.infer<typeof orderIdParamsSchema>;
+
 export type CreateOrderBody = z.infer<typeof createOrderBodySchema>;

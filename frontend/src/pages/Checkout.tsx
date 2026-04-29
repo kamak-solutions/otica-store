@@ -51,7 +51,9 @@ export function Checkout() {
       clearCart();
 
       setSuccessMessage(
-        `Pedido criado com sucesso! Código do pedido: ${response.data.id}`,
+        `Pedido criado com sucesso! Código do pedido: ${
+          response.data.orderNumber ?? response.data.id
+        }`,
       );
 
       setFormData(initialCheckoutFormData);
@@ -86,7 +88,9 @@ export function Checkout() {
         </div>
       </div>
 
-      {successMessage && <div className="success-message">{successMessage}</div>}
+      {successMessage && (
+        <div className="success-message">{successMessage}</div>
+      )}
 
       {errorMessage && <div className="error-alert">{errorMessage}</div>}
 
