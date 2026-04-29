@@ -1,6 +1,9 @@
 import { Link, Outlet } from "react-router-dom";
+import { useCart } from "../../store/cart/use-cart";
 
 export function AppLayout() {
+  const { totalItems } = useCart();
+
   return (
     <div className="app-shell">
       <header className="site-header">
@@ -13,6 +16,7 @@ export function AppLayout() {
 
         <nav className="site-nav">
           <Link to="/">Produtos</Link>
+          <Link to="/carrinho">Carrinho ({totalItems})</Link>
           <a href="#contato">Contato</a>
         </nav>
       </header>

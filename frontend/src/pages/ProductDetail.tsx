@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getProductBySlug } from "../services/products.service";
 import type { Product } from "../types/product";
+import { useCart } from "../store/cart/use-cart";
 
 export function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -23,9 +24,7 @@ export function ProductDetail() {
         setProduct(response.data);
       } catch (error) {
         setError(
-          error instanceof Error
-            ? error.message
-            : "Erro ao carregar produto.",
+          error instanceof Error ? error.message : "Erro ao carregar produto.",
         );
       } finally {
         setIsLoading(false);
@@ -56,6 +55,7 @@ export function ProductDetail() {
       </section>
     );
   }
+  const { addProduct } = useCart();
 
   const hasSalePrice = Boolean(product.salePrice);
 
@@ -72,7 +72,9 @@ export function ProductDetail() {
         </div>
 
         <div className="product-detail-content">
-          {product.brand && <span className="product-brand">{product.brand}</span>}
+          {product.brand && (
+            <span className="product-brand">{product.brand}</span>
+          )}
 
           <h1>{product.name}</h1>
 
@@ -110,12 +112,17 @@ export function ProductDetail() {
             )}
           </div>
 
-          <button className="primary-button" type="button">
+          <button
+            className="primary-button"
+            type="button"
+            onClick={() => addProduct(product)}
+          >
             Adicionar ao carrinho
           </button>
 
           <p className="detail-note">
-            Atendimento personalizado para ajudar você a escolher a melhor opção.
+            Atendimento personalizado para ajudar você a escolher a melhor
+            opção.
           </p>
         </div>
       </div>
