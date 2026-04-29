@@ -36,12 +36,12 @@ export function ProductDetail() {
   }, [slug]);
 
   if (isLoading) {
-    return <p>Carregando produto...</p>;
+    return <p className="state-message">Carregando produto...</p>;
   }
 
   if (error) {
     return (
-      <section>
+      <section className="state-message error-message">
         <p>{error}</p>
         <Link to="/">Voltar para a loja</Link>
       </section>
@@ -50,35 +50,75 @@ export function ProductDetail() {
 
   if (!product) {
     return (
-      <section>
+      <section className="state-message">
         <p>Produto não encontrado.</p>
         <Link to="/">Voltar para a loja</Link>
       </section>
     );
   }
 
+  const hasSalePrice = Boolean(product.salePrice);
+
   return (
-    <section>
-      <Link to="/">← Voltar</Link>
+    <section className="product-detail">
+      <Link className="back-link" to="/">
+        ← Voltar para produtos
+      </Link>
 
-      <h1>{product.name}</h1>
+      <div className="product-detail-grid">
+        <div className="product-detail-image">
+          {product.featured && <span className="product-badge">Destaque</span>}
+          <span>Ótica ShowRoom</span>
+        </div>
 
-      {product.description && <p>{product.description}</p>}
+        <div className="product-detail-content">
+          {product.brand && <span className="product-brand">{product.brand}</span>}
 
-      <p>
-        {product.salePrice ? (
-          <>
-            <span>De R$ {product.price}</span>{" "}
-            <strong>Por R$ {product.salePrice}</strong>
-          </>
-        ) : (
-          <strong>R$ {product.price}</strong>
-        )}
-      </p>
+          <h1>{product.name}</h1>
 
-      <p>Estoque: {product.stock}</p>
+          {product.description && (
+            <p className="product-detail-description">{product.description}</p>
+          )}
 
-      {product.brand && <p>Marca: {product.brand}</p>}
+          <div className="product-detail-price">
+            {hasSalePrice ? (
+              <>
+                <span className="old-price">De R$ {product.price}</span>
+                <strong>Por R$ {product.salePrice}</strong>
+              </>
+            ) : (
+              <strong>R$ {product.price}</strong>
+            )}
+          </div>
+
+          <div className="product-detail-info">
+            <div>
+              <span>Estoque</span>
+              <strong>{product.stock} unidade(s)</strong>
+            </div>
+
+            <div>
+              <span>Status</span>
+              <strong>{product.active ? "Disponível" : "Indisponível"}</strong>
+            </div>
+
+            {product.sku && (
+              <div>
+                <span>SKU</span>
+                <strong>{product.sku}</strong>
+              </div>
+            )}
+          </div>
+
+          <button className="primary-button" type="button">
+            Adicionar ao carrinho
+          </button>
+
+          <p className="detail-note">
+            Atendimento personalizado para ajudar você a escolher a melhor opção.
+          </p>
+        </div>
+      </div>
     </section>
   );
 }
