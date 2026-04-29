@@ -5,6 +5,7 @@ import { errorHandler } from "./errors/error-handler.js";
 import { productsRoutes } from "./modules/products/products.routes.js";
 import { healthRoutes } from "./routes/health.routes.js";
 import { ordersRoutes } from "./modules/orders/orders.routes.js";
+import { adminAuthRoutes } from "./modules/admin-auth/admin-auth.routes.js";
 
 export const app = Fastify({
   logger: {
@@ -52,3 +53,4 @@ app.setErrorHandler(errorHandler);
 app.register(healthRoutes);
 app.register(productsRoutes);
 app.register(ordersRoutes);
+app.register(adminAuthRoutes);
