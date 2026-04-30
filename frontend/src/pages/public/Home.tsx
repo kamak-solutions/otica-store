@@ -50,9 +50,7 @@ export function Home() {
         setProducts(response.data);
       } catch (error) {
         setProductsError(
-          error instanceof Error
-            ? error.message
-            : "Erro ao carregar produtos.",
+          error instanceof Error ? error.message : "Erro ao carregar produtos.",
         );
       } finally {
         setIsLoadingProducts(false);
@@ -93,9 +91,6 @@ export function Home() {
       <CategoryShortcuts />
 
       <HomeBanner />
-
-      <CampaignBanner />
-
       {productsError && (
         <section className="site-container">
           <p className="section-empty-message">{productsError}</p>
@@ -107,32 +102,34 @@ export function Home() {
           <p className="section-empty-message">Carregando produtos...</p>
         </section>
       ) : (
-        <>
-          <ProductPreviewSection
-            id="modelos"
-            kicker="Escolha por estilo"
-            title="Encontre seu modelo ideal"
-            description="Escolha por público e veja produtos selecionados para você."
-            filters={audienceFilters}
-            activeFilter={activeAudienceFilter}
-            onFilterChange={setActiveAudienceFilter}
-            products={audienceProducts}
-            emptyMessage="Nenhum produto encontrado para esse público."
-          />
-
-          <ProductPreviewSection
-            id="categorias"
-            kicker="Compre por categoria"
-            title="Explore nossas categorias"
-            description="Escolha entre óculos solares, grau, armações, lentes e acessórios."
-            filters={categoryFilters}
-            activeFilter={activeCategoryFilter}
-            onFilterChange={setActiveCategoryFilter}
-            products={categoryProducts}
-            emptyMessage="Nenhum produto encontrado para essa categoria."
-          />
-        </>
+        <>{/* AQUI ficam seus ProductPreviewSection */}</>
       )}
+
+      <ProductPreviewSection
+        id="modelos"
+        kicker="Escolha por estilo"
+        title="Encontre seu modelo ideal"
+        description="Escolha por público e veja produtos selecionados para você."
+        filters={audienceFilters}
+        activeFilter={activeAudienceFilter}
+        onFilterChange={setActiveAudienceFilter}
+        products={audienceProducts}
+        emptyMessage="Nenhum produto encontrado para esse público."
+      />
+
+      <CampaignBanner />
+
+      <ProductPreviewSection
+        id="categorias"
+        kicker="Compre por categoria"
+        title="Explore nossas categorias"
+        description="Escolha entre óculos solares, grau, armações, lentes e acessórios."
+        filters={categoryFilters}
+        activeFilter={activeCategoryFilter}
+        onFilterChange={setActiveCategoryFilter}
+        products={categoryProducts}
+        emptyMessage="Nenhum produto encontrado para essa categoria."
+      />
 
       <QuoteBanner />
 
