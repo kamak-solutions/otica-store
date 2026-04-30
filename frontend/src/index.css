@@ -1113,3 +1113,118 @@ a {
   letter-spacing: 0.08em;
   font-size: 0.95rem;
 }
+/* Blog preview / Blog page responsive fix */
+.home-blog-grid,
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.home-blog-grid .blog-card,
+.blog-grid .blog-card {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 26px;
+  background: var(--color-card);
+  box-shadow: 0 16px 45px rgba(80, 50, 35, 0.06);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.blog-card-image-wrapper {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--color-soft);
+  flex: 0 0 auto;
+}
+
+.blog-card-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.blog-card-content {
+  padding: 22px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.blog-card-content span {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: var(--color-gold);
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.blog-card-content h2,
+.blog-card-content h3 {
+  margin: 0 0 12px;
+  color: var(--color-text);
+  font-size: 1.22rem;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+.blog-card-content p {
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.7;
+}
+
+.blog-card-link {
+  display: inline-flex;
+  margin-top: auto;
+  padding-top: 16px;
+  color: var(--color-gold);
+  font-weight: 900;
+}
+
+.blog-card-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 980px) {
+  .home-blog-grid,
+  .blog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .home-blog-grid,
+  .blog-grid {
+    grid-template-columns: 1fr !important;
+    gap: 18px;
+  }
+
+  .home-blog-grid .blog-card,
+  .blog-grid .blog-card {
+    width: 100%;
+  }
+
+  .blog-card-image-wrapper {
+    aspect-ratio: 16 / 9;
+  }
+
+  .blog-card-content {
+    padding: 20px;
+  }
+
+  .blog-card-content h2,
+  .blog-card-content h3 {
+    font-size: 1.18rem;
+  }
+
+  .blog-card-content p {
+    font-size: 0.95rem;
+  }
+}
