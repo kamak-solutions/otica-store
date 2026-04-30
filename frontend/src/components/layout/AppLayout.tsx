@@ -16,7 +16,7 @@ export function AppLayout() {
 
         <nav className="site-nav">
           <Link to="/">Produtos</Link>
-          <Link to="/carrinho">Carrinho ({totalItems})</Link>  
+          <Link to="/carrinho">Carrinho ({totalItems})</Link>
           <a href="#contato">Contato</a>
         </nav>
       </header>
@@ -24,10 +24,26 @@ export function AppLayout() {
       <main className="page-container">
         <Outlet />
       </main>
-
       <footer className="site-footer" id="contato">
-        <strong>Ótica ShowRoom</strong>
-        <p>Atendimento personalizado, qualidade e confiança.</p>
+        <div>
+          <strong>Ótica ShowRoom</strong>
+          <p>
+            Óculos, armações, lentes e acessórios com atendimento personalizado.
+          </p>
+        </div>
+
+        <div>
+          <strong>Atendimento</strong>
+          <p>Envie sua receita para orçamento.</p>
+          <p>Consulte disponibilidade de produtos e lentes.</p>
+        </div>
+
+        <div>
+          <strong>Loja</strong>
+          <p>Óculos de grau</p>
+          <p>Óculos solar</p>
+          <p>Lentes e acessórios</p>
+        </div>
       </footer>
     </div>
   );
