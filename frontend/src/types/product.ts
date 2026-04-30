@@ -7,6 +7,12 @@ export type ProductImage = {
   isMain: boolean;
 };
 
+export type ProductCategory = {
+  id: string;
+  name: string;
+  slug: string;
+} | null;
+
 export type Product = {
   id: string;
   name: string;
@@ -19,6 +25,8 @@ export type Product = {
   stock: number;
   active: boolean;
   featured: boolean;
+  audience: string | null;
+  category: ProductCategory;
   images: ProductImage[];
   createdAt: string;
   updatedAt: string;

@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getCategories } from "../../services/categories.service";
 import {
   createAdminProduct,
   type CreateAdminProductPayload,
 } from "../../services/products.service";
+import type { Category } from "../../types/category";
 
 type ProductFormData = {
   name: string;
@@ -14,6 +16,8 @@ type ProductFormData = {
   sku: string;
   brand: string;
   stock: string;
+  categoryId: string;
+  audience: string;
   active: boolean;
   featured: boolean;
 };
@@ -27,6 +31,8 @@ const initialFormData: ProductFormData = {
   sku: "",
   brand: "Ótica ShowRoom",
   stock: "0",
+  categoryId: "",
+  audience: "unissex",
   active: true,
   featured: false,
 };
@@ -53,8 +59,22 @@ export function AdminProductCreate() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<ProductFormData>(initialFormData);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const response = await getCategories();
+        setCategories(response.data);
+      } catch {
+        setCategories([]);
+      }
+    }
+
+    loadCategories();
+  }, []);
 
   function updateField(
     field: keyof ProductFormData,
@@ -89,6 +109,8 @@ export function AdminProductCreate() {
       sku: formData.sku || undefined,
       brand: formData.brand || undefined,
       stock: Number(formData.stock),
+      categoryId: formData.categoryId || undefined,
+      audience: formData.audience || undefined,
       active: formData.active,
       featured: formData.featured,
     };
@@ -231,6 +253,44 @@ export function AdminProductCreate() {
               onChange={(event) => updateField("brand", event.target.value)}
               placeholder="Ótica ShowRoom"
             />
+          </label>
+        </section>
+
+        <section className="admin-detail-card">
+          <h2>Organização</h2>
+
+          <label>
+            Categoria
+            <select
+              value={formData.categoryId}
+              onChange={(event) =>
+                updateField("categoryId", event.target.value)
+              }
+            >
+              <option value="">Selecione uma categoria</option>
+
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Público
+            <select
+              value={formData.audience}
+              onChange={(event) =>
+                updateField("audience", event.target.value)
+              }
+            >
+              <option value="">Não definido</option>
+              <option value="feminino">Feminino</option>
+              <option value="masculino">Masculino</option>
+              <option value="infantil">Infantil</option>
+              <option value="unissex">Unissex</option>
+            </select>
           </label>
         </section>
 

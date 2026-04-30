@@ -20,6 +20,8 @@ export type CreateAdminProductPayload = {
   stock: number;
   active: boolean;
   featured: boolean;
+  categoryId?: string;
+  audience?: string;
 };
 
 export type UpdateAdminProductPayload = Partial<CreateAdminProductPayload>;

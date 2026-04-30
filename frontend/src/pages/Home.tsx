@@ -1,10 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ProductCard } from "../components/products/ProductCard";
 import { getProducts } from "../services/products.service";
 import type { Product } from "../types/product";
 
+type AudienceFilter = "todos" | "feminino" | "masculino" | "infantil" | "unissex";
+
+const audienceFilters: {
+  label: string;
+  value: AudienceFilter;
+}[] = [
+  { label: "Todos", value: "todos" },
+  { label: "Feminino", value: "feminino" },
+  { label: "Masculino", value: "masculino" },
+  { label: "Infantil", value: "infantil" },
+  { label: "Unissex", value: "unissex" },
+];
+
 export function Home() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [selectedAudience, setSelectedAudience] =
+    useState<AudienceFilter>("todos");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -27,6 +42,16 @@ export function Home() {
     loadProducts();
   }, []);
 
+  const filteredProducts = useMemo(() => {
+    if (selectedAudience === "todos") {
+      return products;
+    }
+
+    return products.filter(
+      (product) => product.audience === selectedAudience,
+    );
+  }, [products, selectedAudience]);
+
   if (isLoading) {
     return <p className="state-message">Carregando produtos...</p>;
   }
@@ -48,15 +73,40 @@ export function Home() {
 
       <section>
         <div className="section-heading">
-          <h2>Produtos disponíveis</h2>
-          <p>{products.length} produto(s) encontrado(s)</p>
+          <div>
+            <h2>Produtos disponíveis</h2>
+            <p>{filteredProducts.length} produto(s) encontrado(s)</p>
+          </div>
         </div>
 
-        <div className="products-grid">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+        <div className="product-filters">
+          {audienceFilters.map((filter) => (
+            <button
+              key={filter.value}
+              className={
+                selectedAudience === filter.value
+                  ? "filter-button filter-button-active"
+                  : "filter-button"
+              }
+              type="button"
+              onClick={() => setSelectedAudience(filter.value)}
+            >
+              {filter.label}
+            </button>
           ))}
         </div>
+
+        {filteredProducts.length === 0 ? (
+          <p className="state-message">
+            Nenhum produto encontrado para esse filtro.
+          </p>
+        ) : (
+          <div className="products-grid">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </section>
     </>
   );

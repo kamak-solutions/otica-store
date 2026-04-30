@@ -15,6 +15,8 @@ export function mapProductToHttp(product: ProductListItem) {
     stock: product.stock,
     active: product.active,
     featured: product.featured,
+    audience: product.audience,
+    category: product.category,
     images: product.images.map((image) => ({
       id: image.id,
       url: image.url,

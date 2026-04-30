@@ -12,7 +12,8 @@
     "prisma:generate": "prisma generate",
     "db:seed": "tsx prisma/seed/seed.ts",
     "db:seed:admin": "tsx prisma/seed/admin-user.seed.ts",
-    "db:reset:admin-password": "tsx prisma/seed/reset-admin-password.seed.ts"
+    "db:reset:admin-password": "tsx prisma/seed/reset-admin-password.seed.ts",
+    "db:seed:categories": "tsx prisma/seed/categories.seed.ts"
   },
   "keywords": [],
   "author": "",

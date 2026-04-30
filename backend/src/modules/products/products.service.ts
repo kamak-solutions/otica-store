@@ -14,6 +14,7 @@ export async function listProducts() {
       createdAt: "desc",
     },
     include: {
+      category: true,
       images: {
         orderBy: {
           position: "asc",
@@ -29,6 +30,7 @@ export async function listAdminProducts() {
       createdAt: "desc",
     },
     include: {
+      category: true,
       images: {
         orderBy: {
           position: "asc",
@@ -45,6 +47,7 @@ export async function findProductBySlug(slug: string) {
       active: true,
     },
     include: {
+      category: true,
       images: {
         orderBy: {
           position: "asc",
@@ -60,6 +63,7 @@ export async function findProductById(id: string) {
       id,
     },
     include: {
+      category: true,
       images: {
         orderBy: {
           position: "asc",
@@ -73,6 +77,7 @@ export async function createProduct(data: CreateProductBody) {
   return prisma.product.create({
     data,
     include: {
+      category: true,
       images: {
         orderBy: {
           position: "asc",
@@ -89,6 +94,7 @@ export async function updateProduct(id: string, data: UpdateProductBody) {
     },
     data,
     include: {
+      category: true,
       images: {
         orderBy: {
           position: "asc",
@@ -107,6 +113,7 @@ export async function deactivateProduct(id: string) {
       active: false,
     },
     include: {
+      category: true,
       images: {
         orderBy: {
           position: "asc",
@@ -148,6 +155,7 @@ export async function addProductImage(
         id: productId,
       },
       include: {
+        category: true,
         images: {
           orderBy: {
             position: "asc",

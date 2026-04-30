@@ -1330,3 +1330,60 @@ a {
 .admin-product-actions .secondary-button {
   width: fit-content;
 }
+
+.admin-product-form select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 13px 14px;
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+}
+
+.admin-product-form select:focus {
+  outline: 2px solid rgba(212, 175, 55, 0.35);
+  border-color: var(--gold);
+}
+.admin-product-form select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 13px 14px;
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+}
+
+.admin-product-form select:focus {
+  outline: 2px solid rgba(212, 175, 55, 0.35);
+  border-color: var(--gold);
+}
+.product-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.filter-button {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: var(--surface);
+  color: var(--muted);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.filter-button:hover {
+  border-color: rgba(212, 175, 55, 0.6);
+  color: var(--gold-strong);
+}
+
+.filter-button-active {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.14);
+  color: var(--gold-strong);
+}

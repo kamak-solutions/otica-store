@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { getCategories } from "../../services/categories.service";
 import {
   getAdminProducts,
   updateAdminProduct,
   type UpdateAdminProductPayload,
 } from "../../services/products.service";
+import type { Category } from "../../types/category";
 import type { Product } from "../../types/product";
 
 type ProductFormData = {
@@ -16,6 +18,8 @@ type ProductFormData = {
   sku: string;
   brand: string;
   stock: string;
+  categoryId: string;
+  audience: string;
   active: boolean;
   featured: boolean;
 };
@@ -48,6 +52,8 @@ function productToFormData(product: Product): ProductFormData {
     sku: product.sku ?? "",
     brand: product.brand ?? "",
     stock: String(product.stock),
+    categoryId: product.category?.id ?? "",
+    audience: product.audience ?? "",
     active: product.active,
     featured: product.featured,
   };
@@ -58,13 +64,14 @@ export function AdminProductEdit() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<ProductFormData | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [productName, setProductName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    async function loadProduct() {
+    async function loadData() {
       if (!id) {
         setErrorMessage("Produto inválido.");
         setIsLoading(false);
@@ -72,14 +79,19 @@ export function AdminProductEdit() {
       }
 
       try {
-        const response = await getAdminProducts();
-        const product = response.data.find((item) => item.id === id);
+        const [productsResponse, categoriesResponse] = await Promise.all([
+          getAdminProducts(),
+          getCategories(),
+        ]);
+
+        const product = productsResponse.data.find((item) => item.id === id);
 
         if (!product) {
           setErrorMessage("Produto não encontrado.");
           return;
         }
 
+        setCategories(categoriesResponse.data);
         setProductName(product.name);
         setFormData(productToFormData(product));
       } catch (error) {
@@ -91,7 +103,7 @@ export function AdminProductEdit() {
       }
     }
 
-    loadProduct();
+    loadData();
   }, [id]);
 
   function updateField(field: keyof ProductFormData, value: string | boolean) {
@@ -139,6 +151,8 @@ export function AdminProductEdit() {
       sku: formData.sku || undefined,
       brand: formData.brand || undefined,
       stock: Number(formData.stock),
+      categoryId: formData.categoryId || undefined,
+      audience: formData.audience || undefined,
       active: formData.active,
       featured: formData.featured,
     };
@@ -296,6 +310,44 @@ export function AdminProductEdit() {
               value={formData.brand}
               onChange={(event) => updateField("brand", event.target.value)}
             />
+          </label>
+        </section>
+
+        <section className="admin-detail-card">
+          <h2>Organização</h2>
+
+          <label>
+            Categoria
+            <select
+              value={formData.categoryId}
+              onChange={(event) =>
+                updateField("categoryId", event.target.value)
+              }
+            >
+              <option value="">Selecione uma categoria</option>
+
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Público
+            <select
+              value={formData.audience}
+              onChange={(event) =>
+                updateField("audience", event.target.value)
+              }
+            >
+              <option value="">Não definido</option>
+              <option value="feminino">Feminino</option>
+              <option value="masculino">Masculino</option>
+              <option value="infantil">Infantil</option>
+              <option value="unissex">Unissex</option>
+            </select>
           </label>
         </section>
 
