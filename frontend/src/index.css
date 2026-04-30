@@ -1309,3 +1309,14 @@ a {
     line-height: 1.1;
   }
 }
+.top-marquee {
+  background: #2c2520;
+  color: #ffffff;
+}
+
+.top-marquee-inner {
+  color: #ffffff;
+}
+.marquee-track span:nth-child(even) {
+  color: #f1d89f;
+}
