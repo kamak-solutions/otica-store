@@ -48,6 +48,7 @@ export const audienceFilters = [
 ];
 
 export const categoryFilters = [
+  "Todos",
   "Óculos Solar",
   "Óculos de Grau",
   "Armações",
