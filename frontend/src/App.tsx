@@ -6,6 +6,7 @@ import { Home } from "./pages/public/Home";
 import { Lenses } from "./pages/public/Lenses";
 import { QuoteRequest } from "./pages/public/QuoteRequest";
 import { Services } from "./pages/public/Services";
+import { ProductDetail } from "./pages/public/ProductDetail";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/servicos" element={<Services />} />
           <Route path="/orcamento" element={<QuoteRequest />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/produtos/:slug" element={<ProductDetail />} />
         </Route>
       </Routes>
     </BrowserRouter>
