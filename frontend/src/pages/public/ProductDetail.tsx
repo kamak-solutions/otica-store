@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getProductBySlug } from "../../services/products.service";
 import type { Product } from "../../types/product";
+import { useCart } from "../../store/cart/use-cart";
 
 function formatPrice(value: string) {
   return Number(value).toLocaleString("pt-BR", {
@@ -47,6 +48,7 @@ export function ProductDetail() {
 
     loadProduct();
   }, [slug]);
+  const { addProduct } = useCart();
 
   const price = useMemo(() => {
     if (!product) {
@@ -79,9 +81,6 @@ export function ProductDetail() {
       </main>
     );
   }
-
- 
-  
 
   return (
     <main className="page-shell">
@@ -142,8 +141,15 @@ export function ProductDetail() {
           </div>
 
           <div className="product-detail-actions">
-            <button className="button-primary" type="button">
-              Adicionar ao carrinho
+            <button
+              className="button-primary"
+              type="button"
+              disabled={product.stock === 0}
+              onClick={() => addProduct(product)}
+            >
+              {product.stock === 0
+                ? "Produto indisponível"
+                : "Adicionar ao carrinho"}
             </button>
 
             <Link className="button-secondary" to="/orcamento">

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
+import { useCart } from "../store/cart/use-cart";
 
 export function PublicLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { totalItems } = useCart();
 
   function closeMobileMenu() {
     setIsMobileMenuOpen(false);
@@ -32,9 +34,7 @@ export function PublicLayout() {
 
           <nav
             className={
-              isMobileMenuOpen
-                ? "public-nav public-nav-open"
-                : "public-nav"
+              isMobileMenuOpen ? "public-nav public-nav-open" : "public-nav"
             }
           >
             <Link to="/" onClick={closeMobileMenu}>
@@ -75,9 +75,14 @@ export function PublicLayout() {
               👤
             </button>
 
-            <button type="button" aria-label="Carrinho">
+            <Link
+              className="header-cart-button"
+              to="/carrinho"
+              aria-label="Carrinho"
+            >
               🛒
-            </button>
+              {totalItems > 0 && <span>{totalItems}</span>}
+            </Link>
 
             <button
               className="mobile-menu-button"
