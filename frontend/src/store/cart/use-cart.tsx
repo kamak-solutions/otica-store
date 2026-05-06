@@ -1,11 +1,14 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
 import type { Product } from "../../types/product";
+
+const CART_STORAGE_KEY = "@otica-showroom:cart";
 
 export type CartItem = {
   productId: string;
@@ -41,8 +44,37 @@ function getProductPrice(product: Product) {
   return product.salePrice ?? product.price;
 }
 
+function loadCartFromStorage(): CartItem[] {
+  try {
+    if (typeof window === "undefined") {
+      return [];
+    }
+
+    const storedCart = window.localStorage.getItem(CART_STORAGE_KEY);
+
+    if (!storedCart) {
+      return [];
+    }
+
+    const parsedCart = JSON.parse(storedCart);
+
+    if (!Array.isArray(parsedCart)) {
+      return [];
+    }
+
+    return parsedCart;
+  } catch (error) {
+    console.error("Erro ao carregar carrinho:", error);
+    return [];
+  }
+}
+
 export function CartProvider({ children }: CartProviderProps) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>(() => loadCartFromStorage());
+
+  useEffect(() => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+  }, [items]);
 
   function addProduct(product: Product) {
     const mainImage = getMainImage(product);
