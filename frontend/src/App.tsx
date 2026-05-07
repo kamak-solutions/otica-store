@@ -10,6 +10,7 @@ import { ProductDetail } from "./pages/public/ProductDetail";
 import { Cart } from "./pages/public/Cart";
 import { Checkout } from "./pages/public/Checkout";
 
+
 export default function App() {
   return (
     <BrowserRouter>
