@@ -10,6 +10,7 @@ import { categoriesRoutes } from "./modules/categories/categories.routes.js";
 import { quoteRequestRoutes } from "./modules/quote-requests/quote-requests.routes.js";
 import { adminQuoteRequestRoutes } from "./modules/quote-requests/admin-quote-requests.routes.js";
 import rateLimit from "@fastify/rate-limit";
+import helmet from "@fastify/helmet";
 
 export const app = Fastify({
   logger: {
@@ -26,6 +27,11 @@ export const app = Fastify({
       : undefined,
   },
 });
+
+await app.register(helmet, {
+  global: true,
+});
+
 
 await app.register(cors, {
   origin(origin, callback) {
