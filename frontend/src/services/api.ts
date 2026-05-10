@@ -21,6 +21,18 @@ export async function apiFetch<T>(
   const data = await response.json();
 
   if (!response.ok) {
+    if (response.status === 401) {
+      window.localStorage.removeItem("@otica-showroom:admin-token");
+      window.localStorage.removeItem("@otica-showroom:admin-user");
+
+      if (
+        window.location.pathname.startsWith("/admin") &&
+        window.location.pathname !== "/admin/login"
+      ) {
+        window.location.href = "/admin/login";
+      }
+    }
+
     throw new Error(data?.message || "Erro ao buscar dados da API.");
   }
 

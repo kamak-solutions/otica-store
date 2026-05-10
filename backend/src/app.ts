@@ -11,6 +11,7 @@ import { quoteRequestRoutes } from "./modules/quote-requests/quote-requests.rout
 import { adminQuoteRequestRoutes } from "./modules/quote-requests/admin-quote-requests.routes.js";
 import rateLimit from "@fastify/rate-limit";
 import helmet from "@fastify/helmet";
+import { adminAuditRoutes } from "./modules/admin-audit/admin-audit.routes.js";
 
 export const app = Fastify({
   logger: {
@@ -71,3 +72,4 @@ app.register(adminAuthRoutes);
 app.register(categoriesRoutes);
 app.register(quoteRequestRoutes);
 app.register(adminQuoteRequestRoutes);
+app.register(adminAuditRoutes);

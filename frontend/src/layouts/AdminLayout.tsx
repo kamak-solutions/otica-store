@@ -24,6 +24,7 @@ export function AdminLayout() {
 
         <nav className="admin-nav">
           <Link to="/admin/orcamentos">Orçamentos</Link>
+          <Link to="/admin/auditoria">Auditoria</Link>
           <Link to="/">Ver vitrine</Link>
         </nav>
 

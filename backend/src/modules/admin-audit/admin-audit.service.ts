@@ -24,3 +24,11 @@ export async function createAdminAuditLog(data: CreateAdminAuditLogInput) {
     },
   });
 }
+export async function listAdminAuditLogs() {
+  return prisma.adminAuditLog.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 100,
+  });
+}
