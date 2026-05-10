@@ -1,5 +1,8 @@
 import type { FastifyInstance } from "fastify";
-import { requireAdminAuth } from "../admin-auth/admin-auth.middleware.js";
+import {
+  requireAdminAuth,
+  requireAdminRole,
+} from "../admin-auth/admin-auth.middleware.js";
 import {
   createOrderController,
   getAdminOrderByIdController,
@@ -16,7 +19,12 @@ export async function ordersRoutes(app: FastifyInstance) {
 
   app.get(
     "/admin/orders",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator", "viewer"]),
+      ],
+    },
     getAdminOrdersController,
   );
 
@@ -24,7 +32,12 @@ export async function ordersRoutes(app: FastifyInstance) {
     Params: OrderIdParams;
   }>(
     "/admin/orders/:id",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator", "viewer"]),
+      ],
+    },
     getAdminOrderByIdController,
   );
 
@@ -33,7 +46,12 @@ export async function ordersRoutes(app: FastifyInstance) {
     Body: UpdateOrderStatusBody;
   }>(
     "/admin/orders/:id/status",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator"]),
+      ],
+    },
     updateOrderStatusController,
   );
 }

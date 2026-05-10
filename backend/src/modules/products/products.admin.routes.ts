@@ -1,5 +1,8 @@
 import type { FastifyInstance } from "fastify";
-import { requireAdminAuth } from "../admin-auth/admin-auth.middleware.js";
+import {
+  requireAdminAuth,
+  requireAdminRole,
+} from "../admin-auth/admin-auth.middleware.js";
 import {
   addProductImageController,
   createProductController,
@@ -17,7 +20,12 @@ import type {
 export async function productsAdminRoutes(app: FastifyInstance) {
   app.get(
     "/admin/products",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator", "viewer"]),
+      ],
+    },
     getAdminProductsController,
   );
 
@@ -25,7 +33,12 @@ export async function productsAdminRoutes(app: FastifyInstance) {
     Body: CreateProductBody;
   }>(
     "/admin/products",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin"]),
+      ],
+    },
     createProductController,
   );
 
@@ -34,7 +47,12 @@ export async function productsAdminRoutes(app: FastifyInstance) {
     Body: UpdateProductBody;
   }>(
     "/admin/products/:id",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin"]),
+      ],
+    },
     updateProductController,
   );
 
@@ -42,7 +60,12 @@ export async function productsAdminRoutes(app: FastifyInstance) {
     Params: ProductIdParams;
   }>(
     "/admin/products/:id",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin"]),
+      ],
+    },
     deleteProductController,
   );
 
@@ -51,7 +74,12 @@ export async function productsAdminRoutes(app: FastifyInstance) {
     Body: CreateProductImageBody;
   }>(
     "/admin/products/:id/images",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin"]),
+      ],
+    },
     addProductImageController,
   );
 }
