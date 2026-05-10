@@ -2769,3 +2769,121 @@ a {
     flex-direction: column;
   }
 }
+.admin-login-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #f5f1eb;
+}
+
+.admin-login-card {
+  width: min(100%, 440px);
+  border: 1px solid #e7d8cc;
+  border-radius: 28px;
+  padding: 32px;
+  background: #ffffff;
+  box-shadow: 0 16px 45px rgba(80, 50, 35, 0.08);
+  display: grid;
+  gap: 16px;
+}
+
+.admin-login-card > span {
+  color: #b8914b;
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.admin-login-card h1 {
+  margin: 0;
+  color: #2c2520;
+  font-size: 2.2rem;
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.admin-login-card p {
+  margin: 0;
+  color: #7f7169;
+  line-height: 1.6;
+}
+
+.admin-login-card label {
+  display: grid;
+  gap: 8px;
+  color: #2c2520;
+  font-weight: 850;
+}
+
+.admin-login-card input {
+  border: 1px solid #e7d8cc;
+  border-radius: 16px;
+  padding: 13px 14px;
+  outline: none;
+}
+
+.admin-login-card input:focus {
+  border-color: #b8914b;
+  box-shadow: 0 0 0 3px rgba(184, 145, 75, 0.14);
+}
+
+.admin-login-card button {
+  border: 0;
+  border-radius: 999px;
+  padding: 13px 18px;
+  background: #b8914b;
+  color: #ffffff;
+  font-weight: 950;
+}
+
+.admin-login-card button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.admin-login-error {
+  border: 1px solid rgba(179, 38, 30, 0.28);
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: rgba(179, 38, 30, 0.08);
+  color: #b3261e;
+  font-weight: 850;
+}
+
+.admin-user-card {
+  border: 1px solid rgba(241, 216, 159, 0.18);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 18px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-user-card strong {
+  display: block;
+  color: #ffffff;
+}
+
+.admin-user-card span {
+  display: block;
+  margin-top: 4px;
+  color: #d8c8bd;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.admin-logout-button {
+  width: 100%;
+  border: 1px solid rgba(241, 216, 159, 0.22);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-top: 18px;
+  background: transparent;
+  color: #f1d89f;
+  font-weight: 900;
+}
+
+.admin-logout-button:hover {
+  background: rgba(241, 216, 159, 0.12);
+}

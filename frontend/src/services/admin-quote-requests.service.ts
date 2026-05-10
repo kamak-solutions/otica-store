@@ -1,5 +1,7 @@
 import { apiFetch } from "./api";
 
+const ADMIN_TOKEN_STORAGE_KEY = "@otica-showroom:admin-token";
+
 export type QuoteRequestStatus =
   | "pending"
   | "in_analysis"
@@ -31,8 +33,22 @@ type UpdateAdminQuoteRequestStatusResponse = {
   message: string;
 };
 
+function getAdminAuthHeaders(): Record<string, string> {
+  const token = window.localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY);
+
+  if (!token) {
+    return {};
+  }
+
+  return {
+    Authorization: `Bearer ${token}`,
+  };
+}
+
 export function listAdminQuoteRequests() {
-  return apiFetch<ListAdminQuoteRequestsResponse>("/admin/quote-requests");
+  return apiFetch<ListAdminQuoteRequestsResponse>("/admin/quote-requests", {
+    headers: getAdminAuthHeaders(),
+  });
 }
 
 export function updateAdminQuoteRequestStatus(
@@ -43,6 +59,7 @@ export function updateAdminQuoteRequestStatus(
     `/admin/quote-requests/${id}/status`,
     {
       method: "PATCH",
+      headers: getAdminAuthHeaders(),
       body: JSON.stringify({ status }),
     },
   );
