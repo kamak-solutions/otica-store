@@ -9,6 +9,7 @@ import { adminAuthRoutes } from "./modules/admin-auth/admin-auth.routes.js";
 import { categoriesRoutes } from "./modules/categories/categories.routes.js";
 import { quoteRequestRoutes } from "./modules/quote-requests/quote-requests.routes.js";
 import { adminQuoteRequestRoutes } from "./modules/quote-requests/admin-quote-requests.routes.js";
+import rateLimit from "@fastify/rate-limit";
 
 export const app = Fastify({
   logger: {
@@ -49,6 +50,10 @@ await app.register(cors, {
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
+});
+
+await app.register(rateLimit, {
+  global: false,
 });
 
 app.setErrorHandler(errorHandler);
