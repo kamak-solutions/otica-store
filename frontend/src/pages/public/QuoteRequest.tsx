@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { createQuoteRequest } from "../../services/quote-requests.service";
 
 type QuoteFormData = {
   name: string;
@@ -23,6 +24,9 @@ export function QuoteRequest() {
   const [formData, setFormData] = useState<QuoteFormData>(initialFormData);
   const [selectedFileName, setSelectedFileName] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [createdQuoteId, setCreatedQuoteId] = useState("");
 
   function updateField(field: keyof QuoteFormData, value: string) {
     setFormData((currentData) => ({
@@ -31,18 +35,35 @@ export function QuoteRequest() {
     }));
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    // Futuramente aqui vamos enviar para o backend.
-    console.log("Solicitação de orçamento:", {
-      ...formData,
-      selectedFileName,
-    });
+    setIsSubmitting(true);
+    setErrorMessage("");
 
-    setIsSubmitted(true);
-    setFormData(initialFormData);
-    setSelectedFileName("");
+    try {
+      const response = await createQuoteRequest({
+        customerName: formData.name,
+        customerEmail: formData.email || undefined,
+        customerPhone: formData.phone,
+        requestType: formData.requestType,
+        prescriptionText: formData.prescriptionText || undefined,
+        notes: formData.notes || undefined,
+      });
+
+      setCreatedQuoteId(response.data.id);
+      setIsSubmitted(true);
+      setFormData(initialFormData);
+      setSelectedFileName("");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Erro ao enviar solicitação de orçamento.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   if (isSubmitted) {
@@ -60,6 +81,12 @@ export function QuoteRequest() {
             em contato para orientar sobre lentes, armação, valores e próximos
             passos.
           </p>
+          {createdQuoteId && (
+            <div className="order-success-number">
+              <small>Código da solicitação</small>
+              <strong>{createdQuoteId}</strong>
+            </div>
+          )}
 
           <div className="order-success-actions">
             <Link className="button-primary" to="/">
@@ -90,6 +117,7 @@ export function QuoteRequest() {
           óculos completo.
         </p>
       </section>
+      {errorMessage && <div className="checkout-error">{errorMessage}</div>}
 
       <section className="quote-request-layout">
         <form className="quote-request-form" onSubmit={handleSubmit}>
@@ -183,9 +211,7 @@ export function QuoteRequest() {
 
               <span>Enviar imagem ou PDF da receita</span>
 
-              <strong>
-                {selectedFileName || "Selecionar arquivo"}
-              </strong>
+              <strong>{selectedFileName || "Selecionar arquivo"}</strong>
 
               <small>
                 Aceitamos imagem da receita ou PDF. O envio real será conectado
@@ -193,9 +219,12 @@ export function QuoteRequest() {
               </small>
             </label>
           </section>
-
-          <button className="button-primary quote-submit-button" type="submit">
-            Solicitar orçamento
+          <button
+            className="button-primary quote-submit-button"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Enviando orçamento..." : "Solicitar orçamento"}
           </button>
         </form>
 

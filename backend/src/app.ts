@@ -7,6 +7,7 @@ import { healthRoutes } from "./routes/health.routes.js";
 import { ordersRoutes } from "./modules/orders/orders.routes.js";
 import { adminAuthRoutes } from "./modules/admin-auth/admin-auth.routes.js";
 import { categoriesRoutes } from "./modules/categories/categories.routes.js";
+import { quoteRequestRoutes } from "./modules/quote-requests/quote-requests.routes.js";
 
 export const app = Fastify({
   logger: {
@@ -56,3 +57,4 @@ app.register(productsRoutes);
 app.register(ordersRoutes);
 app.register(adminAuthRoutes);
 app.register(categoriesRoutes);
+app.register(quoteRequestRoutes);
