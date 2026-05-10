@@ -18,4 +18,23 @@ export async function createQuoteRequest(data: CreateQuoteRequestBody) {
       status: "pending",
     },
   });
+  
+}
+export async function listQuoteRequests() {
+  return prisma.quoteRequest.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
+
+export async function updateQuoteRequestStatus(id: string, status: string) {
+  return prisma.quoteRequest.update({
+    where: {
+      id,
+    },
+    data: {
+      status,
+    },
+  });
 }
