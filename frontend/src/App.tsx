@@ -9,7 +9,8 @@ import { Services } from "./pages/public/Services";
 import { ProductDetail } from "./pages/public/ProductDetail";
 import { Cart } from "./pages/public/Cart";
 import { Checkout } from "./pages/public/Checkout";
-
+import { AdminLayout } from "./layouts/AdminLayout";
+import { AdminQuoteRequests } from "./pages/admin/AdminQuoteRequests";
 
 export default function App() {
   return (
@@ -25,6 +26,9 @@ export default function App() {
           <Route path="/produtos/:slug" element={<ProductDetail />} />
           <Route path="/carrinho" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+        </Route>
+        <Route element={<AdminLayout />}>
+          <Route path="/admin/orcamentos" element={<AdminQuoteRequests />} />
         </Route>
       </Routes>
     </BrowserRouter>
