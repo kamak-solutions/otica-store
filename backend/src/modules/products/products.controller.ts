@@ -22,6 +22,7 @@ import {
   type UpdateProductBody,
 } from "./products.schemas.js";
 import { AppError } from "../../errors/app-error.js";
+import { createAdminAuditLog } from "../admin-audit/admin-audit.service.js";
 
 export async function getProductsController(
   request: FastifyRequest,
@@ -82,6 +83,19 @@ export async function createProductController(
 
   const product = await createProduct(body);
 
+  await createAdminAuditLog({
+    adminId: request.admin?.sub,
+    adminEmail: request.admin?.email,
+    adminRole: request.admin?.role,
+    action: "product.created",
+    entity: "Product",
+    entityId: product.id,
+    metadata: {
+      name: product.name,
+      slug: product.slug,
+    },
+  });
+
   return reply.status(201).send({
     data: mapProductToHttp(product),
   });
@@ -101,6 +115,20 @@ export async function updateProductController(
 
   const product = await updateProduct(id, body);
 
+  await createAdminAuditLog({
+    adminId: request.admin?.sub,
+    adminEmail: request.admin?.email,
+    adminRole: request.admin?.role,
+    action: "product.updated",
+    entity: "Product",
+    entityId: product.id,
+    metadata: {
+      name: product.name,
+      slug: product.slug,
+      fields: Object.keys(body),
+    },
+  });
+
   return reply.send({
     data: mapProductToHttp(product),
   });
@@ -117,6 +145,19 @@ export async function deleteProductController(
   request.log.info({ id }, "Deactivating product");
 
   const product = await deactivateProduct(id);
+
+  await createAdminAuditLog({
+    adminId: request.admin?.sub,
+    adminEmail: request.admin?.email,
+    adminRole: request.admin?.role,
+    action: "product.deactivated",
+    entity: "Product",
+    entityId: product.id,
+    metadata: {
+      name: product.name,
+      slug: product.slug,
+    },
+  });
 
   return reply.send({
     data: mapProductToHttp(product),
@@ -136,6 +177,22 @@ export async function addProductImageController(
   request.log.info({ productId: id }, "Adding product image");
 
   const product = await addProductImage(id, body);
+
+  await createAdminAuditLog({
+    adminId: request.admin?.sub,
+    adminEmail: request.admin?.email,
+    adminRole: request.admin?.role,
+    action: "product.image_added",
+    entity: "Product",
+    entityId: product.id,
+    metadata: {
+      name: product.name,
+      slug: product.slug,
+      imageUrl: body.url,
+      publicId: body.publicId,
+      isMain: body.isMain,
+    },
+  });
 
   return reply.status(201).send({
     data: mapProductToHttp(product),
