@@ -1,5 +1,4 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { AppError } from "../../errors/app-error.js";
 import { verifyAdminToken } from "../../lib/admin-jwt.js";
 
 export async function requireAdminAuth(
@@ -9,14 +8,29 @@ export async function requireAdminAuth(
   const authorization = request.headers.authorization;
 
   if (!authorization) {
-    throw new AppError("Token não informado.", 401, "Unauthorized");
+    return reply.status(401).send({
+      error: "Unauthorized",
+      message: "Token não informado.",
+    });
   }
 
   const [type, token] = authorization.split(" ");
 
   if (type !== "Bearer" || !token) {
-    throw new AppError("Token inválido.", 401, "Unauthorized");
+    return reply.status(401).send({
+      error: "Unauthorized",
+      message: "Token inválido.",
+    });
   }
 
-  verifyAdminToken(token);
+  try {
+    const payload = verifyAdminToken(token);
+
+    request.admin = payload;
+  } catch {
+    return reply.status(401).send({
+      error: "Unauthorized",
+      message: "Token inválido ou expirado.",
+    });
+  }
 }

@@ -10,6 +10,7 @@ import {
   type UpdateQuoteRequestStatusBody,
   type UpdateQuoteRequestStatusParams,
 } from "./admin-quote-requests.schemas.js";
+import { createAdminAuditLog } from "../admin-audit/admin-audit.service.js";
 
 export async function listAdminQuoteRequestsController(
   _request: FastifyRequest,
@@ -33,6 +34,18 @@ export async function updateAdminQuoteRequestStatusController(
   const body = updateQuoteRequestStatusBodySchema.parse(request.body);
 
   const quoteRequest = await updateQuoteRequestStatus(params.id, body.status);
+
+  await createAdminAuditLog({
+    adminId: request.admin?.sub,
+    adminEmail: request.admin?.email,
+    adminRole: request.admin?.role,
+    action: "quote_request.status_updated",
+    entity: "QuoteRequest",
+    entityId: quoteRequest.id,
+    metadata: {
+      newStatus: quoteRequest.status,
+    },
+  });
 
   return reply.send({
     data: mapQuoteRequestToHttp(quoteRequest),
