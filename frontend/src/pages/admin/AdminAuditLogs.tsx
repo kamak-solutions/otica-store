@@ -6,8 +6,8 @@ import {
 
 const actionLabels: Record<string, string> = {
   "quote_request.status_updated": "Status de orçamento atualizado",
+  "order.status_updated": "Status de pedido atualizado",
 };
-
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("pt-BR", {
     dateStyle: "short",

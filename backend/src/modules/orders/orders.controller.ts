@@ -15,6 +15,7 @@ import {
   type CreateOrderBody,
   type OrderIdParams,
 } from "./orders.schemas.js";
+import { createAdminAuditLog } from "../admin-audit/admin-audit.service.js";
 
 export async function createOrderController(
   request: FastifyRequest<{
@@ -86,6 +87,18 @@ export async function updateOrderStatusController(
   request.log.info({ id, status }, "Updating order status");
 
   const order = await updateOrderStatus(id, status);
+
+  await createAdminAuditLog({
+    adminId: request.admin?.sub,
+    adminEmail: request.admin?.email,
+    adminRole: request.admin?.role,
+    action: "order.status_updated",
+    entity: "Order",
+    entityId: order.id,
+    metadata: {
+      newStatus: order.status,
+    },
+  });
 
   return reply.send({
     data: mapOrderToHttp(order),
