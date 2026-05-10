@@ -1,5 +1,8 @@
+
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { verifyAdminToken } from "../../lib/admin-jwt.js";
+
+export type AdminRole = "owner" | "admin" | "collaborator" | "viewer";
 
 export async function requireAdminAuth(
   request: FastifyRequest,
@@ -33,4 +36,27 @@ export async function requireAdminAuth(
       message: "Token inválido ou expirado.",
     });
   }
+}
+
+export function requireAdminRole(allowedRoles: AdminRole[]) {
+  return async function requireAdminRoleHandler(
+    request: FastifyRequest,
+    reply: FastifyReply,
+  ) {
+    const adminRole = request.admin?.role as AdminRole | undefined;
+
+    if (!adminRole) {
+      return reply.status(403).send({
+        error: "Forbidden",
+        message: "Perfil administrativo não identificado.",
+      });
+    }
+
+    if (!allowedRoles.includes(adminRole)) {
+      return reply.status(403).send({
+        error: "Forbidden",
+        message: "Você não tem permissão para executar esta ação.",
+      });
+    }
+  };
 }

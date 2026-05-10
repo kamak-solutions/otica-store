@@ -1,5 +1,8 @@
 import type { FastifyInstance } from "fastify";
-import { requireAdminAuth } from "../admin-auth/admin-auth.middleware.js";
+import {
+  requireAdminAuth,
+  requireAdminRole,
+} from "../admin-auth/admin-auth.middleware.js";
 import {
   listAdminQuoteRequestsController,
   updateAdminQuoteRequestStatusController,
@@ -12,7 +15,12 @@ import type {
 export async function adminQuoteRequestRoutes(app: FastifyInstance) {
   app.get(
     "/admin/quote-requests",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator", "viewer"]),
+      ],
+    },
     listAdminQuoteRequestsController,
   );
 
@@ -21,7 +29,12 @@ export async function adminQuoteRequestRoutes(app: FastifyInstance) {
     Body: UpdateQuoteRequestStatusBody;
   }>(
     "/admin/quote-requests/:id/status",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator"]),
+      ],
+    },
     updateAdminQuoteRequestStatusController,
   );
 }
