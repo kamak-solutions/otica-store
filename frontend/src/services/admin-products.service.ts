@@ -29,6 +29,29 @@ export function listAdminProducts() {
   });
 }
 
+type CreateAdminProductPayload = {
+  name: string;
+  slug: string;
+  description?: string;
+  price: string;
+  salePrice?: string | null;
+  sku?: string | null;
+  brand?: string | null;
+  stock: number;
+  active: boolean;
+  featured: boolean;
+  audience?: string | null;
+  categoryId?: string | null;
+};
+
+export function createAdminProduct(payload: CreateAdminProductPayload) {
+  return apiFetch<UpdateAdminProductResponse>("/admin/products", {
+    method: "POST",
+    headers: getAdminAuthHeaders(),
+    body: JSON.stringify(payload),
+  });
+}
+
 export function updateAdminProduct(
   id: string,
   payload: Partial<{

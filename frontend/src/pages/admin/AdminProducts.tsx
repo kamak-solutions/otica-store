@@ -5,6 +5,7 @@ import {
   updateAdminProduct,
 } from "../../services/admin-products.service";
 import type { Product } from "../../types/product";
+import { Link } from "react-router-dom";
 
 type ProductFilter =
   | "all"
@@ -184,9 +185,15 @@ export function AdminProducts() {
           <p>Gerencie os produtos exibidos na vitrine da Ótica ShowRoom.</p>
         </div>
 
-        <button type="button" onClick={loadProducts}>
-          Atualizar
-        </button>
+        <div className="admin-heading-actions">
+          <Link className="admin-primary-link" to="/admin/produtos/novo">
+            + Novo produto
+          </Link>
+
+          <button type="button" onClick={loadProducts}>
+            Atualizar
+          </button>
+        </div>
       </div>
       <div className="admin-search-bar">
         <input

@@ -3266,3 +3266,132 @@ a {
     flex-direction: column;
   }
 }
+.admin-heading-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-primary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 12px 16px;
+  background: #2c2520;
+  color: #ffffff;
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.admin-primary-link:hover {
+  background: #b8914b;
+  color: #ffffff;
+}
+
+.admin-form-card {
+  display: grid;
+  gap: 20px;
+  border: 1px solid #e7d8cc;
+  border-radius: 26px;
+  padding: 24px;
+  background: #ffffff;
+  box-shadow: 0 16px 45px rgba(80, 50, 35, 0.06);
+}
+
+.admin-form-card section {
+  display: grid;
+  gap: 14px;
+  border-bottom: 1px solid #f0e3d8;
+  padding-bottom: 20px;
+}
+
+.admin-form-card section:last-of-type {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.admin-form-card h2 {
+  margin: 0;
+  color: #2c2520;
+  font-size: 1.3rem;
+}
+
+.admin-form-card label {
+  display: grid;
+  gap: 8px;
+  color: #2c2520;
+  font-weight: 850;
+}
+
+.admin-form-card input,
+.admin-form-card textarea,
+.admin-form-card select {
+  width: 100%;
+  border: 1px solid #e7d8cc;
+  border-radius: 16px;
+  padding: 13px 14px;
+  background: #ffffff;
+  color: #2c2520;
+  outline: none;
+}
+
+.admin-form-card input:focus,
+.admin-form-card textarea:focus,
+.admin-form-card select:focus {
+  border-color: #b8914b;
+  box-shadow: 0 0 0 3px rgba(184, 145, 75, 0.14);
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.admin-checkbox-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.admin-checkbox-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-checkbox-row input {
+  width: auto;
+}
+
+.admin-submit-button {
+  width: fit-content;
+  border: 0;
+  border-radius: 999px;
+  padding: 13px 18px;
+  background: #b8914b;
+  color: #ffffff;
+  font-weight: 950;
+}
+
+.admin-submit-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@media (max-width: 720px) {
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-heading-actions {
+    flex-direction: column;
+  }
+
+  .admin-primary-link,
+  .admin-heading-actions button,
+  .admin-submit-button {
+    width: 100%;
+  }
+}
