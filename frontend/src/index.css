@@ -3223,3 +3223,46 @@ a {
     grid-template-columns: 1fr;
   }
 }
+.admin-search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.admin-search-bar input {
+  width: 100%;
+  border: 1px solid #e7d8cc;
+  border-radius: 999px;
+  padding: 13px 16px;
+  background: #ffffff;
+  color: #2c2520;
+  outline: none;
+  font-weight: 800;
+}
+
+.admin-search-bar input:focus {
+  border-color: #b8914b;
+  box-shadow: 0 0 0 3px rgba(184, 145, 75, 0.14);
+}
+
+.admin-search-bar button {
+  border: 1px solid #e7d8cc;
+  border-radius: 999px;
+  padding: 13px 16px;
+  background: #ffffff;
+  color: #7f7169;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.admin-search-bar button:hover {
+  border-color: #b8914b;
+  background: #b8914b;
+  color: #ffffff;
+}
+
+@media (max-width: 640px) {
+  .admin-search-bar {
+    flex-direction: column;
+  }
+}

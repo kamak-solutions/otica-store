@@ -6,7 +6,12 @@ import {
 } from "../../services/admin-products.service";
 import type { Product } from "../../types/product";
 
-type ProductFilter = "all" | "active" | "inactive" | "featured" | "out_of_stock";
+type ProductFilter =
+  | "all"
+  | "active"
+  | "inactive"
+  | "featured"
+  | "out_of_stock";
 
 const filterLabels: Record<ProductFilter, string> = {
   all: "Todos",
@@ -39,9 +44,18 @@ function getMainImage(product: Product) {
   return product.images.find((image) => image.isMain) ?? product.images[0];
 }
 
+function normalizeText(value: string | null | undefined) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
 export function AdminProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [activeFilter, setActiveFilter] = useState<ProductFilter>("all");
+  const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -98,9 +112,7 @@ export function AdminProducts() {
       );
     } catch (error) {
       alert(
-        error instanceof Error
-          ? error.message
-          : "Erro ao desativar produto.",
+        error instanceof Error ? error.message : "Erro ao desativar produto.",
       );
     }
   }
@@ -118,9 +130,7 @@ export function AdminProducts() {
       );
     } catch (error) {
       alert(
-        error instanceof Error
-          ? error.message
-          : "Erro ao reativar produto.",
+        error instanceof Error ? error.message : "Erro ao reativar produto.",
       );
     }
   }
@@ -129,26 +139,42 @@ export function AdminProducts() {
     loadProducts();
   }, []);
 
+  const normalizedSearchTerm = normalizeText(searchTerm);
+
   const filteredProducts = products.filter((product) => {
-    if (activeFilter === "active") {
-      return product.active;
+    const matchesStatusFilter =
+      activeFilter === "active"
+        ? product.active
+        : activeFilter === "inactive"
+          ? !product.active
+          : activeFilter === "featured"
+            ? product.featured
+            : activeFilter === "out_of_stock"
+              ? product.stock <= 0
+              : true;
+
+    if (!matchesStatusFilter) {
+      return false;
     }
 
-    if (activeFilter === "inactive") {
-      return !product.active;
+    if (!normalizedSearchTerm) {
+      return true;
     }
 
-    if (activeFilter === "featured") {
-      return product.featured;
-    }
+    const searchableText = normalizeText(
+      [
+        product.name,
+        product.slug,
+        product.sku,
+        product.brand,
+        product.audience,
+        product.category?.name,
+        product.category?.slug,
+      ].join(" "),
+    );
 
-    if (activeFilter === "out_of_stock") {
-      return product.stock <= 0;
-    }
-
-    return true;
+    return searchableText.includes(normalizedSearchTerm);
   });
-
   return (
     <section className="admin-page">
       <div className="admin-page-heading">
@@ -161,6 +187,20 @@ export function AdminProducts() {
         <button type="button" onClick={loadProducts}>
           Atualizar
         </button>
+      </div>
+      <div className="admin-search-bar">
+        <input
+          type="search"
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+          placeholder="Buscar por nome, SKU, slug, marca, categoria..."
+        />
+
+        {searchTerm && (
+          <button type="button" onClick={() => setSearchTerm("")}>
+            Limpar
+          </button>
+        )}
       </div>
 
       <div className="admin-filter-bar">
@@ -188,7 +228,7 @@ export function AdminProducts() {
 
       {!isLoading && !errorMessage && filteredProducts.length === 0 && (
         <p className="admin-state-message">
-          Nenhum produto encontrado para este filtro.
+          Nenhum produto encontrado para este filtro ou busca.
         </p>
       )}
 
@@ -200,7 +240,10 @@ export function AdminProducts() {
             <article className="admin-product-card" key={product.id}>
               <div className="admin-product-image">
                 {mainImage ? (
-                  <img src={mainImage.url} alt={mainImage.alt ?? product.name} />
+                  <img
+                    src={mainImage.url}
+                    alt={mainImage.alt ?? product.name}
+                  />
                 ) : (
                   <span>Sem imagem</span>
                 )}
