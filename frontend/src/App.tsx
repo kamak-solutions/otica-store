@@ -13,6 +13,7 @@ import { AdminLayout } from "./layouts/AdminLayout";
 import { AdminQuoteRequests } from "./pages/admin/AdminQuoteRequests";
 import { AdminLogin } from "./pages/admin/AdminLogin";
 import { AdminAuditLogs } from "./pages/admin/AdminAuditLogs";
+import { AdminOrders } from "./pages/admin/AdminOrders";
 
 export default function App() {
   return (
@@ -29,11 +30,13 @@ export default function App() {
           <Route path="/carrinho" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+         
         </Route>
         <Route element={<AdminLayout />}>
           <Route path="/admin/orcamentos" element={<AdminQuoteRequests />} />
           <Route path="/admin/orcamentos" element={<AdminQuoteRequests />} />
           <Route path="/admin/auditoria" element={<AdminAuditLogs />} />
+           <Route path="/admin/pedidos" element={<AdminOrders />} />
         </Route>
       </Routes>
     </BrowserRouter>
