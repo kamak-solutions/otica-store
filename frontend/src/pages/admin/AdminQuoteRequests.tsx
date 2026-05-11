@@ -76,9 +76,7 @@ export function AdminQuoteRequests() {
       );
     } catch (error) {
       alert(
-        error instanceof Error
-          ? error.message
-          : "Erro ao atualizar status.",
+        error instanceof Error ? error.message : "Erro ao atualizar status.",
       );
     }
   }
@@ -128,7 +126,9 @@ export function AdminQuoteRequests() {
                 <span>{formatDate(quoteRequest.createdAt)}</span>
               </div>
 
-              <span className={`admin-status-badge status-${quoteRequest.status}`}>
+              <span
+                className={`admin-status-badge status-${quoteRequest.status}`}
+              >
                 {statusLabels[quoteRequest.status]}
               </span>
             </div>
@@ -155,6 +155,22 @@ export function AdminQuoteRequests() {
               <div className="admin-quote-box">
                 <strong>Receita</strong>
                 <p>{quoteRequest.prescriptionText}</p>
+              </div>
+            )}
+            {quoteRequest.prescriptionFileUrl && (
+              <div className="admin-quote-box">
+                <strong>Arquivo da receita</strong>
+
+                <p>O cliente enviou um arquivo de receita para análise.</p>
+
+                <a
+                  className="admin-quote-file-link"
+                  href={quoteRequest.prescriptionFileUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Ver receita
+                </a>
               </div>
             )}
 

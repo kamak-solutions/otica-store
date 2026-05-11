@@ -2887,3 +2887,21 @@ a {
 .admin-logout-button:hover {
   background: rgba(241, 216, 159, 0.12);
 }
+.admin-quote-file-link {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  background: #b8914b;
+  color: #ffffff;
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.admin-quote-file-link:hover {
+  background: #2c2520;
+  color: #ffffff;
+}
