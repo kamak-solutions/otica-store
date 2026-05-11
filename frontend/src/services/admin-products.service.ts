@@ -82,3 +82,12 @@ export function deactivateAdminProduct(id: string) {
     headers: getAdminAuthHeaders(),
   });
 }
+type GetAdminProductResponse = {
+  data: Product;
+};
+
+export function getAdminProductById(id: string) {
+  return apiFetch<GetAdminProductResponse>(`/admin/products/${id}`, {
+    headers: getAdminAuthHeaders(),
+  });
+}

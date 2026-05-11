@@ -7,6 +7,7 @@ import {
   addProductImageController,
   createProductController,
   deleteProductController,
+  getAdminProductByIdController,
   getAdminProductsController,
   updateProductController,
 } from "./products.controller.js";
@@ -34,12 +35,22 @@ export async function productsAdminRoutes(app: FastifyInstance) {
   }>(
     "/admin/products",
     {
-      preHandler: [
-        requireAdminAuth,
-        requireAdminRole(["owner", "admin"]),
-      ],
+      preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
     },
     createProductController,
+  );
+
+  app.get<{
+    Params: ProductIdParams;
+  }>(
+    "/admin/products/:id",
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator", "viewer"]),
+      ],
+    },
+    getAdminProductByIdController,
   );
 
   app.put<{
@@ -48,10 +59,7 @@ export async function productsAdminRoutes(app: FastifyInstance) {
   }>(
     "/admin/products/:id",
     {
-      preHandler: [
-        requireAdminAuth,
-        requireAdminRole(["owner", "admin"]),
-      ],
+      preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
     },
     updateProductController,
   );
@@ -61,10 +69,7 @@ export async function productsAdminRoutes(app: FastifyInstance) {
   }>(
     "/admin/products/:id",
     {
-      preHandler: [
-        requireAdminAuth,
-        requireAdminRole(["owner", "admin"]),
-      ],
+      preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
     },
     deleteProductController,
   );
@@ -75,10 +80,7 @@ export async function productsAdminRoutes(app: FastifyInstance) {
   }>(
     "/admin/products/:id/images",
     {
-      preHandler: [
-        requireAdminAuth,
-        requireAdminRole(["owner", "admin"]),
-      ],
+      preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
     },
     addProductImageController,
   );

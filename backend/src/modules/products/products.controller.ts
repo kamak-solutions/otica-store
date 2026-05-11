@@ -3,6 +3,7 @@ import {
   addProductImage,
   createProduct,
   deactivateProduct,
+  findProductById,
   findProductBySlug,
   listAdminProducts,
   listProducts,
@@ -47,6 +48,26 @@ export async function getAdminProductsController(
 
   return reply.send({
     data: products.map(mapProductToHttp),
+  });
+}
+export async function getAdminProductByIdController(
+  request: FastifyRequest<{
+    Params: ProductIdParams;
+  }>,
+  reply: FastifyReply,
+) {
+  const { id } = productIdParamsSchema.parse(request.params);
+
+  request.log.info({ id }, "Finding admin product by id");
+
+  const product = await findProductById(id);
+
+  if (!product) {
+    throw new AppError("Produto não encontrado.", 404, "Not found");
+  }
+
+  return reply.send({
+    data: mapProductToHttp(product),
   });
 }
 
