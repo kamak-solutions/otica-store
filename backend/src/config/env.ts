@@ -8,6 +8,10 @@ export const env = {
   FRONTEND_URL: process.env.FRONTEND_URL || "http://localhost:5173",
   ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS || "http://localhost:5173",
   ADMIN_JWT_SECRET: process.env.ADMIN_JWT_SECRET || "",
+
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || "",
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || "",
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || "",
 };
 
 export const allowedOrigins = env.ALLOWED_ORIGINS.split(",").map((origin) =>

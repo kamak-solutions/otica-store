@@ -12,6 +12,8 @@ import { adminQuoteRequestRoutes } from "./modules/quote-requests/admin-quote-re
 import rateLimit from "@fastify/rate-limit";
 import helmet from "@fastify/helmet";
 import { adminAuditRoutes } from "./modules/admin-audit/admin-audit.routes.js";
+import multipart from "@fastify/multipart";
+import { uploadsRoutes } from "./modules/uploads/uploads.routes.js";
 
 export const app = Fastify({
   logger: {
@@ -63,6 +65,13 @@ await app.register(rateLimit, {
   global: false,
 });
 
+await app.register(multipart, {
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+    files: 1,
+  },
+});
+
 app.setErrorHandler(errorHandler);
 
 app.register(healthRoutes);
@@ -73,3 +82,4 @@ app.register(categoriesRoutes);
 app.register(quoteRequestRoutes);
 app.register(adminQuoteRequestRoutes);
 app.register(adminAuditRoutes);
+app.register(uploadsRoutes);

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createQuoteRequest } from "../../services/quote-requests.service";
+import { uploadPrescriptionFile } from "../../services/uploads.service";
 
 type QuoteFormData = {
   name: string;
@@ -23,6 +24,7 @@ const initialFormData: QuoteFormData = {
 export function QuoteRequest() {
   const [formData, setFormData] = useState<QuoteFormData>(initialFormData);
   const [selectedFileName, setSelectedFileName] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -42,6 +44,16 @@ export function QuoteRequest() {
     setErrorMessage("");
 
     try {
+      let prescriptionFileUrl: string | undefined;
+      let prescriptionPublicId: string | undefined;
+
+      if (selectedFile) {
+        const uploadResponse = await uploadPrescriptionFile(selectedFile);
+
+        prescriptionFileUrl = uploadResponse.data.url;
+        prescriptionPublicId = uploadResponse.data.publicId;
+      }
+
       const response = await createQuoteRequest({
         customerName: formData.name,
         customerEmail: formData.email || undefined,
@@ -49,12 +61,14 @@ export function QuoteRequest() {
         requestType: formData.requestType,
         prescriptionText: formData.prescriptionText || undefined,
         notes: formData.notes || undefined,
+        prescriptionFileUrl,
+        prescriptionPublicId,
       });
 
       setCreatedQuoteId(response.data.id);
       setIsSubmitted(true);
       setFormData(initialFormData);
-      setSelectedFileName("");
+      setSelectedFile(null);
     } catch (error) {
       setErrorMessage(
         error instanceof Error
@@ -204,7 +218,9 @@ export function QuoteRequest() {
                 type="file"
                 accept="image/*,.pdf"
                 onChange={(event) => {
-                  const file = event.target.files?.[0];
+                  const file = event.target.files?.[0] ?? null;
+
+                  setSelectedFile(file);
                   setSelectedFileName(file?.name ?? "");
                 }}
               />
@@ -224,7 +240,11 @@ export function QuoteRequest() {
             type="submit"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Enviando orçamento..." : "Solicitar orçamento"}
+            {isSubmitting
+              ? selectedFile
+                ? "Enviando receita e orçamento..."
+                : "Enviando orçamento..."
+              : "Solicitar orçamento"}
           </button>
         </form>
 
