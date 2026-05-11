@@ -3395,3 +3395,18 @@ a {
     width: 100%;
   }
 }
+.admin-product-action-link {
+  border: 1px solid #e7d8cc;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: #ffffff;
+  color: #2c2520;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.admin-product-action-link:hover {
+  border-color: #b8914b;
+  background: #b8914b;
+  color: #ffffff;
+}

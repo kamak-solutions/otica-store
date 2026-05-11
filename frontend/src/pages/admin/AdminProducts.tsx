@@ -295,6 +295,12 @@ export function AdminProducts() {
                 </div>
 
                 <div className="admin-product-actions">
+                  <Link
+                    className="admin-product-action-link"
+                    to={`/admin/produtos/${product.id}/editar`}
+                  >
+                    Editar
+                  </Link>
                   <button
                     type="button"
                     onClick={() => handleToggleFeatured(product)}

@@ -91,3 +91,22 @@ export function getAdminProductById(id: string) {
     headers: getAdminAuthHeaders(),
   });
 }
+
+type AddAdminProductImagePayload = {
+  url: string;
+  publicId?: string | null;
+  alt?: string | null;
+  position?: number;
+  isMain?: boolean;
+};
+
+export function addAdminProductImage(
+  id: string,
+  payload: AddAdminProductImagePayload,
+) {
+  return apiFetch<UpdateAdminProductResponse>(`/admin/products/${id}/images`, {
+    method: "POST",
+    headers: getAdminAuthHeaders(),
+    body: JSON.stringify(payload),
+  });
+}
