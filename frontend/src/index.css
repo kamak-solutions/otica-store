@@ -3410,3 +3410,70 @@ a {
   background: #b8914b;
   color: #ffffff;
 }
+.admin-form-card {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.admin-form-card section {
+  min-width: 0;
+}
+
+.admin-form-card label {
+  min-width: 0;
+}
+
+.admin-form-card input,
+.admin-form-card textarea,
+.admin-form-card select {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.admin-form-grid {
+  min-width: 0;
+}
+
+.admin-product-edit-images {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.admin-product-edit-images article {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  border: 1px solid #f0e3d8;
+  border-radius: 18px;
+  padding: 12px;
+  background: #f9f4ef;
+  overflow: hidden;
+}
+
+.admin-product-edit-images article img {
+  width: 96px !important;
+  height: 96px !important;
+  max-width: 96px;
+  max-height: 96px;
+  border-radius: 14px;
+  object-fit: cover;
+  display: block;
+}
+
+.admin-product-edit-images article div {
+  min-width: 0;
+}
+
+.admin-product-edit-images article strong,
+.admin-product-edit-images article span,
+.admin-product-edit-images article small {
+  overflow-wrap: anywhere;
+}
+.admin-success-message {
+  border-color: rgba(31, 122, 77, 0.25);
+  background: rgba(31, 122, 77, 0.08);
+  color: #1f7a4d;
+}

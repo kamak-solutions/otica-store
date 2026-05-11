@@ -65,7 +65,9 @@ export function AdminProductEdit() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAddingImage, setIsAddingImage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [imageErrorMessage, setImageErrorMessage] = useState("");
+  const [imageSuccessMessage, setImageSuccessMessage] = useState("");
 
   useEffect(() => {
     async function loadData() {
@@ -132,6 +134,7 @@ export function AdminProductEdit() {
 
     setIsAddingImage(true);
     setImageErrorMessage("");
+    setImageSuccessMessage("");
 
     try {
       const response = await addAdminProductImage(id, {
@@ -148,6 +151,7 @@ export function AdminProductEdit() {
       setImageAlt("");
       setImagePosition("0");
       setImageIsMain(false);
+      setImageSuccessMessage("Imagem adicionada com sucesso.");
     } catch (error) {
       setImageErrorMessage(
         error instanceof Error ? error.message : "Erro ao adicionar imagem.",
@@ -167,9 +171,10 @@ export function AdminProductEdit() {
 
     setIsSubmitting(true);
     setErrorMessage("");
+    setSuccessMessage("");
 
     try {
-      await updateAdminProduct(id, {
+      const response = await updateAdminProduct(id, {
         name: formData.name,
         slug: formData.slug,
         description: formData.description || undefined,
@@ -183,6 +188,9 @@ export function AdminProductEdit() {
         active: formData.active,
         featured: formData.featured,
       });
+
+      setProduct(response.data);
+      setSuccessMessage("Produto atualizado com sucesso.");
 
       navigate("/admin/produtos");
     } catch (error) {
@@ -219,6 +227,11 @@ export function AdminProductEdit() {
       {errorMessage && (
         <p className="admin-state-message admin-error-message">
           {errorMessage}
+        </p>
+      )}
+      {successMessage && (
+        <p className="admin-state-message admin-success-message">
+          {successMessage}
         </p>
       )}
 
@@ -417,6 +430,11 @@ export function AdminProductEdit() {
               {imageErrorMessage}
             </p>
           )}
+          {imageSuccessMessage && (
+            <p className="admin-state-message admin-success-message">
+              {imageSuccessMessage}
+            </p>
+          )}
 
           <div className="admin-product-image-form">
             <label>
@@ -426,7 +444,6 @@ export function AdminProductEdit() {
                 value={imageUrl}
                 onChange={(event) => setImageUrl(event.target.value)}
                 placeholder="https://res.cloudinary.com/..."
-                required
               />
             </label>
 
