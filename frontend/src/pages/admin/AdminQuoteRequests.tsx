@@ -42,6 +42,9 @@ export function AdminQuoteRequests() {
   const [quoteRequests, setQuoteRequests] = useState<AdminQuoteRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [activeStatusFilter, setActiveStatusFilter] = useState<
+    QuoteRequestStatus | "all"
+  >("all");
 
   async function loadQuoteRequests() {
     try {
@@ -85,8 +88,35 @@ export function AdminQuoteRequests() {
     loadQuoteRequests();
   }, []);
 
+  const filteredQuoteRequests =
+    activeStatusFilter === "all"
+      ? quoteRequests
+      : quoteRequests.filter(
+          (quoteRequest) => quoteRequest.status === activeStatusFilter,
+        );
+
   return (
     <section className="admin-page">
+      <div className="admin-filter-bar">
+        <button
+          type="button"
+          className={activeStatusFilter === "all" ? "active" : ""}
+          onClick={() => setActiveStatusFilter("all")}
+        >
+          Todos
+        </button>
+
+        {statusOptions.map((status) => (
+          <button
+            key={status}
+            type="button"
+            className={activeStatusFilter === status ? "active" : ""}
+            onClick={() => setActiveStatusFilter(status)}
+          >
+            {statusLabels[status]}
+          </button>
+        ))}
+      </div>
       <div className="admin-page-heading">
         <div>
           <span>Admin</span>
@@ -111,14 +141,14 @@ export function AdminQuoteRequests() {
         </p>
       )}
 
-      {!isLoading && !errorMessage && quoteRequests.length === 0 && (
+      {!isLoading && !errorMessage && filteredQuoteRequests.length === 0 && (
         <p className="admin-state-message">
-          Nenhuma solicitação de orçamento encontrada.
+          Nenhuma solicitação foi encontrada neste filtro.
         </p>
       )}
 
       <div className="admin-quote-grid">
-        {quoteRequests.map((quoteRequest) => (
+       {filteredQuoteRequests.map((quoteRequest) => (
           <article className="admin-quote-card" key={quoteRequest.id}>
             <div className="admin-quote-card-header">
               <div>
