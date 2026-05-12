@@ -1,0 +1,60 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+      - refactor/frontend-vitrine
+  pull_request:
+    branches:
+      - main
+      - refactor/frontend-vitrine
+
+jobs:
+  backend:
+    name: Build and test backend
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      NODE_ENV: test
+      PORT: 3333
+      LOG_LEVEL: silent
+      DATABASE_URL: postgresql://test:test@localhost:5432/test
+      FRONTEND_URL: http://localhost:5173
+      ALLOWED_ORIGINS: http://localhost:5173
+      ADMIN_JWT_SECRET: test-secret-for-ci
+      CLOUDINARY_CLOUD_NAME: test
+      CLOUDINARY_API_KEY: test
+      CLOUDINARY_API_SECRET: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.31.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: backend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate Prisma schema
+        run: pnpm prisma validate
+
+      - name: Build backend
+        run: pnpm build
+
+      - name: Run backend tests
+        run: pnpm test
