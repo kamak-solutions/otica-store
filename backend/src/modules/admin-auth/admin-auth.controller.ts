@@ -5,6 +5,11 @@ import {
   adminLoginBodySchema,
   type AdminLoginBody,
 } from "./admin-auth.schemas.js";
+import {
+  ensureAdminLoginIsNotLocked,
+  registerAdminLoginFailure,
+  resetAdminLoginFailures,
+} from "./admin-login-security.service.js";
 
 export async function adminLoginController(
   request: FastifyRequest<{
@@ -15,9 +20,11 @@ export async function adminLoginController(
   const body = adminLoginBodySchema.parse(request.body);
 
   request.log.info({ email: body.email }, "Admin login attempt");
+  await ensureAdminLoginIsNotLocked(body.email);
 
   try {
     const { admin, token } = await loginAdmin(body);
+    await resetAdminLoginFailures(body.email);
 
     await createAdminAuditLog({
       adminId: admin.id,
@@ -41,6 +48,8 @@ export async function adminLoginController(
       message: "Login realizado com sucesso.",
     });
   } catch (error) {
+    await registerAdminLoginFailure(body.email);
+
     await createAdminAuditLog({
       adminEmail: body.email,
       action: "admin.login_failed",
