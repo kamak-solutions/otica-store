@@ -165,3 +165,88 @@ export async function addProductImage(
     });
   });
 }
+export async function setProductImageAsMain(
+  productId: string,
+  imageId: string,
+) {
+  return prisma.$transaction(async (tx) => {
+    const image = await tx.productImage.findFirst({
+      where: {
+        id: imageId,
+        productId,
+      },
+    });
+
+    if (!image) {
+      throw new Error("Imagem do produto não encontrada.");
+    }
+
+    await tx.productImage.updateMany({
+      where: {
+        productId,
+        isMain: true,
+      },
+      data: {
+        isMain: false,
+      },
+    });
+
+    await tx.productImage.update({
+      where: {
+        id: imageId,
+      },
+      data: {
+        isMain: true,
+      },
+    });
+
+    return tx.product.findUniqueOrThrow({
+      where: {
+        id: productId,
+      },
+      include: {
+        category: true,
+        images: {
+          orderBy: {
+            position: "asc",
+          },
+        },
+      },
+    });
+  });
+}
+
+export async function removeProductImage(productId: string, imageId: string) {
+  return prisma.$transaction(async (tx) => {
+    const image = await tx.productImage.findFirst({
+      where: {
+        id: imageId,
+        productId,
+      },
+    });
+
+    if (!image) {
+      throw new Error("Imagem do produto não encontrada.");
+    }
+
+    await tx.productImage.delete({
+      where: {
+        id: imageId,
+      },
+    });
+
+    return tx.product.findUniqueOrThrow({
+      where: {
+        id: productId,
+      },
+      include: {
+        category: true,
+        images: {
+          orderBy: {
+            position: "asc",
+          },
+        },
+      },
+    });
+  });
+}

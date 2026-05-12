@@ -7,6 +7,8 @@ import {
   findProductBySlug,
   listAdminProducts,
   listProducts,
+  removeProductImage,
+  setProductImageAsMain,
   updateProduct,
 } from "./products.service.js";
 import { mapProductToHttp } from "./products.mapper.js";
@@ -16,6 +18,8 @@ import {
   productIdParamsSchema,
   updateProductBodySchema,
   createProductImageBodySchema,
+  productImageParamsSchema,
+  type ProductImageParams,
   type CreateProductImageBody,
   type CreateProductBody,
   type GetProductBySlugParams,
@@ -218,5 +222,64 @@ export async function addProductImageController(
   return reply.status(201).send({
     data: mapProductToHttp(product),
     message: "Imagem adicionada ao produto com sucesso.",
+  });
+}
+export async function setProductImageAsMainController(
+  request: FastifyRequest<{
+    Params: ProductImageParams;
+  }>,
+  reply: FastifyReply,
+) {
+  const { productId, imageId } = productImageParamsSchema.parse(request.params);
+
+  request.log.info({ productId, imageId }, "Setting product image as main");
+
+  const product = await setProductImageAsMain(productId, imageId);
+
+  await createAdminAuditLog({
+    adminId: request.admin?.sub,
+    adminEmail: request.admin?.email,
+    adminRole: request.admin?.role,
+    action: "product.image_set_as_main",
+    entity: "Product",
+    entityId: product.id,
+    metadata: {
+      imageId,
+    },
+  });
+
+  return reply.send({
+    data: mapProductToHttp(product),
+    message: "Imagem principal atualizada com sucesso.",
+  });
+}
+
+export async function removeProductImageController(
+  request: FastifyRequest<{
+    Params: ProductImageParams;
+  }>,
+  reply: FastifyReply,
+) {
+  const { productId, imageId } = productImageParamsSchema.parse(request.params);
+
+  request.log.info({ productId, imageId }, "Removing product image");
+
+  const product = await removeProductImage(productId, imageId);
+
+  await createAdminAuditLog({
+    adminId: request.admin?.sub,
+    adminEmail: request.admin?.email,
+    adminRole: request.admin?.role,
+    action: "product.image_removed",
+    entity: "Product",
+    entityId: product.id,
+    metadata: {
+      imageId,
+    },
+  });
+
+  return reply.send({
+    data: mapProductToHttp(product),
+    message: "Imagem removida do produto com sucesso.",
   });
 }

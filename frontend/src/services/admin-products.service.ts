@@ -110,3 +110,25 @@ export function addAdminProductImage(
     body: JSON.stringify(payload),
   });
 }
+export function setAdminProductImageAsMain(
+  productId: string,
+  imageId: string,
+) {
+  return apiFetch<UpdateAdminProductResponse>(
+    `/admin/products/${productId}/images/${imageId}/main`,
+    {
+      method: "PATCH",
+      headers: getAdminAuthHeaders(),
+    },
+  );
+}
+
+export function removeAdminProductImage(productId: string, imageId: string) {
+  return apiFetch<UpdateAdminProductResponse>(
+    `/admin/products/${productId}/images/${imageId}`,
+    {
+      method: "DELETE",
+      headers: getAdminAuthHeaders(),
+    },
+  );
+}

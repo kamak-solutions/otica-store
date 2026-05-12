@@ -10,12 +10,15 @@ import {
   getAdminProductByIdController,
   getAdminProductsController,
   updateProductController,
+  removeProductImageController,
+  setProductImageAsMainController,
 } from "./products.controller.js";
 import type {
   CreateProductBody,
   CreateProductImageBody,
   ProductIdParams,
   UpdateProductBody,
+  ProductImageParams,
 } from "./products.schemas.js";
 
 export async function productsAdminRoutes(app: FastifyInstance) {
@@ -83,5 +86,24 @@ export async function productsAdminRoutes(app: FastifyInstance) {
       preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
     },
     addProductImageController,
+  );
+  app.patch<{
+    Params: ProductImageParams;
+  }>(
+    "/admin/products/:productId/images/:imageId/main",
+    {
+      preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
+    },
+    setProductImageAsMainController,
+  );
+
+  app.delete<{
+    Params: ProductImageParams;
+  }>(
+    "/admin/products/:productId/images/:imageId",
+    {
+      preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
+    },
+    removeProductImageController,
   );
 }

@@ -3522,3 +3522,35 @@ a {
   opacity: 0.65;
   cursor: not-allowed;
 }
+.admin-product-image-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.admin-product-image-actions button {
+  border: 1px solid #e7d8cc;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #ffffff;
+  color: #2c2520;
+  font-weight: 900;
+}
+
+.admin-product-image-actions button:hover {
+  border-color: #b8914b;
+  background: #b8914b;
+  color: #ffffff;
+}
+
+.admin-product-image-actions button.danger:hover {
+  border-color: #b3261e;
+  background: #b3261e;
+  color: #ffffff;
+}
+
+.admin-product-image-actions button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}

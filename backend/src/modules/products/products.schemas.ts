@@ -51,3 +51,9 @@ export type CreateProductImageBody = z.infer<
 >;
 
 export type UpdateProductBody = z.infer<typeof updateProductBodySchema>;
+export const productImageParamsSchema = z.object({
+  productId: z.string().uuid("ID do produto inválido."),
+  imageId: z.string().uuid("ID da imagem inválido."),
+});
+
+export type ProductImageParams = z.infer<typeof productImageParamsSchema>;

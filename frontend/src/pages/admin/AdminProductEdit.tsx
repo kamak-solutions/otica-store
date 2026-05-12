@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   addAdminProductImage,
   getAdminProductById,
+  removeAdminProductImage,
+  setAdminProductImageAsMain,
   updateAdminProduct,
 } from "../../services/admin-products.service";
 import { getCategories } from "../../services/categories.service";
@@ -70,6 +72,7 @@ export function AdminProductEdit() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAddingImage, setIsAddingImage] = useState(false);
+  const [imageActionId, setImageActionId] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [imageErrorMessage, setImageErrorMessage] = useState("");
@@ -193,6 +196,61 @@ export function AdminProductEdit() {
       );
     } finally {
       setIsAddingImage(false);
+    }
+  }
+  async function handleSetImageAsMain(imageId: string) {
+    if (!id) {
+      setImageErrorMessage("Produto inválido.");
+      return;
+    }
+
+    setImageActionId(imageId);
+    setImageErrorMessage("");
+    setImageSuccessMessage("");
+
+    try {
+      const response = await setAdminProductImageAsMain(id, imageId);
+
+      setProduct(response.data);
+      setImageSuccessMessage("Imagem principal atualizada com sucesso.");
+    } catch (error) {
+      setImageErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Erro ao definir imagem principal.",
+      );
+    } finally {
+      setImageActionId("");
+    }
+  }
+
+  async function handleRemoveImage(imageId: string) {
+    if (!id) {
+      setImageErrorMessage("Produto inválido.");
+      return;
+    }
+
+    const confirmed = window.confirm("Deseja remover esta imagem do produto?");
+
+    if (!confirmed) {
+      return;
+    }
+
+    setImageActionId(imageId);
+    setImageErrorMessage("");
+    setImageSuccessMessage("");
+
+    try {
+      const response = await removeAdminProductImage(id, imageId);
+
+      setProduct(response.data);
+      setImageSuccessMessage("Imagem removida com sucesso.");
+    } catch (error) {
+      setImageErrorMessage(
+        error instanceof Error ? error.message : "Erro ao remover imagem.",
+      );
+    } finally {
+      setImageActionId("");
     }
   }
 
@@ -446,6 +504,30 @@ export function AdminProductEdit() {
                       {image.isMain ? "Imagem principal" : "Imagem secundária"}
                     </span>
                     <small>Posição: {image.position}</small>
+                    <div className="admin-product-image-actions">
+                      {!image.isMain && (
+                        <button
+                          type="button"
+                          disabled={imageActionId === image.id}
+                          onClick={() => handleSetImageAsMain(image.id)}
+                        >
+                          {imageActionId === image.id
+                            ? "Atualizando..."
+                            : "Definir principal"}
+                        </button>
+                      )}
+
+                      <button
+                        className="danger"
+                        type="button"
+                        disabled={imageActionId === image.id}
+                        onClick={() => handleRemoveImage(image.id)}
+                      >
+                        {imageActionId === image.id
+                          ? "Removendo..."
+                          : "Remover"}
+                      </button>
+                    </div>
                   </div>
                 </article>
               ))}
