@@ -3477,3 +3477,48 @@ a {
   background: rgba(31, 122, 77, 0.08);
   color: #1f7a4d;
 }
+.admin-product-upload-box {
+  display: grid;
+  gap: 10px;
+  border: 1px dashed rgba(184, 145, 75, 0.45);
+  border-radius: 20px;
+  padding: 16px;
+  background: #f9f4ef;
+}
+
+.admin-product-upload-box label {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-product-upload-box input[type="file"] {
+  border-style: dashed;
+  background: #ffffff;
+}
+
+.admin-product-upload-box span {
+  color: #7f7169;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.admin-secondary-button {
+  width: fit-content;
+  border: 1px solid #e7d8cc;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: #ffffff;
+  color: #2c2520;
+  font-weight: 900;
+}
+
+.admin-secondary-button:hover {
+  border-color: #b8914b;
+  background: #b8914b;
+  color: #ffffff;
+}
+
+.admin-secondary-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}

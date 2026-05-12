@@ -32,3 +32,21 @@ export async function uploadPrescriptionFile(file: File) {
 
   return data as UploadPrescriptionResponse;
 }
+export async function uploadProductImageFile(file: File) {
+  const formData = new FormData();
+
+  formData.append("file", file);
+
+  const response = await fetch(`${API_URL}/uploads/product-image`, {
+    method: "POST",
+    body: formData,
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data?.message || "Erro ao enviar imagem do produto.");
+  }
+
+  return data as UploadPrescriptionResponse;
+}

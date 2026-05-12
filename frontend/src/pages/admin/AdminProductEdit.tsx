@@ -8,6 +8,7 @@ import {
 import { getCategories } from "../../services/categories.service";
 import type { Category } from "../../types/category";
 import type { Product } from "../../types/product";
+import { uploadProductImageFile } from "../../services/uploads.service";
 
 type ProductFormData = {
   name: string;
@@ -61,6 +62,11 @@ export function AdminProductEdit() {
   const [imageAlt, setImageAlt] = useState("");
   const [imagePosition, setImagePosition] = useState("0");
   const [imageIsMain, setImageIsMain] = useState(false);
+  const [selectedProductImage, setSelectedProductImage] = useState<File | null>(
+    null,
+  );
+  const [selectedProductImageName, setSelectedProductImageName] = useState("");
+  const [isUploadingProductImage, setIsUploadingProductImage] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAddingImage, setIsAddingImage] = useState(false);
@@ -124,6 +130,33 @@ export function AdminProductEdit() {
       [field]: value,
     }));
   }
+  async function handleUploadProductImage() {
+    if (!selectedProductImage) {
+      setImageErrorMessage("Selecione uma imagem para enviar.");
+      return;
+    }
+
+    setIsUploadingProductImage(true);
+    setImageErrorMessage("");
+    setImageSuccessMessage("");
+
+    try {
+      const response = await uploadProductImageFile(selectedProductImage);
+
+      setImageUrl(response.data.url);
+      setImagePublicId(response.data.publicId);
+      setImageAlt((currentAlt) => currentAlt || response.data.originalFilename);
+      setImageSuccessMessage(
+        "Imagem enviada. Agora clique em Adicionar imagem.",
+      );
+    } catch (error) {
+      setImageErrorMessage(
+        error instanceof Error ? error.message : "Erro ao enviar imagem.",
+      );
+    } finally {
+      setIsUploadingProductImage(false);
+    }
+  }
   async function handleAddImage(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
 
@@ -151,6 +184,8 @@ export function AdminProductEdit() {
       setImageAlt("");
       setImagePosition("0");
       setImageIsMain(false);
+      setSelectedProductImage(null);
+      setSelectedProductImageName("");
       setImageSuccessMessage("Imagem adicionada com sucesso.");
     } catch (error) {
       setImageErrorMessage(
@@ -435,6 +470,36 @@ export function AdminProductEdit() {
               {imageSuccessMessage}
             </p>
           )}
+          <div className="admin-product-upload-box">
+            <label>
+              Selecionar imagem do computador
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(event) => {
+                  const file = event.target.files?.[0] ?? null;
+
+                  setSelectedProductImage(file);
+                  setSelectedProductImageName(file?.name ?? "");
+                }}
+              />
+            </label>
+
+            {selectedProductImageName && (
+              <span>{selectedProductImageName}</span>
+            )}
+
+            <button
+              className="admin-secondary-button"
+              type="button"
+              disabled={isUploadingProductImage || !selectedProductImage}
+              onClick={handleUploadProductImage}
+            >
+              {isUploadingProductImage
+                ? "Enviando imagem..."
+                : "Enviar para Cloudinary"}
+            </button>
+          </div>
 
           <div className="admin-product-image-form">
             <label>

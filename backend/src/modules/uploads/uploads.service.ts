@@ -39,3 +39,30 @@ export async function uploadPrescriptionFile({
     uploadStream.end(buffer);
   });
 }
+export async function uploadProductImageFile({
+  buffer,
+}: {
+  buffer: Buffer;
+}) {
+  return new Promise<CloudinaryUploadResult>((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "otica-showroom/products",
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error || !result) {
+          reject(error ?? new Error("Erro ao enviar imagem para Cloudinary."));
+          return;
+        }
+
+        resolve({
+          secure_url: result.secure_url,
+          public_id: result.public_id,
+        });
+      },
+    );
+
+    uploadStream.end(buffer);
+  });
+}
