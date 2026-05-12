@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { validateFileSignature } from "../../utils/file-signature.js";
 import { AppError } from "../../errors/app-error.js";
 import {
   uploadPrescriptionFile,
@@ -32,11 +33,23 @@ export async function uploadPrescriptionController(
 
   const buffer = await file.toBuffer();
 
+  const signatureValidation = validateFileSignature({
+    buffer,
+    allowedTypes: ["jpg", "png", "webp", "pdf"],
+  });
+
+  if (!signatureValidation.valid) {
+    throw new AppError(
+      "Arquivo inválido. A assinatura do arquivo não corresponde a JPG, PNG, WEBP ou PDF.",
+      400,
+      "Bad Request",
+    );
+  }
+
   const uploadedFile = await uploadPrescriptionFile({
     buffer,
     mimetype: file.mimetype,
   });
-
   return reply.status(201).send({
     data: {
       url: uploadedFile.secure_url,
@@ -47,11 +60,7 @@ export async function uploadPrescriptionController(
     message: "Receita enviada com sucesso.",
   });
 }
-const allowedProductImageMimeTypes = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-];
+const allowedProductImageMimeTypes = ["image/jpeg", "image/png", "image/webp"];
 
 export async function uploadProductImageController(
   request: FastifyRequest,
@@ -72,6 +81,19 @@ export async function uploadProductImageController(
   }
 
   const buffer = await file.toBuffer();
+
+  const signatureValidation = validateFileSignature({
+    buffer,
+    allowedTypes: ["jpg", "png", "webp"],
+  });
+
+  if (!signatureValidation.valid) {
+    throw new AppError(
+      "Imagem inválida. A assinatura do arquivo não corresponde a JPG, PNG ou WEBP.",
+      400,
+      "Bad Request",
+    );
+  }
 
   const uploadedFile = await uploadProductImageFile({
     buffer,
