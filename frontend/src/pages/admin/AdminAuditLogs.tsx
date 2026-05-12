@@ -5,12 +5,16 @@ import {
 } from "../../services/admin-audit-logs.service";
 
 const actionLabels: Record<string, string> = {
+  "admin.login_success": "Login admin realizado",
+  "admin.login_failed": "Tentativa de login falhou",
   "quote_request.status_updated": "Status de orçamento atualizado",
   "order.status_updated": "Status de pedido atualizado",
   "product.created": "Produto criado",
   "product.updated": "Produto atualizado",
   "product.deactivated": "Produto desativado",
   "product.image_added": "Imagem de produto adicionada",
+  "product.image_set_as_main": "Imagem principal atualizada",
+  "product.image_removed": "Imagem de produto removida",
 };
 
 function formatDate(value: string) {
