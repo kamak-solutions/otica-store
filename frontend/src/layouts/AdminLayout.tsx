@@ -11,18 +11,17 @@ export function AdminLayout() {
   return (
     <div className="admin-shell">
       <aside className="admin-sidebar">
-        <Link className="admin-logo" to="/admin/orcamentos">
+        <Link className="admin-logo" to="/admin">
           Ótica Admin
         </Link>
-
         {user && (
           <div className="admin-user-card">
             <strong>{user.name}</strong>
             <span>{user.email}</span>
           </div>
         )}
-
         <nav className="admin-nav">
+          <Link to="/admin">Dashboard</Link>
           <Link to="/admin/orcamentos">Orçamentos</Link>
           <Link to="/admin/pedidos">Pedidos</Link>
           <Link to="/admin/produtos">Produtos</Link>
