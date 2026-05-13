@@ -323,8 +323,11 @@ export function Checkout() {
 
               <span>
                 Confirmo que sou maior de 18 anos e autorizo o uso dos meus
-                dados para atendimento do pedido, conforme a Política de
-                Privacidade.
+                dados para atendimento do pedido, conforme a{" "}
+                <Link to="/politica-de-privacidade" target="_blank">
+                  Política de Privacidade
+                </Link>
+                .
               </span>
             </label>
           </section>

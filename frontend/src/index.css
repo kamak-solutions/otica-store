@@ -4295,4 +4295,38 @@ a {
 .checkout-field-message::before {
   content: "• ";
   color: #b8914b;
+}.privacy-policy-content {
+  display: grid;
+  gap: 18px;
+  padding-bottom: 56px;
+}
+
+.privacy-policy-content article {
+  border: 1px solid #e7d8cc;
+  border-radius: 24px;
+  padding: 22px;
+  background: #ffffff;
+  box-shadow: 0 16px 45px rgba(80, 50, 35, 0.06);
+}
+
+.privacy-policy-content h2 {
+  margin: 0 0 10px;
+  color: #2c2520;
+}
+
+.privacy-policy-content p {
+  margin: 0;
+  color: #7f7169;
+  line-height: 1.8;
+}
+
+.privacy-policy-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.checkout-lgpd-checkbox a {
+  color: #b8914b;
+  font-weight: 950;
 }
