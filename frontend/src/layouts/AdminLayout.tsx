@@ -22,9 +22,10 @@ export function AdminLayout() {
         )}
         <nav className="admin-nav">
           <Link to="/admin">Dashboard</Link>
-          <Link to="/admin/orcamentos">Orçamentos</Link>
-          <Link to="/admin/pedidos">Pedidos</Link>
           <Link to="/admin/produtos">Produtos</Link>
+          <Link to="/admin/pedidos">Pedidos</Link>
+          <Link to="/admin/clientes">Clientes</Link>
+          <Link to="/admin/orcamentos">Orçamentos</Link>
           <Link to="/admin/auditoria">Auditoria</Link>
           <Link to="/">Ver vitrine</Link>
         </nav>
