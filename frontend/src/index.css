@@ -3653,3 +3653,147 @@ a {
     grid-template-columns: 1fr;
   }
 }
+@media (max-width: 640px) {
+  .site-container {
+    width: min(100% - 24px, var(--container-width));
+  }
+
+  .hero-slider {
+    min-height: 430px;
+  }
+
+  .hero-slider-inner {
+    align-items: flex-end;
+    padding-top: 54px;
+    padding-bottom: 64px;
+  }
+
+  .hero-slider-content {
+    max-width: 100%;
+  }
+
+  .hero-slider-content span {
+    font-size: 0.68rem;
+  }
+
+  .hero-slider-content h1 {
+    max-width: 92%;
+    font-size: clamp(2rem, 11vw, 3.1rem);
+    line-height: 0.95;
+  }
+
+  .hero-slider-content p {
+    max-width: 88%;
+    font-size: 0.92rem;
+  }
+
+  .hero-actions {
+    gap: 8px;
+  }
+
+  .hero-actions a {
+    padding: 11px 14px;
+    font-size: 0.82rem;
+  }
+
+  .home-section {
+    padding-block: 34px;
+  }
+
+  .section-heading {
+    margin-bottom: 18px;
+  }
+
+  .section-heading h2 {
+    font-size: clamp(1.55rem, 7vw, 2.2rem);
+    line-height: 1.05;
+  }
+
+  .section-heading p {
+    font-size: 0.9rem;
+  }
+
+  .store-products-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .store-product-card {
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .store-product-image-area {
+    min-height: 150px;
+  }
+
+  .store-product-image {
+    height: 150px;
+    object-fit: cover;
+  }
+
+  .store-product-placeholder {
+    min-height: 150px;
+    font-size: 0.72rem;
+  }
+
+  .store-product-badges {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    gap: 4px;
+  }
+
+  .store-product-badge {
+    padding: 4px 7px;
+    font-size: 0.58rem;
+  }
+
+  .store-product-actions {
+    top: 8px;
+    right: 8px;
+    gap: 5px;
+  }
+
+  .store-product-actions button {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+
+  .store-product-content {
+    padding: 12px;
+  }
+
+  .store-product-meta {
+    gap: 4px;
+    font-size: 0.62rem;
+  }
+
+  .store-product-content h3 {
+    font-size: 0.88rem;
+    line-height: 1.2;
+  }
+
+  .store-product-content p {
+    display: none;
+  }
+
+  .store-product-price-row {
+    margin-top: 10px;
+  }
+
+  .store-product-price-row strong {
+    font-size: 0.92rem;
+  }
+
+  .store-product-price-row small {
+    font-size: 0.72rem;
+  }
+
+  .store-product-link {
+    margin-top: 10px;
+    padding: 9px 10px;
+    font-size: 0.75rem;
+  }
+}
