@@ -65,6 +65,10 @@ model Customer {
   name      String
   email     String
   phone     String
+
+  cpf       String?
+  birthDate DateTime?
+
   zipcode   String
   state     String
   street    String
@@ -73,11 +77,13 @@ model Customer {
   district  String
   city      String
 
+  lgpdAcceptedAt     DateTime?
+  lgpdConsentSource  String?
+
   orders    Order[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
 }
 
 model Order {

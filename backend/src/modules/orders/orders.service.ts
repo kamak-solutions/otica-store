@@ -1,5 +1,11 @@
 import { prisma } from "../../lib/prisma.js";
 import type { CreateOrderBody, OrderStatus } from "./orders.schemas.js";
+import { AppError } from "../../errors/app-error.js";
+import {
+  isAdult,
+  isValidCpf,
+  normalizeCpf,
+} from "../../utils/customer-validation.js";
 
 function generateOrderNumber() {
   const timestamp = Date.now().toString().slice(-6);
@@ -9,6 +15,25 @@ function generateOrderNumber() {
 
 export async function createOrder(data: CreateOrderBody) {
   return prisma.$transaction(async (tx) => {
+    const normalizedCpf = normalizeCpf(data.customer.customerCpf);
+
+    if (!isValidCpf(normalizedCpf)) {
+      throw new AppError("CPF inválido.", 400, "Bad Request");
+    }
+
+    const birthDate = new Date(`${data.customer.birthDate}T00:00:00`);
+
+    if (Number.isNaN(birthDate.getTime())) {
+      throw new AppError("Data de nascimento inválida.", 400, "Bad Request");
+    }
+
+    if (!isAdult(birthDate)) {
+      throw new AppError(
+        "Cliente precisa ser maior de idade para finalizar o pedido.",
+        400,
+        "Bad Request",
+      );
+    }
     const productIds = data.items.map((item) => item.productId);
 
     const products = await tx.product.findMany({
@@ -56,6 +81,8 @@ export async function createOrder(data: CreateOrderBody) {
         name: data.customer.customerName,
         email: data.customer.customerEmail,
         phone: data.customer.customerPhone,
+        cpf: normalizedCpf,
+        birthDate,
         zipcode: data.customer.zipcode,
         state: data.customer.state,
         street: data.customer.street,
@@ -63,6 +90,8 @@ export async function createOrder(data: CreateOrderBody) {
         complement: data.customer.complement || null,
         district: data.customer.district,
         city: data.customer.city,
+        lgpdAcceptedAt: new Date(),
+        lgpdConsentSource: "checkout",
       },
     });
 

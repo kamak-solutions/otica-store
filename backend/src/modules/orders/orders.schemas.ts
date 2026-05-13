@@ -5,6 +5,11 @@ export const createOrderBodySchema = z.object({
     customerName: z.string().min(2, "Nome é obrigatório."),
     customerEmail: z.string().email("E-mail inválido."),
     customerPhone: z.string().min(8, "Telefone é obrigatório."),
+    customerCpf: z.string().min(11, "CPF é obrigatório."),
+    birthDate: z.string().min(10, "Data de nascimento é obrigatória."),
+    lgpdAccepted: z.literal(true, {
+      error: "Você precisa aceitar os termos de privacidade.",
+    }),
     zipcode: z.string().min(3, "CEP é obrigatório."),
     state: z.string().min(2, "Estado é obrigatório.").max(2),
     street: z.string().min(2, "Endereço é obrigatório."),
@@ -22,8 +27,6 @@ export const createOrderBodySchema = z.object({
       }),
     )
     .min(1, "Pedido precisa ter ao menos um item."),
-
-
 });
 
 export const orderIdParamsSchema = z.object({

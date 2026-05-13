@@ -9,6 +9,9 @@ export type CreateOrderCustomerPayload = {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  customerCpf: string;
+  birthDate: string;
+  lgpdAccepted: boolean;
   zipcode: string;
   state: string;
   street: string;

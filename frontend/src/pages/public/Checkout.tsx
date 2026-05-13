@@ -7,6 +7,8 @@ type CheckoutFormData = {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  customerCpf: string;
+  birthDate: string;
   zipcode: string;
   state: string;
   street: string;
@@ -15,12 +17,14 @@ type CheckoutFormData = {
   district: string;
   city: string;
   notes: string;
+  lgpdAccepted: boolean;
 };
-
 const initialFormData: CheckoutFormData = {
   customerName: "",
   customerEmail: "",
   customerPhone: "",
+  customerCpf: "",
+  birthDate: "",
   zipcode: "",
   state: "",
   street: "",
@@ -29,6 +33,7 @@ const initialFormData: CheckoutFormData = {
   district: "",
   city: "",
   notes: "",
+  lgpdAccepted: false,
 };
 
 function formatPrice(value: number | string) {
@@ -52,16 +57,19 @@ export function Checkout() {
       formData.customerName.trim() &&
       formData.customerEmail.trim() &&
       formData.customerPhone.trim() &&
+      formData.customerCpf.trim() &&
+      formData.birthDate.trim() &&
       formData.zipcode.trim() &&
       formData.state.trim() &&
       formData.street.trim() &&
       formData.number.trim() &&
       formData.district.trim() &&
+      formData.zipcode.trim() &&
       formData.city.trim()
     );
   }, [items.length, formData]);
 
-  function updateField(field: keyof CheckoutFormData, value: string) {
+  function updateField(field: keyof CheckoutFormData, value: string | boolean) {
     setFormData((currentData) => ({
       ...currentData,
       [field]: value,
@@ -85,6 +93,9 @@ export function Checkout() {
           customerName: formData.customerName,
           customerEmail: formData.customerEmail,
           customerPhone: formData.customerPhone,
+          customerCpf: formData.customerCpf,
+          birthDate: formData.birthDate,
+          lgpdAccepted: formData.lgpdAccepted,
           zipcode: formData.zipcode,
           state: formData.state,
           street: formData.street,
@@ -98,7 +109,6 @@ export function Checkout() {
           productId: item.productId,
           quantity: item.quantity,
         })),
-        
       });
 
       setCreatedOrderNumber(response.data.orderNumber ?? response.data.id);
@@ -235,6 +245,49 @@ export function Checkout() {
                 />
               </label>
             </div>
+            <div className="checkout-form-grid">
+              <label>
+                CPF *
+                <input
+                  type="text"
+                  value={formData.customerCpf}
+                  onChange={(event) =>
+                    updateField("customerCpf", event.target.value)
+                  }
+                  placeholder="000.000.000-00"
+                  required
+                />
+              </label>
+
+              <label>
+                Data de nascimento *
+                <input
+                  type="date"
+                  value={formData.birthDate}
+                  onChange={(event) =>
+                    updateField("birthDate", event.target.value)
+                  }
+                  required
+                />
+              </label>
+            </div>
+
+            <label className="checkout-lgpd-checkbox">
+              <input
+                type="checkbox"
+                checked={formData.lgpdAccepted}
+                onChange={(event) =>
+                  updateField("lgpdAccepted", event.target.checked)
+                }
+                required
+              />
+
+              <span>
+                Confirmo que sou maior de 18 anos e autorizo o uso dos meus
+                dados para atendimento do pedido, conforme a Política de
+                Privacidade.
+              </span>
+            </label>
           </section>
 
           <section className="checkout-card">
