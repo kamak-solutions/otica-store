@@ -4285,3 +4285,14 @@ a {
     width: 100%;
   }
 }
+.checkout-field-message {
+  margin: 8px 0 0;
+  color: #7f7169;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.checkout-field-message::before {
+  content: "• ";
+  color: #b8914b;
+}

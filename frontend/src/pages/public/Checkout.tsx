@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { createOrder } from "../../services/orders.service";
 import { useCart } from "../../store/cart/use-cart";
+import { maskCpf, maskPhone, maskZipcode } from "../../utils/input-masks";
+import { searchZipcode } from "../../services/zipcode.service";
 
 type CheckoutFormData = {
   customerName: string;
@@ -47,6 +49,8 @@ export function Checkout() {
   const { items, subtotal, clearCart } = useCart();
 
   const [formData, setFormData] = useState<CheckoutFormData>(initialFormData);
+  const [isSearchingZipcode, setIsSearchingZipcode] = useState(false);
+  const [zipcodeMessage, setZipcodeMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [createdOrderNumber, setCreatedOrderNumber] = useState("");
@@ -74,6 +78,41 @@ export function Checkout() {
       ...currentData,
       [field]: value,
     }));
+  }
+  async function handleSearchZipcode() {
+    if (formData.zipcode.replace(/\D/g, "").length !== 8) {
+      return;
+    }
+
+    setIsSearchingZipcode(true);
+    setZipcodeMessage("");
+    setErrorMessage("");
+
+    try {
+      const address = await searchZipcode(formData.zipcode);
+
+      if (!address) {
+        return;
+      }
+
+      setFormData((currentData) => ({
+        ...currentData,
+        zipcode: address.zipcode,
+        street: address.street || currentData.street,
+        complement: currentData.complement || address.complement,
+        district: address.district || currentData.district,
+        city: address.city || currentData.city,
+        state: address.state || currentData.state,
+      }));
+
+      setZipcodeMessage("Endereço preenchido automaticamente pelo CEP.");
+    } catch (error) {
+      setZipcodeMessage(
+        error instanceof Error ? error.message : "Erro ao buscar CEP.",
+      );
+    } finally {
+      setIsSearchingZipcode(false);
+    }
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -239,7 +278,7 @@ export function Checkout() {
                   type="text"
                   value={formData.customerPhone}
                   onChange={(event) =>
-                    updateField("customerPhone", event.target.value)
+                    updateField("customerPhone", maskPhone(event.target.value))
                   }
                   required
                 />
@@ -252,7 +291,7 @@ export function Checkout() {
                   type="text"
                   value={formData.customerCpf}
                   onChange={(event) =>
-                    updateField("customerCpf", event.target.value)
+                    updateField("customerCpf", maskCpf(event.target.value))
                   }
                   placeholder="000.000.000-00"
                   required
@@ -300,10 +339,20 @@ export function Checkout() {
                   type="text"
                   value={formData.zipcode}
                   onChange={(event) =>
-                    updateField("zipcode", event.target.value)
+                    updateField("zipcode", maskZipcode(event.target.value))
                   }
+                  onBlur={handleSearchZipcode}
+                  placeholder="00000-000"
                   required
                 />
+                {isSearchingZipcode && (
+                  <p className="checkout-field-message">
+                    Buscando endereço pelo CEP...
+                  </p>
+                )}
+                {zipcodeMessage && !isSearchingZipcode && (
+                  <p className="checkout-field-message">{zipcodeMessage}</p>
+                )}
               </label>
 
               <label>
