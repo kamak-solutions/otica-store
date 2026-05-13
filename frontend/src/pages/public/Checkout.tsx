@@ -96,11 +96,9 @@ export function Checkout() {
         },
         items: items.map((item) => ({
           productId: item.productId,
-          productName: item.name,
-          unitPrice: item.unitPrice,
           quantity: item.quantity,
         })),
-        subtotal,
+        
       });
 
       setCreatedOrderNumber(response.data.orderNumber ?? response.data.id);

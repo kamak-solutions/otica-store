@@ -14,13 +14,10 @@ export const createOrderBodySchema = z.object({
     city: z.string().min(2, "Cidade é obrigatória."),
     notes: z.string().optional(),
   }),
-
   items: z
     .array(
       z.object({
         productId: z.string().uuid("ID do produto inválido."),
-        productName: z.string().min(1),
-        unitPrice: z.coerce.number().positive(),
         quantity: z.coerce.number().int().positive(),
       }),
     )

@@ -2,8 +2,6 @@ import { apiFetch } from "./api";
 
 export type CreateOrderItemPayload = {
   productId: string;
-  productName: string;
-  unitPrice: string;
   quantity: number;
 };
 
@@ -24,7 +22,6 @@ export type CreateOrderCustomerPayload = {
 export type CreateOrderPayload = {
   customer: CreateOrderCustomerPayload;
   items: CreateOrderItemPayload[];
-  subtotal: number;
 };
 
 export type CreateOrderResponse = {
@@ -32,7 +29,6 @@ export type CreateOrderResponse = {
     id: string;
     orderNumber: string | null;
     status: string;
-    subtotal: string;
     notes: string | null;
     createdAt: string;
   };
