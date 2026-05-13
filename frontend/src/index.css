@@ -3797,3 +3797,126 @@ a {
     font-size: 0.75rem;
   }
 }
+/* Mobile refinado - vitrine em 1 coluna */
+@media (max-width: 640px) {
+  .home-page {
+    overflow-x: hidden;
+  }
+
+  .site-container {
+    width: calc(100% - 28px) !important;
+  }
+
+  .hero-slider {
+    min-height: 520px !important;
+  }
+
+  .hero-slider-inner {
+    min-height: 520px !important;
+    align-items: flex-end !important;
+    padding-top: 80px !important;
+    padding-bottom: 72px !important;
+  }
+
+  .hero-slider-content {
+    max-width: 100% !important;
+  }
+
+  .hero-slider-content h1 {
+    max-width: 100% !important;
+    font-size: clamp(2.25rem, 12vw, 3.4rem) !important;
+    line-height: 0.95 !important;
+    letter-spacing: -0.08em !important;
+  }
+
+  .hero-slider-content p {
+    max-width: 94% !important;
+    font-size: 0.95rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .hero-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  .hero-actions a {
+    min-height: 42px !important;
+    padding: 12px 16px !important;
+    font-size: 0.86rem !important;
+  }
+
+  .category-shortcuts,
+  .lens-brand-grid,
+  .testimonials-grid,
+  .home-blog-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .store-products-grid {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+
+  .store-product-card {
+    border-radius: 24px !important;
+    overflow: hidden !important;
+  }
+
+  .store-product-image-area {
+    min-height: 260px !important;
+  }
+
+  .store-product-image {
+    width: 100% !important;
+    height: 260px !important;
+    object-fit: cover !important;
+  }
+
+  .store-product-placeholder {
+    min-height: 260px !important;
+  }
+
+  .store-product-content {
+    padding: 18px !important;
+  }
+
+  .store-product-content h3 {
+    font-size: 1.12rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .store-product-content p {
+    display: block !important;
+    font-size: 0.88rem !important;
+    line-height: 1.45 !important;
+    margin-top: 8px !important;
+  }
+
+  .store-product-price-row strong {
+    font-size: 1.15rem !important;
+  }
+
+  .store-product-link {
+    padding: 13px 16px !important;
+    font-size: 0.9rem !important;
+  }
+
+  .home-banner,
+  .campaign-banner,
+  .quote-banner {
+    border-radius: 24px !important;
+    padding: 24px !important;
+  }
+
+  .section-heading h2 {
+    font-size: clamp(1.7rem, 8vw, 2.4rem) !important;
+    line-height: 1.05 !important;
+  }
+
+  .public-footer-inner,
+  .footer-payment-area {
+    grid-template-columns: 1fr !important;
+  }
+}
