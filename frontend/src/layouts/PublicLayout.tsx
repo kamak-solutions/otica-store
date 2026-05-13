@@ -2,6 +2,53 @@ import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { useCart } from "../store/cart/use-cart";
 
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" />
+      <path d="M16.5 16.5L21 21" />
+    </svg>
+  );
+}
+
+function UserIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21C5.5 16.5 8.5 14 12 14C15.5 14 18.5 16.5 20 21" />
+    </svg>
+  );
+}
+
+function CartIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 5H6L8.2 15.5H18.5L20 8H7" />
+      <circle cx="10" cy="20" r="1.6" />
+      <circle cx="17" cy="20" r="1.6" />
+    </svg>
+  );
+}
+
+function MenuIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 7H20" />
+      <path d="M4 12H20" />
+      <path d="M4 17H20" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 6L18 18" />
+      <path d="M18 6L6 18" />
+    </svg>
+  );
+}
+
 export function PublicLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { totalItems } = useCart();
@@ -68,11 +115,11 @@ export function PublicLayout() {
 
           <div className="public-header-actions" aria-label="Ações rápidas">
             <button type="button" aria-label="Buscar">
-              🔎
+              <SearchIcon />
             </button>
 
             <button type="button" aria-label="Entrar">
-              👤
+              <UserIcon />
             </button>
 
             <Link
@@ -80,10 +127,9 @@ export function PublicLayout() {
               to="/carrinho"
               aria-label="Carrinho"
             >
-              🛒
+              <CartIcon />
               {totalItems > 0 && <span>{totalItems}</span>}
             </Link>
-
             <button
               className="mobile-menu-button"
               type="button"
@@ -91,7 +137,7 @@ export function PublicLayout() {
               aria-expanded={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen((current) => !current)}
             >
-              {isMobileMenuOpen ? "✕" : "☰"}
+             {isMobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
             </button>
           </div>
         </div>
