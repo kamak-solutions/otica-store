@@ -23,7 +23,7 @@ export const createOrderBodySchema = z.object({
     )
     .min(1, "Pedido precisa ter ao menos um item."),
 
-  subtotal: z.coerce.number().positive(),
+
 });
 
 export const orderIdParamsSchema = z.object({
