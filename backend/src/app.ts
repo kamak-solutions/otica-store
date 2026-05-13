@@ -15,6 +15,7 @@ import { adminAuditRoutes } from "./modules/admin-audit/admin-audit.routes.js";
 import multipart from "@fastify/multipart";
 import { uploadsRoutes } from "./modules/uploads/uploads.routes.js";
 import { customersRoutes } from "./modules/customers/customers.routes.js";
+import { adminUsersRoutes } from "./modules/admin-users/admin-users.routes.js";
 
 export const app = Fastify({
   logger: {
@@ -85,3 +86,4 @@ app.register(adminQuoteRequestRoutes);
 app.register(adminAuditRoutes);
 app.register(uploadsRoutes);
 app.register(customersRoutes);
+app.register(adminUsersRoutes);

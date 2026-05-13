@@ -4133,3 +4133,155 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+.admin-users-form {
+  border: 1px solid #e7d8cc;
+  border-radius: 24px;
+  padding: 20px;
+  margin-bottom: 22px;
+  background: #ffffff;
+  box-shadow: 0 16px 45px rgba(80, 50, 35, 0.06);
+}
+
+.admin-users-form h2 {
+  margin: 0 0 16px;
+  color: #2c2520;
+}
+
+.admin-users-form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.admin-users-form label {
+  display: grid;
+  gap: 8px;
+  color: #2c2520;
+  font-weight: 900;
+}
+
+.admin-users-form input,
+.admin-users-form select {
+  min-height: 42px;
+  border: 1px solid #e7d8cc;
+  border-radius: 14px;
+  padding: 0 12px;
+  background: #fff;
+  color: #2c2520;
+  font: inherit;
+}
+
+.admin-users-form button {
+  margin-top: 16px;
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 18px;
+  background: #b8914b;
+  color: #ffffff;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.admin-users-list {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-user-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  border: 1px solid #e7d8cc;
+  border-radius: 22px;
+  padding: 18px;
+  background: #ffffff;
+  box-shadow: 0 16px 45px rgba(80, 50, 35, 0.06);
+}
+
+.admin-user-card strong {
+  display: block;
+  color: #2c2520;
+  font-size: 1.05rem;
+}
+
+.admin-user-card span {
+  display: block;
+  margin-top: 4px;
+  color: #7f7169;
+  font-weight: 800;
+}
+
+.admin-user-card small {
+  display: block;
+  margin-top: 6px;
+  color: #9a8b82;
+}
+
+.admin-user-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.admin-user-controls select,
+.admin-user-controls button {
+  min-height: 38px;
+  border: 1px solid #e7d8cc;
+  border-radius: 999px;
+  padding: 0 12px;
+  background: #fff;
+  color: #2c2520;
+  font-weight: 900;
+}
+
+.admin-user-controls button {
+  cursor: pointer;
+}
+
+.admin-user-status {
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #f4e9e3;
+  color: #8a5a46 !important;
+  font-size: 0.78rem;
+  font-weight: 950 !important;
+}
+
+.admin-user-status.active {
+  background: #edf7ed;
+  color: #247a35 !important;
+}
+
+@media (max-width: 900px) {
+  .admin-users-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-user-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-user-controls {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 620px) {
+  .admin-users-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-user-controls {
+    width: 100%;
+  }
+
+  .admin-user-controls select,
+  .admin-user-controls button {
+    width: 100%;
+  }
+}

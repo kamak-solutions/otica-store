@@ -19,6 +19,7 @@ import { AdminProductCreate } from "./pages/admin/AdminProductCreate";
 import { AdminProductEdit } from "./pages/admin/AdminProductEdit";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminCustomers } from "./pages/admin/AdminCustomers";
+import { AdminUsers } from "./pages/admin/AdminUsers";
 
 export default function App() {
   return (
@@ -46,6 +47,7 @@ export default function App() {
           <Route path="/admin/produtos/:id/editar" element={<AdminProductEdit />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/clientes" element={<AdminCustomers />} />
+          <Route path="/admin/usuarios" element={<AdminUsers />} />
         </Route>
       </Routes>
     </BrowserRouter>
