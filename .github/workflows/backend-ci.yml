@@ -53,6 +53,9 @@ jobs:
       - name: Validate Prisma schema
         run: pnpm prisma validate
 
+      - name: Generate Prisma client
+        run: pnpm prisma generate
+
       - name: Build backend
         run: pnpm build
 
