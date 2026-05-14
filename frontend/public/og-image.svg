@@ -1,0 +1,12 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#2c2520"/>
+  <circle cx="430" cy="290" r="80" stroke="#c79b4b" stroke-width="28"/>
+  <circle cx="590" cy="290" r="80" stroke="#c79b4b" stroke-width="28"/>
+  <path d="M510 290H510.5" stroke="#c79b4b" stroke-width="28" stroke-linecap="round"/>
+  <text x="120" y="455" fill="#ffffff" font-family="Arial, sans-serif" font-size="76" font-weight="800">
+    Ótica ShowRoom
+  </text>
+  <text x="120" y="525" fill="#d9c29a" font-family="Arial, sans-serif" font-size="34" font-weight="600">
+    Óculos, lentes e orçamento online
+  </text>
+</svg>
