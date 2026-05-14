@@ -97,6 +97,17 @@ model Order {
   subtotal    Decimal  @db.Decimal(10, 2)
   notes       String?
 
+  paymentStatus     String   @default("pending")
+  paymentMethod     String?
+  paymentProvider   String?
+  paymentProviderId String?
+  paymentUrl        String?
+  paidAt            DateTime?
+
+  shippingMethod String?
+  shippingPrice  Decimal? @db.Decimal(10, 2)
+  shippingStatus String?  @default("not_required")
+
   items       OrderItem[]
 
   createdAt   DateTime @default(now())

@@ -170,6 +170,57 @@ export function AdminOrderDetail() {
             <span>Subtotal</span>
             <strong>{formatPrice(order.subtotal)}</strong>
           </div>
+          <div className="admin-order-detail-payment">
+            <h3>Pagamento</h3>
+
+            <p>
+              <strong>Status:</strong> {order.paymentStatus}
+            </p>
+
+            <p>
+              <strong>Método:</strong>{" "}
+              {order.paymentMethod ?? "Ainda não definido"}
+            </p>
+
+            <p>
+              <strong>Provedor:</strong>{" "}
+              {order.paymentProvider ?? "Ainda não definido"}
+            </p>
+
+            {order.paymentUrl && (
+              <p>
+                <strong>Link:</strong>{" "}
+                <a href={order.paymentUrl} target="_blank" rel="noreferrer">
+                  Abrir pagamento
+                </a>
+              </p>
+            )}
+
+            <p>
+              <strong>Pago em:</strong>{" "}
+              {order.paidAt ? formatDate(order.paidAt) : "Ainda não pago"}
+            </p>
+          </div>
+
+          <div className="admin-order-detail-payment">
+            <h3>Entrega/Frete</h3>
+
+            <p>
+              <strong>Status:</strong> {order.shippingStatus ?? "not_required"}
+            </p>
+
+            <p>
+              <strong>Método:</strong>{" "}
+              {order.shippingMethod ?? "Ainda não definido"}
+            </p>
+
+            <p>
+              <strong>Valor:</strong>{" "}
+              {order.shippingPrice
+                ? formatPrice(order.shippingPrice)
+                : "Ainda não definido"}
+            </p>
+          </div>
         </article>
 
         <article className="admin-order-detail-card">
@@ -191,9 +242,7 @@ export function AdminOrderDetail() {
 
           <p>
             {order.customer.street}, {order.customer.number}
-            {order.customer.complement
-              ? ` - ${order.customer.complement}`
-              : ""}
+            {order.customer.complement ? ` - ${order.customer.complement}` : ""}
           </p>
           <p>
             {order.customer.district} · {order.customer.city}/
@@ -214,7 +263,9 @@ export function AdminOrderDetail() {
                 </span>
               </div>
 
-              <strong>{formatPrice(Number(item.unitPrice) * item.quantity)}</strong>
+              <strong>
+                {formatPrice(Number(item.unitPrice) * item.quantity)}
+              </strong>
             </div>
           ))}
         </article>

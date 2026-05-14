@@ -1,11 +1,23 @@
 type OrderHttp = {
-  id: string;
+    id: string;
   orderNumber: string | null;
   status: string;
   subtotal: {
-    toFixed: (digits: number) => string;
+    toFixed: (digits?: number) => string;
   };
   notes: string | null;
+
+  paymentStatus: string;
+  paymentMethod: string | null;
+  paymentProvider: string | null;
+  paymentProviderId: string | null;
+  paymentUrl: string | null;
+  paidAt: Date | null;
+  shippingMethod: string | null;
+  shippingPrice: {
+    toFixed: (digits?: number) => string;
+  } | null;
+  shippingStatus: string | null;
   customer: {
     id: string;
     name: string;
@@ -39,6 +51,16 @@ export function mapOrderToHttp(order: OrderHttp) {
     status: order.status,
     subtotal: order.subtotal.toFixed(2),
     notes: order.notes,
+
+    paymentStatus: order.paymentStatus,
+    paymentMethod: order.paymentMethod,
+    paymentProvider: order.paymentProvider,
+    paymentProviderId: order.paymentProviderId,
+    paymentUrl: order.paymentUrl,
+    paidAt: order.paidAt?.toISOString() ?? null,
+    shippingMethod: order.shippingMethod,
+    shippingPrice: order.shippingPrice?.toFixed(2) ?? null,
+    shippingStatus: order.shippingStatus,
     customer: {
       id: order.customer.id,
       name: order.customer.name,

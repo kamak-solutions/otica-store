@@ -38,6 +38,15 @@ export type AdminOrder = {
   status: OrderStatus;
   subtotal: string;
   notes: string | null;
+  paymentStatus: string;
+  paymentMethod: string | null;
+  paymentProvider: string | null;
+  paymentProviderId: string | null;
+  paymentUrl: string | null;
+  paidAt: string | null;
+  shippingMethod: string | null;
+  shippingPrice: string | null;
+  shippingStatus: string | null;
   customer: AdminOrderCustomer;
   items: AdminOrderItem[];
   createdAt: string;
@@ -91,4 +100,3 @@ export function updateAdminOrderStatus(id: string, status: OrderStatus) {
     },
   );
 }
-
