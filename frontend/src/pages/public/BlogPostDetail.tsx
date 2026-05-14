@@ -34,6 +34,7 @@ export function BlogPostDetail() {
       <Seo
         title={`${post.title} | Blog Ótica ShowRoom`}
         description={post.excerpt}
+        imageUrl={post.imageUrl}
       />
       <article className="blog-post-detail">
         <div className="site-container blog-post-hero">

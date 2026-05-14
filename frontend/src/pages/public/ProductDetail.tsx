@@ -74,14 +74,12 @@ export function ProductDetail() {
           description="O produto solicitado não foi encontrado na Ótica ShowRoom. Veja outras opções de armações, lentes e óculos."
         />
 
-        <section className="page-hero">
-          <span>Produto</span>
-          <h1>Produto não encontrado</h1>
-          <p>{errorMessage || "Não encontramos este produto."}</p>
-        </section>
+        {/* restante do erro */}
       </main>
     );
   }
+
+  const mainImage = getMainImage(product);
 
   return (
     <main className="page-shell">
@@ -91,6 +89,7 @@ export function ProductDetail() {
           product.description ||
           `Conheça ${product.name} na Ótica ShowRoom e solicite atendimento personalizado.`
         }
+        imageUrl={mainImage?.url}
       />
       <Link className="back-link" to="/">
         ← Voltar para a vitrine
