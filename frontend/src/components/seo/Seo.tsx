@@ -36,7 +36,7 @@ export function Seo({ title, description, imageUrl }: SeoProps) {
   useEffect(() => {
     const currentUrl = window.location.href;
     const finalImageUrl =
-      imageUrl ?? "https://otica-store.vercel.app/og-image.svg";
+      imageUrl ?? "https://otica-store.vercel.app/og-image.png";
 
     document.title = title;
 
