@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   listAdminOrders,
   updateAdminOrderStatus,
@@ -122,7 +123,9 @@ export function AdminOrders() {
         ))}
       </div>
 
-      {isLoading && <p className="admin-state-message">Carregando pedidos...</p>}
+      {isLoading && (
+        <p className="admin-state-message">Carregando pedidos...</p>
+      )}
 
       {errorMessage && (
         <p className="admin-state-message admin-error-message">
@@ -195,7 +198,12 @@ export function AdminOrders() {
                 <span>Subtotal</span>
                 <strong>{formatPrice(order.subtotal)}</strong>
               </div>
-
+              <Link
+                className="button-secondary"
+                to={`/admin/pedidos/${order.id}`}
+              >
+                Ver detalhes
+              </Link>
               <label className="admin-status-select">
                 Alterar status
                 <select

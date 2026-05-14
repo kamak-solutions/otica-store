@@ -48,6 +48,10 @@ type ListAdminOrdersResponse = {
   data: AdminOrder[];
 };
 
+type GetAdminOrderResponse = {
+  data: AdminOrder;
+};
+
 type UpdateAdminOrderStatusResponse = {
   data: AdminOrder;
   message: string;
@@ -71,6 +75,12 @@ export function listAdminOrders() {
   });
 }
 
+export function getAdminOrderById(id: string) {
+  return apiFetch<GetAdminOrderResponse>(`/admin/orders/${id}`, {
+    headers: getAdminAuthHeaders(),
+  });
+}
+
 export function updateAdminOrderStatus(id: string, status: OrderStatus) {
   return apiFetch<UpdateAdminOrderStatusResponse>(
     `/admin/orders/${id}/status`,
@@ -81,3 +91,4 @@ export function updateAdminOrderStatus(id: string, status: OrderStatus) {
     },
   );
 }
+

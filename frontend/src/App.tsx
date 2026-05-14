@@ -22,6 +22,7 @@ import { AdminCustomers } from "./pages/admin/AdminCustomers";
 import { AdminUsers } from "./pages/admin/AdminUsers";
 import { PrivacyPolicy } from "./pages/public/PrivacyPolicy";
 import { BlogPostDetail } from "./pages/public/BlogPostDetail";
+import { AdminOrderDetail } from "./pages/admin/AdminOrderDetail";
 
 export default function App() {
   return (
@@ -52,6 +53,7 @@ export default function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/clientes" element={<AdminCustomers />} />
           <Route path="/admin/usuarios" element={<AdminUsers />} />
+          <Route path="/admin/pedidos/:id" element={<AdminOrderDetail />} />
         </Route>
       </Routes>
     </BrowserRouter>
