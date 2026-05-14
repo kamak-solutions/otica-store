@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createQuoteRequest } from "../../services/quote-requests.service";
 import { uploadPrescriptionFile } from "../../services/uploads.service";
+import { Seo } from "../../components/seo/Seo";
 
 type QuoteFormData = {
   name: string;
@@ -83,6 +84,10 @@ export function QuoteRequest() {
   if (isSubmitted) {
     return (
       <main className="page-shell">
+        <Seo
+          title="Orçamento com Receita | Ótica ShowRoom"
+          description="Envie sua receita para solicitar orçamento de lentes, armações e óculos completos com atendimento personalizado."
+        />
         <section className="quote-success-card">
           <div className="order-success-icon">✓</div>
 

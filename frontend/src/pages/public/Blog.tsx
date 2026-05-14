@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { blogPosts } from "../../data/blog-posts";
+import { Seo } from "../../components/seo/Seo";
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("pt-BR", {
@@ -10,6 +11,10 @@ function formatDate(value: string) {
 export function Blog() {
   return (
     <main className="page-shell">
+      <Seo
+        title="Blog | Ótica ShowRoom"
+        description="Dicas sobre armações, lentes, cuidados com óculos, saúde visual e escolha do modelo ideal."
+      />
       <section className="page-hero">
         <span>Blog</span>
         <h1>Dicas da Ótica ShowRoom</h1>

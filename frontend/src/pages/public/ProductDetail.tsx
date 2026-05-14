@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { getProductBySlug } from "../../services/products.service";
 import type { Product } from "../../types/product";
 import { useCart } from "../../store/cart/use-cart";
+import { Seo } from "../../components/seo/Seo";
 
 function formatPrice(value: string) {
   return Number(value).toLocaleString("pt-BR", {
@@ -84,6 +85,13 @@ export function ProductDetail() {
 
   return (
     <main className="page-shell">
+      <Seo
+        title={`${product.name} | Ótica ShowRoom`}
+        description={
+          product.description ||
+          `Conheça ${product.name} na Ótica ShowRoom e solicite atendimento personalizado.`
+        }
+      />
       <Link className="back-link" to="/">
         ← Voltar para a vitrine
       </Link>

@@ -1,8 +1,13 @@
 import { Link } from "react-router-dom";
+import { Seo } from "../../components/seo/Seo";
 
 export function PrivacyPolicy() {
   return (
     <main className="page-shell">
+      <Seo
+        title="Política de Privacidade | Ótica ShowRoom"
+        description="Veja como a Ótica ShowRoom coleta, utiliza e protege dados pessoais em pedidos, orçamentos e atendimento."
+      />
       <section className="page-hero">
         <span>Privacidade</span>
         <h1>Política de Privacidade</h1>

@@ -11,6 +11,7 @@ import { Testimonials } from "../../components/public/home/Testimonials";
 import { getProducts } from "../../services/products.service";
 import { audienceFilters, categoryFilters } from "../../data/home-content";
 import type { Product } from "../../types/product";
+import { Seo } from "../../components/seo/Seo";
 
 function normalizeAudienceFilter(filter: string) {
   if (filter === "Todos") {
@@ -86,6 +87,10 @@ export function Home() {
 
   return (
     <main className="home-page">
+      <Seo
+        title="Ótica ShowRoom | Óculos, lentes e orçamento online"
+        description="Ótica ShowRoom: óculos de grau, armações, lentes e orçamento online com atendimento personalizado."
+      />
       <HeroCarousel />
 
       <CategoryShortcuts />

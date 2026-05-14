@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { findBlogPostBySlug } from "../../data/blog-posts";
+import { Seo } from "../../components/seo/Seo";
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("pt-BR", {
@@ -30,6 +31,10 @@ export function BlogPostDetail() {
 
   return (
     <main className="page-shell">
+      <Seo
+        title={`${post.title} | Blog Ótica ShowRoom`}
+        description={post.excerpt}
+      />
       <article className="blog-post-detail">
         <div className="site-container blog-post-hero">
           <Link to="/blog" className="blog-post-back-link">

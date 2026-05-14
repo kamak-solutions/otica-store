@@ -4,6 +4,7 @@ import { createOrder } from "../../services/orders.service";
 import { useCart } from "../../store/cart/use-cart";
 import { maskCpf, maskPhone, maskZipcode } from "../../utils/input-masks";
 import { searchZipcode } from "../../services/zipcode.service";
+import { Seo } from "../../components/seo/Seo";
 
 type CheckoutFormData = {
   customerName: string;
@@ -165,6 +166,10 @@ export function Checkout() {
   if (createdOrderNumber) {
     return (
       <main className="page-shell">
+        <Seo
+          title="Checkout | Ótica ShowRoom"
+          description="Finalize seu pedido na Ótica ShowRoom com segurança, informando seus dados para atendimento e confirmação."
+        />
         <section className="order-success-card">
           <div className="order-success-icon">✓</div>
 
