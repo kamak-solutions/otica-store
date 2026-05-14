@@ -66,18 +66,18 @@ export function ProductDetail() {
       </main>
     );
   }
-
   if (errorMessage || !product || !price) {
     return (
       <main className="page-shell">
+        <Seo
+          title="Produto não encontrado | Ótica ShowRoom"
+          description="O produto solicitado não foi encontrado na Ótica ShowRoom. Veja outras opções de armações, lentes e óculos."
+        />
+
         <section className="page-hero">
           <span>Produto</span>
           <h1>Produto não encontrado</h1>
-          <p>{errorMessage || "Não conseguimos encontrar este produto."}</p>
-
-          <Link className="button-primary" to="/">
-            Voltar para a vitrine
-          </Link>
+          <p>{errorMessage || "Não encontramos este produto."}</p>
         </section>
       </main>
     );
