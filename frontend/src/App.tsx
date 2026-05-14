@@ -21,6 +21,7 @@ import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminCustomers } from "./pages/admin/AdminCustomers";
 import { AdminUsers } from "./pages/admin/AdminUsers";
 import { PrivacyPolicy } from "./pages/public/PrivacyPolicy";
+import { BlogPostDetail } from "./pages/public/BlogPostDetail";
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
+          <Route path="/blog/:slug" element={<BlogPostDetail />} />
         </Route>
         <Route element={<AdminLayout />}>
           <Route path="/admin/orcamentos" element={<AdminQuoteRequests />} />

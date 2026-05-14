@@ -1,20 +1,11 @@
-const posts = [
-  {
-    title: "Como escolher a armação ideal para seu rosto",
-    excerpt:
-      "Entenda como formato, proporção e estilo ajudam na escolha da armação.",
-  },
-  {
-    title: "Antirreflexo, blue cut e fotossensível: qual escolher?",
-    excerpt:
-      "Veja diferenças entre tipos de lentes e quando cada opção pode ajudar.",
-  },
-  {
-    title: "Quando trocar seus óculos de grau?",
-    excerpt:
-      "Sinais de que está na hora de revisar sua receita ou renovar suas lentes.",
-  },
-];
+import { Link } from "react-router-dom";
+import { blogPosts } from "../../data/blog-posts";
+
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "long",
+  }).format(new Date(`${value}T00:00:00`));
+}
 
 export function Blog() {
   return (
@@ -28,12 +19,29 @@ export function Blog() {
         </p>
       </section>
 
-      <section className="blog-grid">
-        {posts.map((post) => (
-          <article key={post.title}>
-            <span>Artigo</span>
-            <h2>{post.title}</h2>
-            <p>{post.excerpt}</p>
+      <section className="site-container blog-page-grid">
+        {blogPosts.map((post) => (
+          <article className="blog-page-card" key={post.slug}>
+            <div className="blog-page-card-image-wrapper">
+              <img
+                className="blog-page-card-image"
+                src={post.imageUrl}
+                alt={post.title}
+              />
+            </div>
+
+            <div className="blog-page-card-content">
+              <span>{post.category}</span>
+              <h2>{post.title}</h2>
+              <p>{post.excerpt}</p>
+
+              <div className="blog-page-card-meta">
+                <small>{formatDate(post.publishedAt)}</small>
+                <small>{post.readingTime}</small>
+              </div>
+
+              <Link to={`/blog/${post.slug}`}>Ler artigo</Link>
+            </div>
           </article>
         ))}
       </section>
