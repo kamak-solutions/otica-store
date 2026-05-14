@@ -44,6 +44,7 @@ export function AdminOrders() {
   const [activeStatusFilter, setActiveStatusFilter] = useState<
     OrderStatus | "all"
   >("all");
+  const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -83,10 +84,31 @@ export function AdminOrders() {
     loadOrders();
   }, []);
 
-  const filteredOrders =
-    activeStatusFilter === "all"
-      ? orders
-      : orders.filter((order) => order.status === activeStatusFilter);
+  const filteredOrders = orders.filter((order) => {
+    const matchesStatus =
+      activeStatusFilter === "all" || order.status === activeStatusFilter;
+
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+
+    if (!normalizedSearch) {
+      return matchesStatus;
+    }
+
+    const searchableText = [
+      order.orderNumber ?? "",
+      order.id,
+      order.customer.name,
+      order.customer.email,
+      order.customer.phone,
+      order.customer.city,
+      order.customer.state,
+      ...order.items.map((item) => item.productName),
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    return matchesStatus && searchableText.includes(normalizedSearch);
+  });
 
   return (
     <section className="admin-page">
@@ -122,7 +144,14 @@ export function AdminOrders() {
           </button>
         ))}
       </div>
-
+      <div className="admin-toolbar">
+        <input
+          type="search"
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+          placeholder="Buscar por pedido, cliente, e-mail, telefone, cidade ou produto..."
+        />
+      </div>
       {isLoading && (
         <p className="admin-state-message">Carregando pedidos...</p>
       )}
