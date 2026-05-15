@@ -4,6 +4,7 @@ import {
   requireAdminRole,
 } from "../admin-auth/admin-auth.middleware.js";
 import {
+  createAdminOrderPaymentLinkController,
   createOrderController,
   getAdminOrderByIdController,
   getAdminOrdersController,
@@ -39,6 +40,19 @@ export async function ordersRoutes(app: FastifyInstance) {
       ],
     },
     getAdminOrderByIdController,
+  );
+
+    app.post<{
+    Params: OrderIdParams;
+  }>(
+    "/admin/orders/:id/payment-link",
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator"]),
+      ],
+    },
+    createAdminOrderPaymentLinkController,
   );
 
   app.patch<{

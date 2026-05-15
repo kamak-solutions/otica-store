@@ -100,3 +100,12 @@ export function updateAdminOrderStatus(id: string, status: OrderStatus) {
     },
   );
 }
+export function createAdminOrderPaymentLink(id: string) {
+  return apiFetch<UpdateAdminOrderStatusResponse>(
+    `/admin/orders/${id}/payment-link`,
+    {
+      method: "POST",
+      headers: getAdminAuthHeaders(),
+    },
+  );
+}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
+  createAdminOrderPaymentLink,
   getAdminOrderById,
   updateAdminOrderStatus,
   type AdminOrder,
@@ -45,6 +46,8 @@ export function AdminOrderDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isCreatingPaymentLink, setIsCreatingPaymentLink] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   async function loadOrder() {
     if (!id) {
@@ -90,7 +93,30 @@ export function AdminOrderDetail() {
       setIsUpdatingStatus(false);
     }
   }
+  async function handleCreatePaymentLink() {
+    if (!order) {
+      return;
+    }
 
+    try {
+      setIsCreatingPaymentLink(true);
+      setErrorMessage("");
+      setSuccessMessage("");
+
+      const response = await createAdminOrderPaymentLink(order.id);
+
+      setOrder(response.data);
+      setSuccessMessage("Link de pagamento criado com sucesso.");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Erro ao criar link de pagamento.",
+      );
+    } finally {
+      setIsCreatingPaymentLink(false);
+    }
+  }
   useEffect(() => {
     loadOrder();
   }, [id]);
@@ -108,6 +134,11 @@ export function AdminOrderDetail() {
       <section className="admin-page">
         <div className="admin-page-heading">
           <div>
+            {successMessage && (
+              <p className="admin-state-message admin-success-message">
+                {successMessage}
+              </p>
+            )}
             <span>Admin</span>
             <h1>Pedido não encontrado</h1>
             <p>{errorMessage || "Não foi possível encontrar este pedido."}</p>
@@ -195,6 +226,30 @@ export function AdminOrderDetail() {
                 </a>
               </p>
             )}
+            <div className="admin-payment-actions">
+              <button
+                type="button"
+                disabled={
+                  isCreatingPaymentLink || order.paymentStatus === "paid"
+                }
+                onClick={handleCreatePaymentLink}
+              >
+                {isCreatingPaymentLink
+                  ? "Gerando link..."
+                  : "Gerar link de pagamento"}
+              </button>
+
+              {order.paymentUrl && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigator.clipboard.writeText(order.paymentUrl ?? "")
+                  }
+                >
+                  Copiar link
+                </button>
+              )}
+            </div>
 
             <p>
               <strong>Pago em:</strong>{" "}

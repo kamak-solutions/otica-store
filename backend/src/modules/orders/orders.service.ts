@@ -1,6 +1,7 @@
 import { prisma } from "../../lib/prisma.js";
 import type { CreateOrderBody, OrderStatus } from "./orders.schemas.js";
 import { AppError } from "../../errors/app-error.js";
+import { createMercadoPagoPreference } from "../payments/mercado-pago.service.js";
 import {
   isAdult,
   isValidCpf,
@@ -145,6 +146,54 @@ export async function updateOrderStatus(id: string, status: OrderStatus) {
     },
     data: {
       status,
+    },
+    include: {
+      customer: true,
+      items: true,
+    },
+  });
+}
+export async function createOrderPaymentLink(id: string) {
+  const order = await prisma.order.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      customer: true,
+      items: true,
+    },
+  });
+
+  if (!order) {
+    throw new AppError("Pedido não encontrado.", 404, "Not found");
+  }
+
+  if (order.paymentStatus === "paid") {
+    throw new AppError("Este pedido já está pago.", 400, "Bad Request");
+  }
+
+  const preference = await createMercadoPagoPreference({
+    orderId: order.id,
+    orderNumber: order.orderNumber ?? order.id,
+    customerEmail: order.customer.email,
+    items: order.items.map((item) => ({
+      title: item.productName,
+      quantity: item.quantity,
+      unit_price: Number(item.unitPrice),
+      currency_id: "BRL",
+    })),
+  });
+
+  return prisma.order.update({
+    where: {
+      id: order.id,
+    },
+    data: {
+      paymentStatus: "waiting_payment",
+      paymentMethod: "checkout_pro",
+      paymentProvider: "mercado_pago",
+      paymentProviderId: preference.providerId,
+      paymentUrl: preference.paymentUrl,
     },
     include: {
       customer: true,

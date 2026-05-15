@@ -4748,3 +4748,75 @@ a {
     font-size: 0.9rem;
   }
 }
+
+.admin-payment-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.admin-payment-actions button,
+.admin-payment-actions a {
+  min-height: 38px;
+  border: 1px solid #b8914b;
+  border-radius: 999px;
+  padding: 0 14px;
+  background: #b8914b;
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 950;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.admin-payment-actions button:hover,
+.admin-payment-actions a:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(184, 145, 75, 0.22);
+}
+
+.admin-payment-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+  box-shadow: none;
+}
+
+.admin-payment-actions button:nth-child(2) {
+  background: #ffffff;
+  color: #b8914b;
+}
+
+.admin-order-detail-payment {
+  margin-top: 18px;
+  border-top: 1px solid #f0e4db;
+  padding-top: 16px;
+}
+
+.admin-order-detail-payment h3 {
+  margin: 0 0 10px;
+  color: #2c2520;
+  font-size: 1rem;
+}
+
+.admin-order-detail-payment a {
+  color: #b8914b;
+  font-weight: 950;
+}
+
+@media (max-width: 620px) {
+  .admin-payment-actions {
+    flex-direction: column;
+  }
+
+  .admin-payment-actions button,
+  .admin-payment-actions a {
+    width: 100%;
+  }
+}

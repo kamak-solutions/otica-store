@@ -4,6 +4,7 @@ import {
   createOrder,
   findAdminOrderById,
   listAdminOrders,
+  createOrderPaymentLink,
   updateOrderStatus,
 } from "./orders.service.js";
 import { mapOrderToHttp } from "./orders.mapper.js";
@@ -103,5 +104,36 @@ export async function updateOrderStatusController(
   return reply.send({
     data: mapOrderToHttp(order),
     message: "Status do pedido atualizado com sucesso.",
+  });
+}
+export async function createAdminOrderPaymentLinkController(
+  request: FastifyRequest<{
+    Params: OrderIdParams;
+  }>,
+  reply: FastifyReply,
+) {
+  const { id } = orderIdParamsSchema.parse(request.params);
+
+  request.log.info({ id }, "Creating Mercado Pago payment link for order");
+
+  const order = await createOrderPaymentLink(id);
+
+  await createAdminAuditLog({
+    adminId: request.admin?.sub,
+    adminEmail: request.admin?.email,
+    adminRole: request.admin?.role,
+    action: "order.payment_link_created",
+    entity: "Order",
+    entityId: order.id,
+    metadata: {
+      paymentProvider: order.paymentProvider,
+      paymentProviderId: order.paymentProviderId,
+      paymentStatus: order.paymentStatus,
+    },
+  });
+
+  return reply.send({
+    data: mapOrderToHttp(order),
+    message: "Link de pagamento criado com sucesso.",
   });
 }
