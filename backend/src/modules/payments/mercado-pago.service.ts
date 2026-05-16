@@ -44,7 +44,9 @@ export async function createMercadoPagoPreference(
         external_reference: input.orderId,
         items: input.items,
         payer: {
-          email: input.customerEmail,
+          email: env.MERCADO_PAGO_ACCESS_TOKEN.startsWith("TEST-")
+            ? "test@testuser.com"
+            : input.customerEmail,
         },
         metadata: {
           orderId: input.orderId,
@@ -66,11 +68,11 @@ export async function createMercadoPagoPreference(
   if (!response.ok) {
     console.error("Mercado Pago preference error:", data);
 
-throw new AppError(
-  "Erro ao criar preferência de pagamento no Mercado Pago.",
-  502,
-  "Bad Gateway",
-);
+    throw new AppError(
+      "Erro ao criar preferência de pagamento no Mercado Pago.",
+      502,
+      "Bad Gateway",
+    );
   }
 
   const preference = data as MercadoPagoPreferenceResponse;
