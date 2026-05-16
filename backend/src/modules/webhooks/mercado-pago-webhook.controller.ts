@@ -24,10 +24,25 @@ export async function mercadoPagoWebhookController(
     "Mercado Pago webhook received",
   );
 
-  const result = await processMercadoPagoWebhook(request.body);
+  try {
+    const result = await processMercadoPagoWebhook(request.body);
 
-  return reply.send({
-    received: true,
-    result,
-  });
+    return reply.send({
+      received: true,
+      result,
+    });
+  } catch (error) {
+    request.log.error(
+      {
+        error,
+        body: request.body,
+      },
+      "Mercado Pago webhook processing failed",
+    );
+
+    return reply.send({
+      received: true,
+      ignored: true,
+    });
+  }
 }
