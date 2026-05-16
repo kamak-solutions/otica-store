@@ -89,3 +89,48 @@ throw new AppError(
     paymentUrl,
   };
 }
+type MercadoPagoPaymentResponse = {
+  id: number;
+  status: string;
+  status_detail?: string;
+  payment_method_id?: string;
+  external_reference?: string;
+  transaction_amount?: number;
+  date_approved?: string | null;
+};
+
+export async function getMercadoPagoPayment(paymentId: string) {
+  if (!env.MERCADO_PAGO_ACCESS_TOKEN) {
+    throw new AppError(
+      "Mercado Pago não configurado.",
+      500,
+      "Internal Server Error",
+    );
+  }
+
+  const response = await fetch(
+    `https://api.mercadopago.com/v1/payments/${paymentId}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${env.MERCADO_PAGO_ACCESS_TOKEN}`,
+      },
+    },
+  );
+
+  const data = (await response.json()) as
+    | MercadoPagoPaymentResponse
+    | { message?: string; error?: string; status?: number };
+
+  if (!response.ok) {
+    console.error("Mercado Pago payment query error:", data);
+
+    throw new AppError(
+      "Erro ao consultar pagamento no Mercado Pago.",
+      502,
+      "Bad Gateway",
+    );
+  }
+
+  return data as MercadoPagoPaymentResponse;
+}

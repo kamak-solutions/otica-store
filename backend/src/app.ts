@@ -16,6 +16,7 @@ import multipart from "@fastify/multipart";
 import { uploadsRoutes } from "./modules/uploads/uploads.routes.js";
 import { customersRoutes } from "./modules/customers/customers.routes.js";
 import { adminUsersRoutes } from "./modules/admin-users/admin-users.routes.js";
+import { mercadoPagoWebhookRoutes } from "./modules/webhooks/mercado-pago-webhook.routes.js";
 
 export const app = Fastify({
   logger: {
@@ -87,3 +88,4 @@ app.register(adminAuditRoutes);
 app.register(uploadsRoutes);
 app.register(customersRoutes);
 app.register(adminUsersRoutes);
+app.register(mercadoPagoWebhookRoutes);

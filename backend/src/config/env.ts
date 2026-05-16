@@ -15,6 +15,7 @@ export const env = {
 
   MERCADO_PAGO_ACCESS_TOKEN: process.env.MERCADO_PAGO_ACCESS_TOKEN || "",
   MERCADO_PAGO_PUBLIC_KEY: process.env.MERCADO_PAGO_PUBLIC_KEY || "",
+  MERCADO_PAGO_WEBHOOK_SECRET: process.env.MERCADO_PAGO_WEBHOOK_SECRET || "",
 };
 
 export const allowedOrigins = env.ALLOWED_ORIGINS.split(",").map((origin) =>
@@ -23,3 +24,4 @@ export const allowedOrigins = env.ALLOWED_ORIGINS.split(",").map((origin) =>
 
 export const isDevelopment = env.NODE_ENV !== "production";
 export const isProduction = env.NODE_ENV === "production";
+
