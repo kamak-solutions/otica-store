@@ -5019,3 +5019,12 @@ a {
     flex-direction: column;
   }
 }
+.admin-storefront-actions .admin-storefront-danger-action {
+  border: 1px solid #c94a4a;
+  background: #ffffff;
+  color: #c94a4a;
+}
+
+.admin-storefront-actions .admin-storefront-danger-action:hover {
+  background: #fff4f4;
+}

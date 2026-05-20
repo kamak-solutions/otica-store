@@ -5,6 +5,7 @@ import {
 } from "../admin-auth/admin-auth.middleware.js";
 import {
   createAdminHeroSlideController,
+  deleteAdminHeroSlideController,
   getAdminHeroSlidesController,
   getPublicHeroSlidesController,
   updateAdminHeroSlideController,
@@ -52,5 +53,17 @@ export async function storefrontRoutes(app: FastifyInstance) {
       ],
     },
     updateAdminHeroSlideController,
+  );
+  app.delete<{
+    Params: StorefrontHeroSlideIdParams;
+  }>(
+    "/admin/storefront/hero-slides/:id",
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator"]),
+      ],
+    },
+    deleteAdminHeroSlideController,
   );
 }

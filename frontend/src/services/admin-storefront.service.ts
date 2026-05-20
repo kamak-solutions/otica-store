@@ -67,3 +67,12 @@ export function updateAdminHeroSlide(
     },
   );
 }
+export function deleteAdminHeroSlide(id: string) {
+  return apiFetch<UpdateHeroSlideResponse>(
+    `/admin/storefront/hero-slides/${id}`,
+    {
+      method: "DELETE",
+      headers: getAdminAuthHeaders(),
+    },
+  );
+}

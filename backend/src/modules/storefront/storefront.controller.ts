@@ -1,6 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import {
   createHeroSlide,
+   deleteHeroSlide,
   listAdminHeroSlides,
   listPublicHeroSlides,
   updateHeroSlide,
@@ -73,5 +74,22 @@ export async function updateAdminHeroSlideController(
   return reply.send({
     data: slide,
     message: "Slide da vitrine atualizado com sucesso.",
+  });
+}
+export async function deleteAdminHeroSlideController(
+  request: FastifyRequest<{
+    Params: StorefrontHeroSlideIdParams;
+  }>,
+  reply: FastifyReply,
+) {
+  const { id } = storefrontHeroSlideIdParamsSchema.parse(request.params);
+
+  request.log.info({ id }, "Deleting storefront hero slide");
+
+  const slide = await deleteHeroSlide(id);
+
+  return reply.send({
+    data: slide,
+    message: "Slide da vitrine excluído com sucesso.",
   });
 }

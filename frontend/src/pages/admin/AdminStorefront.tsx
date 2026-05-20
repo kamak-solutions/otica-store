@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { uploadStorefrontImage } from "../../services/admin-uploads.service";
 import {
   createAdminHeroSlide,
+  deleteAdminHeroSlide,
   listAdminHeroSlides,
   updateAdminHeroSlide,
   type UpdateStorefrontHeroSlidePayload,
@@ -240,6 +241,41 @@ export function AdminStorefront() {
       setSavingSlideId("");
     }
   }
+  async function handleDeleteSlide(slide: StorefrontHeroSlide) {
+    const confirmed = window.confirm(
+      `Tem certeza que deseja excluir o slide "${slide.title}"? Essa ação não pode ser desfeita.`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setSavingSlideId(slide.id);
+      setErrorMessage("");
+      setSuccessMessage("");
+
+      await deleteAdminHeroSlide(slide.id);
+
+      setSlides((currentSlides) =>
+        currentSlides.filter((currentSlide) => currentSlide.id !== slide.id),
+      );
+
+      setForms((currentForms) => {
+        const nextForms = { ...currentForms };
+        delete nextForms[slide.id];
+        return nextForms;
+      });
+
+      setSuccessMessage("Slide excluído com sucesso.");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Erro ao excluir slide.",
+      );
+    } finally {
+      setSavingSlideId("");
+    }
+  }
   async function handleSaveSlide(slide: StorefrontHeroSlide) {
     const formData = forms[slide.id];
 
@@ -470,6 +506,14 @@ export function AdminStorefront() {
                   onClick={() => handleToggleSlideActive(slide)}
                 >
                   {formData.active ? "Desativar slide" : "Ativar slide"}
+                </button>
+                <button
+                  type="button"
+                  className="admin-storefront-danger-action"
+                  disabled={savingSlideId === slide.id}
+                  onClick={() => handleDeleteSlide(slide)}
+                >
+                  Excluir slide
                 </button>
 
                 <button

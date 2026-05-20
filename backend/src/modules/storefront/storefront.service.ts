@@ -50,3 +50,22 @@ export async function updateHeroSlide(
     data,
   });
 }
+export async function deleteHeroSlide(id: string) {
+  const slide = await prisma.storefrontHeroSlide.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!slide) {
+    throw new AppError("Slide da vitrine não encontrado.", 404, "Not found");
+  }
+
+  await prisma.storefrontHeroSlide.delete({
+    where: {
+      id,
+    },
+  });
+
+  return slide;
+}
