@@ -36,8 +36,21 @@ function getAdminAuthHeaders(): Record<string, string> {
 }
 
 export function listAdminHeroSlides() {
-  return apiFetch<ListAdminHeroSlidesResponse>("/admin/storefront/hero-slides", {
+  return apiFetch<ListAdminHeroSlidesResponse>(
+    "/admin/storefront/hero-slides",
+    {
+      headers: getAdminAuthHeaders(),
+    },
+  );
+}
+
+export function createAdminHeroSlide(
+  payload: UpdateStorefrontHeroSlidePayload,
+) {
+  return apiFetch<UpdateHeroSlideResponse>("/admin/storefront/hero-slides", {
+    method: "POST",
     headers: getAdminAuthHeaders(),
+    body: JSON.stringify(payload),
   });
 }
 

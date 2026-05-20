@@ -4,11 +4,13 @@ import {
   requireAdminRole,
 } from "../admin-auth/admin-auth.middleware.js";
 import {
+  createAdminHeroSlideController,
   getAdminHeroSlidesController,
   getPublicHeroSlidesController,
   updateAdminHeroSlideController,
 } from "./storefront.controller.js";
 import type {
+  CreateStorefrontHeroSlideBody,
   StorefrontHeroSlideIdParams,
   UpdateStorefrontHeroSlideBody,
 } from "./storefront.schemas.js";
@@ -25,6 +27,18 @@ export async function storefrontRoutes(app: FastifyInstance) {
       ],
     },
     getAdminHeroSlidesController,
+  );
+  app.post<{
+    Body: CreateStorefrontHeroSlideBody;
+  }>(
+    "/admin/storefront/hero-slides",
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator"]),
+      ],
+    },
+    createAdminHeroSlideController,
   );
   app.patch<{
     Params: StorefrontHeroSlideIdParams;

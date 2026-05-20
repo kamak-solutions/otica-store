@@ -5003,3 +5003,19 @@ a {
     width: 100%;
   }
 }
+.admin-storefront-actions {
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-storefront-actions .admin-storefront-secondary-action {
+  border: 1px solid #b8914b;
+  background: #ffffff;
+  color: #b8914b;
+}
+
+@media (max-width: 760px) {
+  .admin-storefront-actions {
+    flex-direction: column;
+  }
+}

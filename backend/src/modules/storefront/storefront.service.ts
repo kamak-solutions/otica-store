@@ -1,6 +1,9 @@
 import { AppError } from "../../errors/app-error.js";
 import { prisma } from "../../lib/prisma.js";
-import type { UpdateStorefrontHeroSlideBody } from "./storefront.schemas.js";
+import type {
+  CreateStorefrontHeroSlideBody,
+  UpdateStorefrontHeroSlideBody,
+} from "./storefront.schemas.js";
 
 export async function listPublicHeroSlides() {
   return prisma.storefrontHeroSlide.findMany({
@@ -18,6 +21,12 @@ export async function listAdminHeroSlides() {
     orderBy: {
       position: "asc",
     },
+  });
+}
+
+export async function createHeroSlide(data: CreateStorefrontHeroSlideBody) {
+  return prisma.storefrontHeroSlide.create({
+    data,
   });
 }
 export async function updateHeroSlide(

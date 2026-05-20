@@ -182,7 +182,64 @@ export function AdminStorefront() {
       setIsCreatingSlide(false);
     }
   }
+  async function handleToggleSlideActive(slide: StorefrontHeroSlide) {
+    const formData = forms[slide.id];
 
+    if (!formData) {
+      return;
+    }
+
+    const nextActive = !formData.active;
+
+    const payload: UpdateStorefrontHeroSlidePayload = {
+      kicker: formData.kicker,
+      title: formData.title,
+      description: formData.description,
+      imageUrl: formData.imageUrl,
+      primaryAction: formData.primaryAction,
+      secondaryAction: formData.secondaryAction,
+      position: Number(formData.position),
+      active: nextActive,
+    };
+
+    try {
+      setSavingSlideId(slide.id);
+      setErrorMessage("");
+      setSuccessMessage("");
+
+      const response = await updateAdminHeroSlide(slide.id, payload);
+
+      setSlides((currentSlides) =>
+        currentSlides
+          .map((currentSlide) =>
+            currentSlide.id === slide.id ? response.data : currentSlide,
+          )
+          .sort(
+            (firstSlide, secondSlide) =>
+              firstSlide.position - secondSlide.position,
+          ),
+      );
+
+      setForms((currentForms) => ({
+        ...currentForms,
+        [slide.id]: createFormDataFromSlide(response.data),
+      }));
+
+      setSuccessMessage(
+        nextActive
+          ? "Slide ativado com sucesso."
+          : "Slide desativado com sucesso.",
+      );
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Erro ao alterar status do slide.",
+      );
+    } finally {
+      setSavingSlideId("");
+    }
+  }
   async function handleSaveSlide(slide: StorefrontHeroSlide) {
     const formData = forms[slide.id];
 
@@ -406,6 +463,15 @@ export function AdminStorefront() {
               </div>
 
               <div className="admin-storefront-actions">
+                <button
+                  type="button"
+                  className="admin-storefront-secondary-action"
+                  disabled={savingSlideId === slide.id}
+                  onClick={() => handleToggleSlideActive(slide)}
+                >
+                  {formData.active ? "Desativar slide" : "Ativar slide"}
+                </button>
+
                 <button
                   type="button"
                   disabled={savingSlideId === slide.id}
