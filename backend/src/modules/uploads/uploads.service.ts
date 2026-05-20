@@ -66,3 +66,30 @@ export async function uploadProductImageFile({
     uploadStream.end(buffer);
   });
 }
+export async function uploadStorefrontImageFile({
+  buffer,
+}: {
+  buffer: Buffer;
+}) {
+  return new Promise<CloudinaryUploadResult>((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "otica-showroom/storefront",
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error || !result) {
+          reject(error ?? new Error("Erro ao enviar imagem da vitrine para Cloudinary."));
+          return;
+        }
+
+        resolve({
+          secure_url: result.secure_url,
+          public_id: result.public_id,
+        });
+      },
+    );
+
+    uploadStream.end(buffer);
+  });
+}

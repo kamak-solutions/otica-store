@@ -9,11 +9,12 @@ export async function apiFetch<T>(
   options?: RequestInit,
 ): Promise<T> {
   const hasBody = Boolean(options?.body);
+  const isFormData = options?.body instanceof FormData;
 
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
     headers: {
-      ...(hasBody ? { "Content-Type": "application/json" } : {}),
+      ...(hasBody && !isFormData ? { "Content-Type": "application/json" } : {}),
       ...options?.headers,
     },
   });

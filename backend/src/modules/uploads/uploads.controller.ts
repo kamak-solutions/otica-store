@@ -4,6 +4,7 @@ import { AppError } from "../../errors/app-error.js";
 import {
   uploadPrescriptionFile,
   uploadProductImageFile,
+  uploadStorefrontImageFile,
 } from "./uploads.service.js";
 
 const allowedMimeTypes = [
@@ -107,5 +108,52 @@ export async function uploadProductImageController(
       mimetype: file.mimetype,
     },
     message: "Imagem do produto enviada com sucesso.",
+  });
+}
+export async function uploadStorefrontImageController(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  const file = await request.file();
+
+  if (!file) {
+    throw new AppError("Imagem não enviada.", 400, "Bad Request");
+  }
+
+  if (!allowedProductImageMimeTypes.includes(file.mimetype)) {
+    throw new AppError(
+      "Tipo de imagem inválido. Envie JPG, PNG ou WEBP.",
+      400,
+      "Bad Request",
+    );
+  }
+
+  const buffer = await file.toBuffer();
+
+  const signatureValidation = validateFileSignature({
+    buffer,
+    allowedTypes: ["jpg", "png", "webp"],
+  });
+
+  if (!signatureValidation.valid) {
+    throw new AppError(
+      "Imagem inválida. A assinatura do arquivo não corresponde a JPG, PNG ou WEBP.",
+      400,
+      "Bad Request",
+    );
+  }
+
+  const uploadedFile = await uploadStorefrontImageFile({
+    buffer,
+  });
+
+  return reply.status(201).send({
+    data: {
+      url: uploadedFile.secure_url,
+      publicId: uploadedFile.public_id,
+      originalFilename: file.filename,
+      mimetype: file.mimetype,
+    },
+    message: "Imagem da vitrine enviada com sucesso.",
   });
 }

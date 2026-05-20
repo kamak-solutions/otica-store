@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { uploadStorefrontImage } from "../../services/admin-uploads.service";
 import {
+  createAdminHeroSlide,
   listAdminHeroSlides,
   updateAdminHeroSlide,
   type UpdateStorefrontHeroSlidePayload,
@@ -15,6 +17,16 @@ type SlideFormData = {
   secondaryAction: string;
   position: string;
   active: boolean;
+};
+const emptySlideFormData: SlideFormData = {
+  kicker: "",
+  title: "",
+  description: "",
+  imageUrl: "",
+  primaryAction: "",
+  secondaryAction: "",
+  position: "0",
+  active: true,
 };
 
 function createFormDataFromSlide(slide: StorefrontHeroSlide): SlideFormData {
@@ -37,6 +49,10 @@ export function AdminStorefront() {
   const [savingSlideId, setSavingSlideId] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [newSlideForm, setNewSlideForm] =
+    useState<SlideFormData>(emptySlideFormData);
+  const [isCreatingSlide, setIsCreatingSlide] = useState(false);
+  const [uploadingImageFor, setUploadingImageFor] = useState("");
 
   async function loadSlides() {
     try {
@@ -57,9 +73,7 @@ export function AdminStorefront() {
       setForms(nextForms);
     } catch (error) {
       setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Erro ao carregar vitrine.",
+        error instanceof Error ? error.message : "Erro ao carregar vitrine.",
       );
     } finally {
       setIsLoading(false);
@@ -82,6 +96,91 @@ export function AdminStorefront() {
         [field]: value,
       },
     }));
+  }
+  function updateNewSlideField(
+    field: keyof SlideFormData,
+    value: string | boolean,
+  ) {
+    setNewSlideForm((currentForm) => ({
+      ...currentForm,
+      [field]: value,
+    }));
+  }
+  async function handleUploadImage(
+    target: "new" | string,
+    file: File | undefined,
+  ) {
+    if (!file) {
+      return;
+    }
+
+    try {
+      setUploadingImageFor(target);
+      setErrorMessage("");
+      setSuccessMessage("");
+
+      const response = await uploadStorefrontImage(file);
+
+      if (target === "new") {
+        setNewSlideForm((currentForm) => ({
+          ...currentForm,
+          imageUrl: response.data.url,
+        }));
+      } else {
+        updateFormField(target, "imageUrl", response.data.url);
+      }
+
+      setSuccessMessage("Imagem enviada com sucesso.");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Erro ao enviar imagem.",
+      );
+    } finally {
+      setUploadingImageFor("");
+    }
+  }
+  async function handleCreateSlide(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const payload: UpdateStorefrontHeroSlidePayload = {
+      kicker: newSlideForm.kicker,
+      title: newSlideForm.title,
+      description: newSlideForm.description,
+      imageUrl: newSlideForm.imageUrl,
+      primaryAction: newSlideForm.primaryAction,
+      secondaryAction: newSlideForm.secondaryAction,
+      position: Number(newSlideForm.position),
+      active: newSlideForm.active,
+    };
+
+    try {
+      setIsCreatingSlide(true);
+      setErrorMessage("");
+      setSuccessMessage("");
+
+      const response = await createAdminHeroSlide(payload);
+
+      setSlides((currentSlides) =>
+        [...currentSlides, response.data].sort(
+          (firstSlide, secondSlide) =>
+            firstSlide.position - secondSlide.position,
+        ),
+      );
+
+      setForms((currentForms) => ({
+        ...currentForms,
+        [response.data.id]: createFormDataFromSlide(response.data),
+      }));
+
+      setNewSlideForm(emptySlideFormData);
+      setSuccessMessage("Novo slide criado com sucesso.");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Erro ao criar slide.",
+      );
+    } finally {
+      setIsCreatingSlide(false);
+    }
   }
 
   async function handleSaveSlide(slide: StorefrontHeroSlide) {
@@ -114,7 +213,10 @@ export function AdminStorefront() {
           .map((currentSlide) =>
             currentSlide.id === slide.id ? response.data : currentSlide,
           )
-          .sort((firstSlide, secondSlide) => firstSlide.position - secondSlide.position),
+          .sort(
+            (firstSlide, secondSlide) =>
+              firstSlide.position - secondSlide.position,
+          ),
       );
 
       setForms((currentForms) => ({
@@ -238,7 +340,6 @@ export function AdminStorefront() {
                     }
                   />
                 </label>
-
                 <label className="admin-storefront-full">
                   URL da imagem
                   <input
@@ -246,6 +347,18 @@ export function AdminStorefront() {
                     value={formData.imageUrl}
                     onChange={(event) =>
                       updateFormField(slide.id, "imageUrl", event.target.value)
+                    }
+                  />
+                </label>
+
+                <label className="admin-storefront-full">
+                  Enviar nova imagem
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    disabled={uploadingImageFor === slide.id}
+                    onChange={(event) =>
+                      handleUploadImage(slide.id, event.target.files?.[0])
                     }
                   />
                 </label>
@@ -305,6 +418,123 @@ export function AdminStorefront() {
           );
         })}
       </div>
+      <form className="admin-storefront-card" onSubmit={handleCreateSlide}>
+        <h2>Novo slide</h2>
+
+        <div className="admin-storefront-form-grid">
+          <label>
+            Chamada
+            <input
+              type="text"
+              value={newSlideForm.kicker}
+              onChange={(event) =>
+                updateNewSlideField("kicker", event.target.value)
+              }
+              required
+            />
+          </label>
+
+          <label>
+            Posição
+            <input
+              type="number"
+              min="0"
+              value={newSlideForm.position}
+              onChange={(event) =>
+                updateNewSlideField("position", event.target.value)
+              }
+              required
+            />
+          </label>
+
+          <label className="admin-storefront-full">
+            Título
+            <input
+              type="text"
+              value={newSlideForm.title}
+              onChange={(event) =>
+                updateNewSlideField("title", event.target.value)
+              }
+              required
+            />
+          </label>
+
+          <label className="admin-storefront-full">
+            Descrição
+            <textarea
+              value={newSlideForm.description}
+              onChange={(event) =>
+                updateNewSlideField("description", event.target.value)
+              }
+              required
+            />
+          </label>
+
+          <label className="admin-storefront-full">
+            URL da imagem
+            <input
+              type="url"
+              value={newSlideForm.imageUrl}
+              onChange={(event) =>
+                updateNewSlideField("imageUrl", event.target.value)
+              }
+              required
+            />
+          </label>
+          <label className="admin-storefront-full">
+            Enviar imagem
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              disabled={uploadingImageFor === "new"}
+              onChange={(event) =>
+                handleUploadImage("new", event.target.files?.[0])
+              }
+            />
+          </label>
+
+          <label>
+            Botão principal
+            <input
+              type="text"
+              value={newSlideForm.primaryAction}
+              onChange={(event) =>
+                updateNewSlideField("primaryAction", event.target.value)
+              }
+              required
+            />
+          </label>
+
+          <label>
+            Botão secundário
+            <input
+              type="text"
+              value={newSlideForm.secondaryAction}
+              onChange={(event) =>
+                updateNewSlideField("secondaryAction", event.target.value)
+              }
+              required
+            />
+          </label>
+
+          <label className="admin-storefront-checkbox">
+            <input
+              type="checkbox"
+              checked={newSlideForm.active}
+              onChange={(event) =>
+                updateNewSlideField("active", event.target.checked)
+              }
+            />
+            Slide ativo
+          </label>
+        </div>
+
+        <div className="admin-storefront-actions">
+          <button type="submit" disabled={isCreatingSlide}>
+            {isCreatingSlide ? "Criando..." : "Criar novo slide"}
+          </button>
+        </div>
+      </form>
     </section>
   );
 }
