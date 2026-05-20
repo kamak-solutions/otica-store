@@ -23,6 +23,7 @@ import { AdminUsers } from "./pages/admin/AdminUsers";
 import { PrivacyPolicy } from "./pages/public/PrivacyPolicy";
 import { BlogPostDetail } from "./pages/public/BlogPostDetail";
 import { AdminOrderDetail } from "./pages/admin/AdminOrderDetail";
+import { AdminStorefront } from "./pages/admin/AdminStorefront";
 
 export default function App() {
   return (
@@ -51,6 +52,7 @@ export default function App() {
           <Route path="/admin/produtos/novo" element={<AdminProductCreate />} />
           <Route path="/admin/produtos/:id/editar" element={<AdminProductEdit />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/vitrine" element={<AdminStorefront />} />
           <Route path="/admin/clientes" element={<AdminCustomers />} />
           <Route path="/admin/usuarios" element={<AdminUsers />} />
           <Route path="/admin/pedidos/:id" element={<AdminOrderDetail />} />

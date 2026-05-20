@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
-import { heroSlides } from "../../../data/home-content";
+import { heroSlides as fallbackHeroSlides } from "../../../data/home-content";
+import type { StorefrontHeroSlide } from "../../../services/storefront.service";
 
-export function HeroCarousel() {
+type HeroCarouselProps = {
+  slides?: StorefrontHeroSlide[];
+};
+
+export function HeroCarousel({ slides }: HeroCarouselProps) {
+  const heroSlides = slides && slides.length > 0 ? slides : fallbackHeroSlides;
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
 
   useEffect(() => {
+    if (heroSlides.length <= 1) {
+      return;
+    }
+
     const interval = window.setInterval(() => {
       setActiveSlideIndex((currentIndex) =>
         currentIndex === heroSlides.length - 1 ? 0 : currentIndex + 1,
@@ -12,7 +22,13 @@ export function HeroCarousel() {
     }, 5500);
 
     return () => window.clearInterval(interval);
-  }, []);
+  }, [heroSlides.length]);
+
+  useEffect(() => {
+    if (activeSlideIndex > heroSlides.length - 1) {
+      setActiveSlideIndex(0);
+    }
+  }, [activeSlideIndex, heroSlides.length]);
 
   const activeSlide = heroSlides[activeSlideIndex];
 
@@ -50,7 +66,7 @@ export function HeroCarousel() {
         <div className="hero-dots">
           {heroSlides.map((slide, index) => (
             <button
-              key={slide.title}
+             key={`${slide.title}-${index}`}
               className={index === activeSlideIndex ? "active" : ""}
               type="button"
               aria-label={`Ir para banner ${index + 1}`}

@@ -15,7 +15,8 @@
     "db:reset:admin-password": "tsx prisma/seed/reset-admin-password.seed.ts",
     "db:seed:categories": "tsx prisma/seed/categories.seed.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:seed:storefront": "tsx prisma/seed/storefront-hero-slides.seed.ts"
   },
   "keywords": [],
   "author": "",

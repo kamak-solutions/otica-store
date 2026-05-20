@@ -12,6 +12,10 @@ import { getProducts } from "../../services/products.service";
 import { audienceFilters, categoryFilters } from "../../data/home-content";
 import type { Product } from "../../types/product";
 import { Seo } from "../../components/seo/Seo";
+import {
+  listPublicHeroSlides,
+  type StorefrontHeroSlide,
+} from "../../services/storefront.service";
 
 function normalizeAudienceFilter(filter: string) {
   if (filter === "Todos") {
@@ -43,6 +47,7 @@ export function Home() {
   const [activeCategoryFilter, setActiveCategoryFilter] = useState("Todos");
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [productsError, setProductsError] = useState("");
+  const [heroSlides, setHeroSlides] = useState<StorefrontHeroSlide[]>([]);
 
   useEffect(() => {
     async function loadProducts() {
@@ -60,6 +65,20 @@ export function Home() {
 
     loadProducts();
   }, []);
+
+  useEffect(() => {
+  async function loadHeroSlides() {
+    try {
+      const response = await listPublicHeroSlides();
+
+      setHeroSlides(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar slides da vitrine:", error);
+    }
+  }
+
+  loadHeroSlides();
+}, []);
 
   const audienceProducts = useMemo(() => {
     const selectedAudience = normalizeAudienceFilter(activeAudienceFilter);
@@ -91,7 +110,7 @@ export function Home() {
         title="Ótica ShowRoom | Óculos, lentes e orçamento online"
         description="Ótica ShowRoom: óculos de grau, armações, lentes e orçamento online com atendimento personalizado."
       />
-      <HeroCarousel />
+    <HeroCarousel slides={heroSlides} />
 
       <CategoryShortcuts />
 
