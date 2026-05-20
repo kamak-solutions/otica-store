@@ -136,18 +136,31 @@ a {
   object-fit: cover;
 }
 
+.hero-slider-image {
+  filter: saturate(1.12) contrast(1.05) !important;
+}
+
 .hero-slider-overlay {
-  position: absolute;
-  inset: 0;
   background:
     linear-gradient(
       90deg,
-      rgba(250, 247, 242, 0.95),
-      rgba(250, 247, 242, 0.72) 42%,
-      rgba(250, 247, 242, 0.18) 68%,
-      rgba(250, 247, 242, 0.04)
-    ),
-    linear-gradient(0deg, rgba(45, 37, 32, 0.18), rgba(45, 37, 32, 0));
+      rgba(248, 241, 234, 0.88) 0%,
+      rgba(248, 241, 234, 0.68) 34%,
+      rgba(248, 241, 234, 0.24) 58%,
+      rgba(248, 241, 234, 0.02) 100%
+    ) !important;
+}
+
+.hero-slider-content {
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.hero-slider-content h1 {
+  color: #2c2520;
+}
+
+.hero-slider-content p {
+  color: #6f625b;
 }
 
 .hero-slider-inner {
