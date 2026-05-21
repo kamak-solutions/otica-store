@@ -13,9 +13,12 @@ import { audienceFilters, categoryFilters } from "../../data/home-content";
 import type { Product } from "../../types/product";
 import { Seo } from "../../components/seo/Seo";
 import {
+  listPublicBanners,
   listPublicHeroSlides,
+  type StorefrontBanner,
   type StorefrontHeroSlide,
 } from "../../services/storefront.service";
+import { StorefrontThemeProvider } from "../../components/public/StorefrontThemeProvider";
 
 function normalizeAudienceFilter(filter: string) {
   if (filter === "Todos") {
@@ -48,6 +51,7 @@ export function Home() {
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [productsError, setProductsError] = useState("");
   const [heroSlides, setHeroSlides] = useState<StorefrontHeroSlide[]>([]);
+  const [banners, setBanners] = useState<StorefrontBanner[]>([]);
 
   useEffect(() => {
     async function loadProducts() {
@@ -67,18 +71,32 @@ export function Home() {
   }, []);
 
   useEffect(() => {
-  async function loadHeroSlides() {
-    try {
-      const response = await listPublicHeroSlides();
+    async function loadBanners() {
+      try {
+        const response = await listPublicBanners();
 
-      setHeroSlides(response.data);
-    } catch (error) {
-      console.error("Erro ao carregar slides da vitrine:", error);
+        setBanners(response.data);
+      } catch (error) {
+        console.error("Erro ao carregar banners da vitrine:", error);
+      }
     }
-  }
 
-  loadHeroSlides();
-}, []);
+    loadBanners();
+  }, []);
+
+  useEffect(() => {
+    async function loadHeroSlides() {
+      try {
+        const response = await listPublicHeroSlides();
+
+        setHeroSlides(response.data);
+      } catch (error) {
+        console.error("Erro ao carregar slides da vitrine:", error);
+      }
+    }
+
+    loadHeroSlides();
+  }, []);
 
   const audienceProducts = useMemo(() => {
     const selectedAudience = normalizeAudienceFilter(activeAudienceFilter);
@@ -103,18 +121,24 @@ export function Home() {
       .filter((product) => product.category?.slug === selectedCategory)
       .slice(0, 8);
   }, [products, activeCategoryFilter]);
+  const homeBanner = banners.find((banner) => banner.key === "home_banner");
+  const campaignBanner = banners.find(
+    (banner) => banner.key === "campaign_banner",
+  );
+  const quoteBanner = banners.find((banner) => banner.key === "quote_banner");
 
   return (
     <main className="home-page">
+      <StorefrontThemeProvider />
       <Seo
         title="Ótica ShowRoom | Óculos, lentes e orçamento online"
         description="Ótica ShowRoom: óculos de grau, armações, lentes e orçamento online com atendimento personalizado."
       />
-    <HeroCarousel slides={heroSlides} />
+      <HeroCarousel slides={heroSlides} />
 
       <CategoryShortcuts />
 
-      <HomeBanner />
+      <HomeBanner banner={homeBanner} />
       {productsError && (
         <section className="site-container">
           <p className="section-empty-message">{productsError}</p>
@@ -141,7 +165,7 @@ export function Home() {
         emptyMessage="Nenhum produto encontrado para esse público."
       />
 
-      <CampaignBanner />
+      <CampaignBanner banner={campaignBanner} />
 
       <ProductPreviewSection
         id="categorias"
@@ -155,7 +179,7 @@ export function Home() {
         emptyMessage="Nenhum produto encontrado para essa categoria."
       />
 
-      <QuoteBanner />
+      <QuoteBanner banner={quoteBanner} />
 
       <LensBrands />
 

@@ -20,6 +20,58 @@ export const updateStorefrontHeroSlideBodySchema = z.object({
   position: z.coerce.number().int().min(0).optional(),
   active: z.boolean().optional(),
 });
+export const storefrontBannerIdParamsSchema = z.object({
+  id: z.string().min(1, "ID do banner é obrigatório."),
+});
+
+export const updateStorefrontBannerBodySchema = z.object({
+  kicker: z.string().min(1, "Chamada é obrigatória.").optional(),
+  title: z.string().min(1, "Título é obrigatório.").optional(),
+  description: z.string().min(1, "Descrição é obrigatória.").optional(),
+  buttonLabel: z.string().min(1, "Texto do botão é obrigatório.").optional(),
+  buttonHref: z.string().min(1, "Link do botão é obrigatório.").optional(),
+  imageUrl: z.string().url("URL da imagem inválida.").nullable().optional(),
+  active: z.boolean().optional(),
+});
+export const updateStorefrontThemeBodySchema = z.object({
+  primaryColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Cor principal inválida.")
+    .optional(),
+  secondaryColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Cor secundária inválida.")
+    .optional(),
+  accentColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Cor de destaque inválida.")
+    .optional(),
+
+  backgroundColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Cor de fundo inválida.")
+    .optional(),
+  surfaceColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Cor dos cards inválida.")
+    .optional(),
+  titleColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Cor dos títulos inválida.")
+    .optional(),
+  textColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Cor dos textos inválida.")
+    .optional(),
+  borderColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Cor das bordas inválida.")
+    .optional(),
+  buttonTextColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Cor do texto dos botões inválida.")
+    .optional(),
+});
 
 export type StorefrontHeroSlideIdParams = z.infer<
   typeof storefrontHeroSlideIdParamsSchema
@@ -42,4 +94,14 @@ export const createStorefrontHeroSlideBodySchema = z.object({
 });
 export type CreateStorefrontHeroSlideBody = z.infer<
   typeof createStorefrontHeroSlideBodySchema
+>;
+export type StorefrontBannerIdParams = z.infer<
+  typeof storefrontBannerIdParamsSchema
+>;
+
+export type UpdateStorefrontBannerBody = z.infer<
+  typeof updateStorefrontBannerBodySchema
+>;
+export type UpdateStorefrontThemeBody = z.infer<
+  typeof updateStorefrontThemeBodySchema
 >;

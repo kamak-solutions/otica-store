@@ -2,7 +2,9 @@ import { AppError } from "../../errors/app-error.js";
 import { prisma } from "../../lib/prisma.js";
 import type {
   CreateStorefrontHeroSlideBody,
+  UpdateStorefrontBannerBody,
   UpdateStorefrontHeroSlideBody,
+  UpdateStorefrontThemeBody,
 } from "./storefront.schemas.js";
 
 export async function listPublicHeroSlides() {
@@ -68,4 +70,68 @@ export async function deleteHeroSlide(id: string) {
   });
 
   return slide;
+}
+export async function listPublicBanners() {
+  return prisma.storefrontBanner.findMany({
+    where: {
+      active: true,
+    },
+    orderBy: {
+      key: "asc",
+    },
+  });
+}
+
+export async function listAdminBanners() {
+  return prisma.storefrontBanner.findMany({
+    orderBy: {
+      key: "asc",
+    },
+  });
+}
+
+export async function updateBanner(
+  id: string,
+  data: UpdateStorefrontBannerBody,
+) {
+  const banner = await prisma.storefrontBanner.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!banner) {
+    throw new AppError("Banner da vitrine não encontrado.", 404, "Not found");
+  }
+
+  return prisma.storefrontBanner.update({
+    where: {
+      id,
+    },
+    data,
+  });
+}
+export async function getStorefrontTheme() {
+  return prisma.storefrontTheme.upsert({
+    where: {
+      key: "default",
+    },
+    update: {},
+    create: {
+      key: "default",
+    },
+  });
+}
+
+export async function updateStorefrontTheme(data: UpdateStorefrontThemeBody) {
+  return prisma.storefrontTheme.upsert({
+    where: {
+      key: "default",
+    },
+    update: data,
+    create: {
+      key: "default",
+      ...data,
+    },
+  });
 }

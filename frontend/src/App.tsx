@@ -24,6 +24,9 @@ import { PrivacyPolicy } from "./pages/public/PrivacyPolicy";
 import { BlogPostDetail } from "./pages/public/BlogPostDetail";
 import { AdminOrderDetail } from "./pages/admin/AdminOrderDetail";
 import { AdminStorefront } from "./pages/admin/AdminStorefront";
+import { AdminStorefrontSlides } from "./pages/admin/storefront/AdminStorefrontSlides";
+import { AdminStorefrontBanners } from "./pages/admin/storefront/AdminStorefrontBanners";
+import { AdminStorefrontColors } from "./pages/admin/storefront/AdminStorefrontColors";
 
 export default function App() {
   return (
@@ -50,9 +53,24 @@ export default function App() {
           <Route path="/admin/pedidos" element={<AdminOrders />} />
           <Route path="/admin/produtos" element={<AdminProducts />} />
           <Route path="/admin/produtos/novo" element={<AdminProductCreate />} />
-          <Route path="/admin/produtos/:id/editar" element={<AdminProductEdit />} />
+          <Route
+            path="/admin/produtos/:id/editar"
+            element={<AdminProductEdit />}
+          />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/vitrine" element={<AdminStorefront />} />
+          <Route
+            path="/admin/vitrine/cores"
+            element={<AdminStorefrontColors />}
+          />
+          <Route
+            path="/admin/vitrine/slides"
+            element={<AdminStorefrontSlides />}
+          />
+          <Route
+            path="/admin/vitrine/banners"
+            element={<AdminStorefrontBanners />}
+          />{" "}
           <Route path="/admin/clientes" element={<AdminCustomers />} />
           <Route path="/admin/usuarios" element={<AdminUsers />} />
           <Route path="/admin/pedidos/:id" element={<AdminOrderDetail />} />

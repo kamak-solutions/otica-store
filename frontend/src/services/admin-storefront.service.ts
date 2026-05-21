@@ -1,5 +1,9 @@
 import { apiFetch } from "./api";
-import type { StorefrontHeroSlide } from "./storefront.service";
+import type {
+  StorefrontBanner,
+  StorefrontHeroSlide,
+  StorefrontTheme,
+} from "./storefront.service";
 
 const ADMIN_TOKEN_STORAGE_KEY = "@otica-showroom:admin-token";
 
@@ -12,6 +16,27 @@ export type UpdateStorefrontHeroSlidePayload = {
   secondaryAction?: string;
   position?: number;
   active?: boolean;
+};
+
+export type UpdateStorefrontThemePayload = {
+  primaryColor?: string;
+  secondaryColor?: string;
+  accentColor?: string;
+  backgroundColor?: string;
+  surfaceColor?: string;
+  titleColor?: string;
+  textColor?: string;
+  borderColor?: string;
+  buttonTextColor?: string;
+};
+
+type GetAdminThemeResponse = {
+  data: StorefrontTheme;
+};
+
+type UpdateThemeResponse = {
+  data: StorefrontTheme;
+  message: string;
 };
 
 type ListAdminHeroSlidesResponse = {
@@ -75,4 +100,51 @@ export function deleteAdminHeroSlide(id: string) {
       headers: getAdminAuthHeaders(),
     },
   );
+}
+export type UpdateStorefrontBannerPayload = {
+  kicker?: string;
+  title?: string;
+  description?: string;
+  buttonLabel?: string;
+  buttonHref?: string;
+  imageUrl?: string | null;
+  active?: boolean;
+};
+
+type ListAdminBannersResponse = {
+  data: StorefrontBanner[];
+};
+
+type UpdateBannerResponse = {
+  data: StorefrontBanner;
+  message: string;
+};
+export function listAdminBanners() {
+  return apiFetch<ListAdminBannersResponse>("/admin/storefront/banners", {
+    headers: getAdminAuthHeaders(),
+  });
+}
+
+export function updateAdminBanner(
+  id: string,
+  payload: UpdateStorefrontBannerPayload,
+) {
+  return apiFetch<UpdateBannerResponse>(`/admin/storefront/banners/${id}`, {
+    method: "PATCH",
+    headers: getAdminAuthHeaders(),
+    body: JSON.stringify(payload),
+  });
+}
+export function getAdminTheme() {
+  return apiFetch<GetAdminThemeResponse>("/admin/storefront/theme", {
+    headers: getAdminAuthHeaders(),
+  });
+}
+
+export function updateAdminTheme(payload: UpdateStorefrontThemePayload) {
+  return apiFetch<UpdateThemeResponse>("/admin/storefront/theme", {
+    method: "PATCH",
+    headers: getAdminAuthHeaders(),
+    body: JSON.stringify(payload),
+  });
 }

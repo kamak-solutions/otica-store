@@ -16,7 +16,9 @@
     "db:seed:categories": "tsx prisma/seed/categories.seed.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:seed:storefront": "tsx prisma/seed/storefront-hero-slides.seed.ts"
+    "db:seed:storefront": "tsx prisma/seed/storefront-hero-slides.seed.ts",
+    "db:seed:storefront-banners": "tsx prisma/seed/storefront-banners.seed.ts",
+    "db:seed:storefront-theme": "tsx prisma/seed/storefront-theme.seed.ts"
   },
   "keywords": [],
   "author": "",
