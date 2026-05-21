@@ -70,6 +70,7 @@ const defaultTheme: ThemeFormData = {
   textColor: "#7F7169",
   borderColor: "#E7D8CC",
   buttonTextColor: "#FFFFFF",
+  bannerContentOpacity: 68,
 };
 
 function createFormDataFromTheme(theme: StorefrontTheme): ThemeFormData {
@@ -83,6 +84,7 @@ function createFormDataFromTheme(theme: StorefrontTheme): ThemeFormData {
     textColor: theme.textColor,
     borderColor: theme.borderColor,
     buttonTextColor: theme.buttonTextColor,
+    bannerContentOpacity: theme.bannerContentOpacity,
   };
 }
 
@@ -119,6 +121,12 @@ export function AdminStorefrontColors() {
       [key]: value,
     }));
   }
+  function updateNumberField(key: keyof ThemeFormData, value: number) {
+    setFormData((currentForm) => ({
+      ...currentForm,
+      [key]: value,
+    }));
+  }
 
   async function handleSaveTheme() {
     try {
@@ -141,7 +149,9 @@ export function AdminStorefrontColors() {
 
   function handleRestoreDefault() {
     setFormData(defaultTheme);
-    setSuccessMessage("Paleta padrão carregada. Clique em salvar para aplicar.");
+    setSuccessMessage(
+      "Paleta padrão carregada. Clique em salvar para aplicar.",
+    );
   }
 
   return (
@@ -218,6 +228,33 @@ export function AdminStorefrontColors() {
               >
                 Destaque
               </button>
+            </div>
+          </div>
+          <div className="admin-theme-range-card">
+            <div>
+              <strong>Transparência do card dos banners</strong>
+              <span>
+                Controla quanto da imagem aparece atrás do texto dos banners
+                secundários.
+              </span>
+            </div>
+
+            <div className="admin-theme-range-control">
+              <input
+                type="range"
+                min="20"
+                max="95"
+                step="1"
+                value={formData.bannerContentOpacity ?? 68}
+                onChange={(event) =>
+                  updateNumberField(
+                    "bannerContentOpacity",
+                    Number(event.target.value),
+                  )
+                }
+              />
+
+              <strong>{formData.bannerContentOpacity ?? 68}%</strong>
             </div>
           </div>
 

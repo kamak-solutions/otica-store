@@ -22,6 +22,7 @@ export type StorefrontBanner = {
   buttonLabel: string;
   buttonHref: string;
   imageUrl: string | null;
+  imagePosition: string | null;
   active: boolean;
   createdAt: string;
   updatedAt: string;
@@ -38,6 +39,7 @@ export type StorefrontTheme = {
   textColor: string;
   borderColor: string;
   buttonTextColor: string;
+  bannerContentOpacity: number;
   createdAt: string;
   updatedAt: string;
 };

@@ -28,6 +28,7 @@ export type UpdateStorefrontThemePayload = {
   textColor?: string;
   borderColor?: string;
   buttonTextColor?: string;
+  bannerContentOpacity?: number;
 };
 
 type GetAdminThemeResponse = {
@@ -108,6 +109,7 @@ export type UpdateStorefrontBannerPayload = {
   buttonLabel?: string;
   buttonHref?: string;
   imageUrl?: string | null;
+  imagePosition?: string;
   active?: boolean;
 };
 

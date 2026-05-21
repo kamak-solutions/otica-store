@@ -202,34 +202,38 @@ model StorefrontHeroSlide {
 }
 
 model StorefrontBanner {
-  id          String   @id @default(uuid())
-  key         String   @unique
-  kicker      String
-  title       String
-  description String
-  buttonLabel String
-  buttonHref  String
-  imageUrl    String?
-  active      Boolean  @default(true)
+  id            String   @id @default(uuid())
+  key           String   @unique
+  kicker        String
+  title         String
+  description   String
+  buttonLabel   String
+  buttonHref    String
+  imageUrl      String?
+  imagePosition String?  @default("center")
+  active        Boolean  @default(true)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
+
 model StorefrontTheme {
-  id              String   @id @default(uuid())
-  key             String   @unique @default("default")
+  id                   String   @id @default(uuid())
+  key                  String   @unique @default("default")
 
-  primaryColor    String   @default("#6F330B")
-  secondaryColor  String   @default("#E75900")
-  accentColor     String   @default("#B8914B")
+  primaryColor         String   @default("#6F330B")
+  secondaryColor       String   @default("#E75900")
+  accentColor          String   @default("#B8914B")
 
-  backgroundColor String   @default("#F9F4EF")
-  surfaceColor    String   @default("#FFFFFF")
-  titleColor      String   @default("#2C2520")
-  textColor       String   @default("#7F7169")
-  borderColor     String   @default("#E7D8CC")
-  buttonTextColor String   @default("#FFFFFF")
+  backgroundColor      String   @default("#F9F4EF")
+  surfaceColor         String   @default("#FFFFFF")
+  titleColor           String   @default("#2C2520")
+  textColor            String   @default("#7F7169")
+  borderColor          String   @default("#E7D8CC")
+  buttonTextColor      String   @default("#FFFFFF")
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  bannerContentOpacity Int      @default(68)
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }

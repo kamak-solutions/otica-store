@@ -21,6 +21,10 @@ export function StorefrontThemeProvider() {
         applyThemeVariable("--storefront-text", theme.textColor);
         applyThemeVariable("--storefront-border", theme.borderColor);
         applyThemeVariable("--storefront-button-text", theme.buttonTextColor);
+        applyThemeVariable(
+          "--storefront-banner-content-opacity",
+          `${theme.bannerContentOpacity}%`,
+        );
       } catch (error) {
         console.error("Erro ao carregar tema da vitrine:", error);
       }

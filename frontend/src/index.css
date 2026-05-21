@@ -28,6 +28,8 @@
   --storefront-text: #7f7169;
   --storefront-border: #e7d8cc;
   --storefront-button-text: #ffffff;
+
+  --storefront-banner-content-opacity: 68%;
 }
 
 * {
@@ -5653,4 +5655,40 @@ a {
     color-mix(in srgb, var(--storefront-background) 74%, transparent) 44%,
     color-mix(in srgb, var(--storefront-background) 22%, transparent) 100%
   ) !important;
+}
+
+/* Deixa os banners secundários com imagem mais viva */
+.storefront-banner-with-image::before {
+  display: none !important;
+}
+
+.storefront-banner-with-image .storefront-banner-content {
+  max-width: 720px;
+  border-radius: 22px;
+  padding: 18px 20px;
+  background: color-mix(in srgb, var(--storefront-background) 75%, transparent);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 16px 40px rgba(44, 37, 32, 0.08);
+}
+
+.storefront-banner-with-image .storefront-banner-image {
+  filter: saturate(1.12) contrast(1.06);
+}
+
+@media (max-width: 760px) {
+  .storefront-banner-with-image .storefront-banner-content {
+    width: 100%;
+    padding: 16px;
+  }
+}
+
+/* Card de texto dos banners secundários mais transparente */
+.storefront-banner-with-image .storefront-banner-content {
+  background: color-mix(
+    in srgb,
+    var(--storefront-background) var(--storefront-banner-content-opacity),
+    transparent
+  ) !important;
+  backdrop-filter: blur(2px);
+  box-shadow: 0 14px 34px rgba(44, 37, 32, 0.06);
 }

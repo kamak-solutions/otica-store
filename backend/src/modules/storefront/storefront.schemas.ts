@@ -23,7 +23,6 @@ export const updateStorefrontHeroSlideBodySchema = z.object({
 export const storefrontBannerIdParamsSchema = z.object({
   id: z.string().min(1, "ID do banner é obrigatório."),
 });
-
 export const updateStorefrontBannerBodySchema = z.object({
   kicker: z.string().min(1, "Chamada é obrigatória.").optional(),
   title: z.string().min(1, "Título é obrigatório.").optional(),
@@ -31,6 +30,17 @@ export const updateStorefrontBannerBodySchema = z.object({
   buttonLabel: z.string().min(1, "Texto do botão é obrigatório.").optional(),
   buttonHref: z.string().min(1, "Link do botão é obrigatório.").optional(),
   imageUrl: z.string().url("URL da imagem inválida.").nullable().optional(),
+  imagePosition: z
+    .enum([
+      "center",
+      "top",
+      "bottom",
+      "left",
+      "right",
+      "center top",
+      "center bottom",
+    ])
+    .optional(),
   active: z.boolean().optional(),
 });
 export const updateStorefrontThemeBodySchema = z.object({
@@ -70,6 +80,12 @@ export const updateStorefrontThemeBodySchema = z.object({
   buttonTextColor: z
     .string()
     .regex(/^#[0-9A-Fa-f]{6}$/, "Cor do texto dos botões inválida.")
+    .optional(),
+  bannerContentOpacity: z.coerce
+    .number()
+    .int()
+    .min(20, "A transparência mínima é 20.")
+    .max(95, "A transparência máxima é 95.")
     .optional(),
 });
 
