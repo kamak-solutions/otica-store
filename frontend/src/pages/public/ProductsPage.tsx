@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Seo } from "../../components/seo/Seo";
 import { getProducts } from "../../services/products.service";
 import type { Product } from "../../types/product";
@@ -38,10 +38,15 @@ function normalizeText(value: string) {
 }
 
 export function ProductsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("todos");
-  const [selectedAudience, setSelectedAudience] = useState("todos");
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get("categoria") ?? "todos",
+  );
+  const [selectedAudience, setSelectedAudience] = useState(
+    searchParams.get("publico") ?? "todos",
+  );
   const [onlyFeatured, setOnlyFeatured] = useState(false);
   const [onlyAvailable, setOnlyAvailable] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
@@ -64,6 +69,10 @@ export function ProductsPage() {
 
     loadProducts();
   }, []);
+  useEffect(() => {
+    setSelectedCategory(searchParams.get("categoria") ?? "todos");
+    setSelectedAudience(searchParams.get("publico") ?? "todos");
+  }, [searchParams]);
 
   const filteredProducts = useMemo(() => {
     const normalizedSearch = normalizeText(searchTerm.trim());
@@ -152,7 +161,21 @@ export function ProductsPage() {
             <select
               id="product-category"
               value={selectedCategory}
-              onChange={(event) => setSelectedCategory(event.target.value)}
+              onChange={(event) => {
+                const value = event.target.value;
+
+                setSelectedCategory(value);
+
+                const nextParams = new URLSearchParams(searchParams);
+
+                if (value === "todos") {
+                  nextParams.delete("categoria");
+                } else {
+                  nextParams.set("categoria", value);
+                }
+
+                setSearchParams(nextParams);
+              }}
             >
               {categoryOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -167,7 +190,21 @@ export function ProductsPage() {
             <select
               id="product-audience"
               value={selectedAudience}
-              onChange={(event) => setSelectedAudience(event.target.value)}
+              onChange={(event) => {
+                const value = event.target.value;
+
+                setSelectedAudience(value);
+
+                const nextParams = new URLSearchParams(searchParams);
+
+                if (value === "todos") {
+                  nextParams.delete("publico");
+                } else {
+                  nextParams.set("publico", value);
+                }
+
+                setSearchParams(nextParams);
+              }}
             >
               {audienceOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -204,6 +241,7 @@ export function ProductsPage() {
               setSelectedAudience("todos");
               setOnlyFeatured(false);
               setOnlyAvailable(true);
+              setSearchParams({});
             }}
           >
             Limpar filtros
@@ -241,7 +279,10 @@ export function ProductsPage() {
                 <article className="products-card" key={product.id}>
                   <Link to={`/produtos/${product.slug}`}>
                     {mainImage ? (
-                      <img src={mainImage.url} alt={mainImage.alt ?? product.name} />
+                      <img
+                        src={mainImage.url}
+                        alt={mainImage.alt ?? product.name}
+                      />
                     ) : (
                       <div className="products-card-placeholder">
                         Sem imagem

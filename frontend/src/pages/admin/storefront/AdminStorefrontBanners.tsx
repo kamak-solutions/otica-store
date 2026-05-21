@@ -35,12 +35,17 @@ const bannerLabels: Record<string, string> = {
 };
 
 const linkSuggestions = [
-  { label: "Modelos / produtos", value: "#modelos" },
-  { label: "Categorias", value: "#categorias" },
-  { label: "Orçamento / receita", value: "#receita" },
-  { label: "Página de orçamento", value: "/orcamento" },
-  { label: "Armações", value: "/armacoes" },
+  { label: "Home", value: "/" },
+  { label: "Produtos", value: "/produtos" },
+  { label: "Armações", value: "/produtos?categoria=armacoes" },
+  { label: "Óculos solar", value: "/produtos?categoria=oculos-solar" },
+  { label: "Óculos de grau", value: "/produtos?categoria=oculos-de-grau" },
+  { label: "Infantil", value: "/produtos?publico=infantil" },
+  { label: "Masculino", value: "/produtos?publico=masculino" },
+  { label: "Feminino", value: "/produtos?publico=feminino" },
+  { label: "Orçamento", value: "/orcamento" },
   { label: "Lentes", value: "/lentes" },
+  { label: "Serviços", value: "/servicos" },
   { label: "Blog", value: "/blog" },
 ];
 
