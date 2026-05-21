@@ -27,6 +27,7 @@ import { AdminStorefront } from "./pages/admin/AdminStorefront";
 import { AdminStorefrontSlides } from "./pages/admin/storefront/AdminStorefrontSlides";
 import { AdminStorefrontBanners } from "./pages/admin/storefront/AdminStorefrontBanners";
 import { AdminStorefrontColors } from "./pages/admin/storefront/AdminStorefrontColors";
+import { ProductsPage } from "./pages/public/ProductsPage";
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="/servicos" element={<Services />} />
           <Route path="/orcamento" element={<QuoteRequest />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/produtos" element={<ProductsPage />} />
           <Route path="/produtos/:slug" element={<ProductDetail />} />
           <Route path="/carrinho" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
