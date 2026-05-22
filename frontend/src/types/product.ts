@@ -28,6 +28,7 @@ export type Product = {
   active: boolean;
   featured: boolean;
   audience: string | null;
+  productType?: string | null;
   category: ProductCategory;
   images: ProductImage[];
   createdAt: string;

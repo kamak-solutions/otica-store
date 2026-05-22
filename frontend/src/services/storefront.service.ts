@@ -7,7 +7,9 @@ export type StorefrontHeroSlide = {
   description: string;
   imageUrl: string;
   primaryAction: string;
+  primaryActionHref: string;
   secondaryAction: string;
+  secondaryActionHref: string;
   position: number;
   active: boolean;
   createdAt: string;

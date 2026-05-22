@@ -1,10 +1,29 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { heroSlides as fallbackHeroSlides } from "../../../data/home-content";
 import type { StorefrontHeroSlide } from "../../../services/storefront.service";
 
 type HeroCarouselProps = {
   slides?: StorefrontHeroSlide[];
 };
+
+function getPrimaryHref(
+  slide: StorefrontHeroSlide | (typeof fallbackHeroSlides)[number],
+) {
+  return "primaryActionHref" in slide ? slide.primaryActionHref : "#modelos";
+}
+
+function getSecondaryHref(
+  slide: StorefrontHeroSlide | (typeof fallbackHeroSlides)[number],
+) {
+  return "secondaryActionHref" in slide
+    ? slide.secondaryActionHref
+    : "#receita";
+}
+
+function isInternalRoute(href: string) {
+  return href.startsWith("/");
+}
 
 export function HeroCarousel({ slides }: HeroCarouselProps) {
   const heroSlides = slides && slides.length > 0 ? slides : fallbackHeroSlides;
@@ -51,13 +70,31 @@ export function HeroCarousel({ slides }: HeroCarouselProps) {
           <p>{activeSlide.description}</p>
 
           <div className="hero-actions">
-            <a className="button-primary" href="#modelos">
-              {activeSlide.primaryAction}
-            </a>
+            {isInternalRoute(getPrimaryHref(activeSlide)) ? (
+              <Link className="button-primary" to={getPrimaryHref(activeSlide)}>
+                {activeSlide.primaryAction}
+              </Link>
+            ) : (
+              <a className="button-primary" href={getPrimaryHref(activeSlide)}>
+                {activeSlide.primaryAction}
+              </a>
+            )}
 
-            <a className="button-secondary" href="#receita">
-              {activeSlide.secondaryAction}
-            </a>
+            {isInternalRoute(getSecondaryHref(activeSlide)) ? (
+              <Link
+                className="button-secondary"
+                to={getSecondaryHref(activeSlide)}
+              >
+                {activeSlide.secondaryAction}
+              </Link>
+            ) : (
+              <a
+                className="button-secondary"
+                href={getSecondaryHref(activeSlide)}
+              >
+                {activeSlide.secondaryAction}
+              </a>
+            )}
           </div>
         </div>
       </div>
@@ -66,7 +103,7 @@ export function HeroCarousel({ slides }: HeroCarouselProps) {
         <div className="hero-dots">
           {heroSlides.map((slide, index) => (
             <button
-             key={`${slide.title}-${index}`}
+              key={`${slide.title}-${index}`}
               className={index === activeSlideIndex ? "active" : ""}
               type="button"
               aria-label={`Ir para banner ${index + 1}`}

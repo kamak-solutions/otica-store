@@ -15,7 +15,9 @@ type SlideFormData = {
   description: string;
   imageUrl: string;
   primaryAction: string;
+  primaryActionHref: string;
   secondaryAction: string;
+  secondaryActionHref: string;
   position: string;
   active: boolean;
 };
@@ -26,7 +28,9 @@ const emptySlideFormData: SlideFormData = {
   description: "",
   imageUrl: "",
   primaryAction: "",
+  primaryActionHref: "/produtos",
   secondaryAction: "",
+  secondaryActionHref: "/orcamento",
   position: "0",
   active: true,
 };
@@ -38,7 +42,9 @@ function createFormDataFromSlide(slide: StorefrontHeroSlide): SlideFormData {
     description: slide.description,
     imageUrl: slide.imageUrl,
     primaryAction: slide.primaryAction,
+    primaryActionHref: slide.primaryActionHref,
     secondaryAction: slide.secondaryAction,
+    secondaryActionHref: slide.secondaryActionHref,
     position: String(slide.position),
     active: slide.active,
   };
@@ -151,7 +157,9 @@ export function AdminStorefrontSlides() {
       description: formData.description,
       imageUrl: formData.imageUrl,
       primaryAction: formData.primaryAction,
+      primaryActionHref: formData.primaryActionHref,
       secondaryAction: formData.secondaryAction,
+      secondaryActionHref: formData.secondaryActionHref,
       position: Number(formData.position),
       active: formData.active,
     };
@@ -287,9 +295,7 @@ export function AdminStorefrontSlides() {
         </p>
       )}
 
-      {isLoading && (
-        <p className="admin-state-message">Carregando slides...</p>
-      )}
+      {isLoading && <p className="admin-state-message">Carregando slides...</p>}
 
       {isFormOpen && (
         <form className="admin-storefront-card" onSubmit={handleSubmit}>
@@ -389,6 +395,18 @@ export function AdminStorefrontSlides() {
                 required
               />
             </label>
+            <label>
+              Link do botão principal
+              <input
+                type="text"
+                value={formData.primaryActionHref}
+                onChange={(event) =>
+                  updateFormField("primaryActionHref", event.target.value)
+                }
+                placeholder="/produtos"
+                required
+              />
+            </label>
 
             <label>
               Botão secundário
@@ -398,6 +416,18 @@ export function AdminStorefrontSlides() {
                 onChange={(event) =>
                   updateFormField("secondaryAction", event.target.value)
                 }
+                required
+              />
+            </label>
+            <label>
+              Link do botão secundário
+              <input
+                type="text"
+                value={formData.secondaryActionHref}
+                onChange={(event) =>
+                  updateFormField("secondaryActionHref", event.target.value)
+                }
+                placeholder="/orcamento"
                 required
               />
             </label>

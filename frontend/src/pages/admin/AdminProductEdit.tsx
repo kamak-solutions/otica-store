@@ -22,6 +22,7 @@ type ProductFormData = {
   brand: string;
   stock: string;
   audience: string;
+  productType: string;
   categoryId: string;
   active: boolean;
   featured: boolean;
@@ -37,6 +38,7 @@ const initialFormData: ProductFormData = {
   brand: "",
   stock: "0",
   audience: "",
+  productType: "",
   categoryId: "",
   active: true,
   featured: false,
@@ -106,6 +108,7 @@ export function AdminProductEdit() {
           brand: product.brand ?? "",
           stock: String(product.stock),
           audience: product.audience ?? "",
+          productType: product.productType ?? "",
           categoryId: product.category?.id ?? "",
           active: product.active,
           featured: product.featured,
@@ -277,6 +280,7 @@ export function AdminProductEdit() {
         brand: formData.brand || undefined,
         stock: Number(formData.stock),
         audience: formData.audience || undefined,
+        productType: formData.productType || undefined,
         categoryId: formData.categoryId || undefined,
         active: formData.active,
         featured: formData.featured,
@@ -463,6 +467,17 @@ export function AdminProductEdit() {
                 </option>
               ))}
             </select>
+          </label>
+          <label>
+            Tipo / Modelo
+            <input
+              type="text"
+              value={formData.productType}
+              onChange={(event) =>
+                updateField("productType", event.target.value)
+              }
+              placeholder="Gatinho, Redondo, Esportivo, Estojo..."
+            />
           </label>
 
           <div className="admin-checkbox-row">

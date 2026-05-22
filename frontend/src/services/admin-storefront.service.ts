@@ -13,7 +13,9 @@ export type UpdateStorefrontHeroSlidePayload = {
   description?: string;
   imageUrl?: string;
   primaryAction?: string;
+  primaryActionHref?: string;
   secondaryAction?: string;
+  secondaryActionHref?: string;
   position?: number;
   active?: boolean;
 };

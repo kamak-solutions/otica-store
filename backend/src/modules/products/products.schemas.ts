@@ -27,6 +27,7 @@ export const createProductBodySchema = z.object({
   featured: z.boolean().default(false),
   categoryId: z.string().uuid("ID da categoria inválido.").optional(),
   audience: z.string().max(40).optional(),
+  productType: z.string().trim().min(1).max(80).optional(),
 });
 
 export type CreateProductBody = z.infer<typeof createProductBodySchema>;
@@ -42,8 +43,6 @@ export const createProductImageBodySchema = z.object({
   alt: z.string().max(160).optional(),
   position: z.coerce.number().int().min(0).default(0),
   isMain: z.boolean().default(false),
-  categoryId: z.string().uuid("ID da categoria inválido.").optional(),
-  audience: z.string().max(40).optional(),
 });
 
 export type CreateProductImageBody = z.infer<

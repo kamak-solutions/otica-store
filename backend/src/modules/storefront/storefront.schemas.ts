@@ -13,9 +13,17 @@ export const updateStorefrontHeroSlideBodySchema = z.object({
     .string()
     .min(1, "Texto do botão principal é obrigatório.")
     .optional(),
+  primaryActionHref: z
+    .string()
+    .min(1, "Link do botão principal é obrigatório.")
+    .optional(),
   secondaryAction: z
     .string()
     .min(1, "Texto do botão secundário é obrigatório.")
+    .optional(),
+  secondaryActionHref: z
+    .string()
+    .min(1, "Link do botão secundário é obrigatório.")
     .optional(),
   position: z.coerce.number().int().min(0).optional(),
   active: z.boolean().optional(),
@@ -102,9 +110,17 @@ export const createStorefrontHeroSlideBodySchema = z.object({
   description: z.string().min(1, "Descrição é obrigatória."),
   imageUrl: z.string().url("URL da imagem inválida."),
   primaryAction: z.string().min(1, "Texto do botão principal é obrigatório."),
+  primaryActionHref: z
+    .string()
+    .min(1, "Link do botão principal é obrigatório.")
+    .default("/produtos"),
   secondaryAction: z
     .string()
     .min(1, "Texto do botão secundário é obrigatório."),
+  secondaryActionHref: z
+    .string()
+    .min(1, "Link do botão secundário é obrigatório.")
+    .default("/orcamento"),
   position: z.coerce.number().int().min(0).default(0),
   active: z.boolean().default(true),
 });

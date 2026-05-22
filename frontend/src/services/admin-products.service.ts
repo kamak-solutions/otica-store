@@ -41,6 +41,7 @@ type CreateAdminProductPayload = {
   active: boolean;
   featured: boolean;
   audience?: string | null;
+  productType?: string | null;
   categoryId?: string | null;
 };
 
@@ -66,6 +67,7 @@ export function updateAdminProduct(
     active: boolean;
     featured: boolean;
     audience: string | null;
+    productType: string | null;
     categoryId: string | null;
   }>,
 ) {
@@ -110,10 +112,7 @@ export function addAdminProductImage(
     body: JSON.stringify(payload),
   });
 }
-export function setAdminProductImageAsMain(
-  productId: string,
-  imageId: string,
-) {
+export function setAdminProductImageAsMain(productId: string, imageId: string) {
   return apiFetch<UpdateAdminProductResponse>(
     `/admin/products/${productId}/images/${imageId}/main`,
     {

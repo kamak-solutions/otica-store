@@ -3,13 +3,8 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Seo } from "../../components/seo/Seo";
 import { getProducts } from "../../services/products.service";
 import type { Product } from "../../types/product";
-
-const categoryOptions = [
-  { label: "Todos", value: "todos" },
-  { label: "Armações", value: "armacoes" },
-  { label: "Óculos Solar", value: "oculos-solar" },
-  { label: "Óculos de Grau", value: "oculos-de-grau" },
-];
+import { getCategories } from "../../services/categories.service";
+import type { Category } from "../../types/category";
 
 const audienceOptions = [
   { label: "Todos", value: "todos" },
@@ -47,17 +42,25 @@ export function ProductsPage() {
   const [selectedAudience, setSelectedAudience] = useState(
     searchParams.get("publico") ?? "todos",
   );
+  const [selectedType, setSelectedType] = useState(
+    searchParams.get("tipo") ?? "todos",
+  );
   const [onlyFeatured, setOnlyFeatured] = useState(false);
   const [onlyAvailable, setOnlyAvailable] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
-    async function loadProducts() {
+    async function loadData() {
       try {
-        const response = await getProducts();
+        const [productsResponse, categoriesResponse] = await Promise.all([
+          getProducts(),
+          getCategories(),
+        ]);
 
-        setProducts(response.data);
+        setProducts(productsResponse.data);
+        setCategories(categoriesResponse.data);
       } catch (error) {
         setErrorMessage(
           error instanceof Error ? error.message : "Erro ao carregar produtos.",
@@ -67,12 +70,24 @@ export function ProductsPage() {
       }
     }
 
-    loadProducts();
+    loadData();
   }, []);
   useEffect(() => {
     setSelectedCategory(searchParams.get("categoria") ?? "todos");
     setSelectedAudience(searchParams.get("publico") ?? "todos");
   }, [searchParams]);
+  const productTypeOptions = useMemo(() => {
+    return [
+      { label: "Todos", value: "todos" },
+
+      ...Array.from(
+        new Set(products.map((product) => product.productType).filter(Boolean)),
+      ).map((type) => ({
+        label: type!,
+        value: type!,
+      })),
+    ];
+  }, [products]);
 
   const filteredProducts = useMemo(() => {
     const normalizedSearch = normalizeText(searchTerm.trim());
@@ -108,12 +123,16 @@ export function ProductsPage() {
             product.brand ?? "",
             product.category?.name ?? "",
             product.audience ?? "",
+            product.productType ?? "",
           ].join(" "),
         );
 
         if (!searchableText.includes(normalizedSearch)) {
           return false;
         }
+      }
+      if (selectedType !== "todos" && product.productType !== selectedType) {
+        return false;
       }
 
       return true;
@@ -177,9 +196,11 @@ export function ProductsPage() {
                 setSearchParams(nextParams);
               }}
             >
-              {categoryOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
+              <option value="todos">Todos</option>
+
+              {categories.map((category) => (
+                <option key={category.id} value={category.slug}>
+                  {category.name}
                 </option>
               ))}
             </select>
@@ -187,6 +208,35 @@ export function ProductsPage() {
 
           <div>
             <label htmlFor="product-audience">Público</label>
+            <div>
+              <label htmlFor="product-type">Tipo / Modelo</label>
+
+              <select
+                id="product-type"
+                value={selectedType}
+                onChange={(event) => {
+                  const value = event.target.value;
+
+                  setSelectedType(value);
+
+                  const nextParams = new URLSearchParams(searchParams);
+
+                  if (value === "todos") {
+                    nextParams.delete("tipo");
+                  } else {
+                    nextParams.set("tipo", value);
+                  }
+
+                  setSearchParams(nextParams);
+                }}
+              >
+                {productTypeOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
             <select
               id="product-audience"
               value={selectedAudience}
@@ -242,6 +292,7 @@ export function ProductsPage() {
               setOnlyFeatured(false);
               setOnlyAvailable(true);
               setSearchParams({});
+              setSelectedType("todos");
             }}
           >
             Limpar filtros
@@ -293,7 +344,12 @@ export function ProductsPage() {
                   <div className="products-card-content">
                     <div className="products-card-tags">
                       {product.category && <span>{product.category.name}</span>}
+
                       {product.audience && <span>{product.audience}</span>}
+
+                      {product.productType && (
+                        <span>{product.productType}</span>
+                      )}
                     </div>
 
                     <h3>{product.name}</h3>

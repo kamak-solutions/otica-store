@@ -13,8 +13,9 @@ type ProductFormData = {
   sku: string;
   brand: string;
   stock: string;
-  audience: string;
   categoryId: string;
+  audience: string;
+  productType: string;
   active: boolean;
   featured: boolean;
 };
@@ -29,6 +30,7 @@ const initialFormData: ProductFormData = {
   brand: "",
   stock: "0",
   audience: "",
+  productType: "",
   categoryId: "",
   active: true,
   featured: false,
@@ -100,6 +102,7 @@ export function AdminProductCreate() {
         brand: formData.brand || undefined,
         stock: Number(formData.stock),
         audience: formData.audience || undefined,
+        productType: formData.productType || undefined,
         categoryId: formData.categoryId || undefined,
         active: formData.active,
         featured: formData.featured,
@@ -251,6 +254,17 @@ export function AdminProductCreate() {
                 <option value="infantil">Infantil</option>
                 <option value="unissex">Unissex</option>
               </select>
+            </label>
+            <label>
+              Tipo / Modelo
+              <input
+                type="text"
+                value={formData.productType}
+                onChange={(event) =>
+                  updateField("productType", event.target.value)
+                }
+                placeholder="Gatinho, Redondo, Esportivo, Estojo..."
+              />
             </label>
           </div>
 
