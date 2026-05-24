@@ -89,7 +89,7 @@ export function AdminProductCreate() {
     setFormData((currentData) => ({
       ...currentData,
       name: value,
-      slug: currentData.slug ? currentData.slug : createSlug(value),
+      slug: createSlug(value),
     }));
   }
 
@@ -286,7 +286,11 @@ export function AdminProductCreate() {
                   updateField("categoryId", "");
                 }}
               >
-                <option value="">Selecione</option>
+                <option value="">
+                  {selectedParentCategory
+                    ? "Nenhuma subcategoria"
+                    : "Selecione"}
+                </option>
 
                 {parentCategories.map((category) => (
                   <option key={category.id} value={category.id}>
@@ -303,7 +307,9 @@ export function AdminProductCreate() {
                 onChange={(event) =>
                   updateField("categoryId", event.target.value)
                 }
-                disabled={!selectedParentCategory}
+                disabled={
+                  !selectedParentCategory || childCategories.length === 0
+                }
               >
                 <option value="">Selecione</option>
 
