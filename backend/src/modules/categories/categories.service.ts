@@ -39,10 +39,7 @@ export async function createCategory(data: CreateCategoryData) {
 
 type UpdateCategoryData = Partial<CreateCategoryData>;
 
-export async function updateCategory(
-  id: string,
-  data: UpdateCategoryData,
-) {
+export async function updateCategory(id: string, data: UpdateCategoryData) {
   return prisma.category.update({
     where: {
       id,
@@ -50,6 +47,20 @@ export async function updateCategory(
     data: {
       ...data,
       parentId: data.parentId || null,
+    },
+    include: {
+      parent: true,
+      children: true,
+    },
+  });
+}
+export async function deactivateCategory(id: string) {
+  return prisma.category.update({
+    where: {
+      id,
+    },
+    data: {
+      active: false,
     },
     include: {
       parent: true,

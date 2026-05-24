@@ -74,7 +74,10 @@ export function ProductsPage() {
   }, []);
   useEffect(() => {
     setSelectedCategory(searchParams.get("categoria") ?? "todos");
+
     setSelectedAudience(searchParams.get("publico") ?? "todos");
+
+    setSelectedType(searchParams.get("tipo") ?? "todos");
   }, [searchParams]);
   const productTypeOptions = useMemo(() => {
     return [
@@ -142,6 +145,7 @@ export function ProductsPage() {
     searchTerm,
     selectedCategory,
     selectedAudience,
+    selectedType,
     onlyFeatured,
     onlyAvailable,
   ]);
@@ -207,36 +211,38 @@ export function ProductsPage() {
           </div>
 
           <div>
+            <label htmlFor="product-type">Tipo / Modelo</label>
+
+            <select
+              id="product-type"
+              value={selectedType}
+              onChange={(event) => {
+                const value = event.target.value;
+
+                setSelectedType(value);
+
+                const nextParams = new URLSearchParams(searchParams);
+
+                if (value === "todos") {
+                  nextParams.delete("tipo");
+                } else {
+                  nextParams.set("tipo", value);
+                }
+
+                setSearchParams(nextParams);
+              }}
+            >
+              {productTypeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
             <label htmlFor="product-audience">Público</label>
-            <div>
-              <label htmlFor="product-type">Tipo / Modelo</label>
 
-              <select
-                id="product-type"
-                value={selectedType}
-                onChange={(event) => {
-                  const value = event.target.value;
-
-                  setSelectedType(value);
-
-                  const nextParams = new URLSearchParams(searchParams);
-
-                  if (value === "todos") {
-                    nextParams.delete("tipo");
-                  } else {
-                    nextParams.set("tipo", value);
-                  }
-
-                  setSearchParams(nextParams);
-                }}
-              >
-                {productTypeOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
             <select
               id="product-audience"
               value={selectedAudience}

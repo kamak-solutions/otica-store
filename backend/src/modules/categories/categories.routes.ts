@@ -4,6 +4,7 @@ import {
   createCategoryController,
   getCategoriesController,
   updateCategoryController,
+  deleteCategoryController,
 } from "./categories.controller.js";
 
 export async function categoriesRoutes(app: FastifyInstance) {
@@ -12,4 +13,5 @@ export async function categoriesRoutes(app: FastifyInstance) {
   app.post("/admin/categories", createCategoryController);
 
   app.put("/admin/categories/:id", updateCategoryController);
+  app.delete("/admin/categories/:id", deleteCategoryController);
 }

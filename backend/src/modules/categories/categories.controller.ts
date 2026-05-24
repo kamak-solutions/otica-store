@@ -5,6 +5,7 @@ import {
   createCategory,
   listCategories,
   updateCategory,
+  deactivateCategory,
 } from "./categories.service.js";
 
 const createCategorySchema = z.object({
@@ -86,5 +87,24 @@ export async function updateCategoryController(
 
   return reply.send({
     data: mapCategory(category),
+  });
+}
+export async function deleteCategoryController(
+  request: FastifyRequest<{
+    Params: {
+      id: string;
+    };
+  }>,
+  reply: FastifyReply,
+) {
+  const { id } = request.params;
+
+  request.log.info({ id }, "Deactivating category");
+
+  const category = await deactivateCategory(id);
+
+  return reply.send({
+    data: category,
+    message: "Categoria desativada com sucesso.",
   });
 }
