@@ -42,8 +42,10 @@ function createSlug(value: string) {
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "");
+    .replace(/[^a-z0-9- ]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
 export function AdminProductCreate() {
@@ -51,6 +53,7 @@ export function AdminProductCreate() {
 
   const [formData, setFormData] = useState<ProductFormData>(initialFormData);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedParentCategory, setSelectedParentCategory] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -66,6 +69,11 @@ export function AdminProductCreate() {
 
     loadCategories();
   }, []);
+  const parentCategories = categories.filter((category) => !category.parent);
+
+  const childCategories = categories.filter(
+    (category) => category.parent?.id === selectedParentCategory,
+  );
 
   function updateField<K extends keyof ProductFormData>(
     field: K,
@@ -157,9 +165,8 @@ export function AdminProductCreate() {
             <input
               type="text"
               value={formData.slug}
-              onChange={(event) =>
-                updateField("slug", createSlug(event.target.value))
-              }
+              onChange={(event) => updateField("slug", event.target.value)}
+              onBlur={() => updateField("slug", createSlug(formData.slug))}
               required
             />
           </label>
@@ -268,23 +275,46 @@ export function AdminProductCreate() {
             </label>
           </div>
 
-          <label>
-            Categoria
-            <select
-              value={formData.categoryId}
-              onChange={(event) =>
-                updateField("categoryId", event.target.value)
-              }
-            >
-              <option value="">Sem categoria</option>
+          <div className="admin-form-grid">
+            <label>
+              Categoria principal
+              <select
+                value={selectedParentCategory}
+                onChange={(event) => {
+                  setSelectedParentCategory(event.target.value);
 
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </label>
+                  updateField("categoryId", "");
+                }}
+              >
+                <option value="">Selecione</option>
+
+                {parentCategories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>
+              Subcategoria
+              <select
+                value={formData.categoryId}
+                onChange={(event) =>
+                  updateField("categoryId", event.target.value)
+                }
+                disabled={!selectedParentCategory}
+              >
+                <option value="">Selecione</option>
+
+                {childCategories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
 
           <div className="admin-checkbox-row">
             <label>

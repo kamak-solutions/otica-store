@@ -27,8 +27,10 @@ function createSlug(value: string) {
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "");
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
 export function AdminCategories() {
@@ -120,11 +122,11 @@ export function AdminCategories() {
           <input
             value={formData.name}
             onChange={(e) => {
-              updateField("name", e.target.value);
+              const value = e.target.value;
 
-              if (!formData.slug) {
-                updateField("slug", createSlug(e.target.value));
-              }
+              updateField("name", value);
+
+              updateField("slug", createSlug(value));
             }}
           />
         </label>
