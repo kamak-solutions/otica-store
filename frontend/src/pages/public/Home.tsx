@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+
 import { BlogPreview } from "../../components/public/home/BlogPreview";
 import { CampaignBanner } from "../../components/public/home/CampaignBanner";
 import { CategoryShortcuts } from "../../components/public/home/CategoryShortcuts";
@@ -8,55 +9,36 @@ import { LensBrands } from "../../components/public/home/LensBrands";
 import { ProductPreviewSection } from "../../components/public/home/ProductPreviewSection";
 import { QuoteBanner } from "../../components/public/home/QuoteBanner";
 import { Testimonials } from "../../components/public/home/Testimonials";
-import { getProducts } from "../../services/products.service";
-import { audienceFilters, categoryFilters } from "../../data/home-content";
-import type { Product } from "../../types/product";
+
 import { Seo } from "../../components/seo/Seo";
+
+import { getProducts } from "../../services/products.service";
+
 import {
   listPublicBanners,
   listPublicHeroSlides,
   type StorefrontBanner,
   type StorefrontHeroSlide,
 } from "../../services/storefront.service";
+
 import { StorefrontThemeProvider } from "../../components/public/StorefrontThemeProvider";
 
-function normalizeAudienceFilter(filter: string) {
-  if (filter === "Todos") {
-    return "todos";
-  }
-
-  return filter
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
-}
-
-function normalizeCategoryFilter(filter: string) {
-  const map: Record<string, string> = {
-    Todos: "todos",
-    "Óculos Solar": "oculos-solar",
-    "Óculos de Grau": "oculos-de-grau",
-    Armações: "armacoes",
-    Lentes: "lentes",
-    Acessórios: "acessorios",
-  };
-
-  return map[filter] ?? "todos";
-}
+import type { Product } from "../../types/product";
 
 export function Home() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [activeAudienceFilter, setActiveAudienceFilter] = useState("Todos");
-  const [activeCategoryFilter, setActiveCategoryFilter] = useState("Todos");
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [productsError, setProductsError] = useState("");
+
   const [heroSlides, setHeroSlides] = useState<StorefrontHeroSlide[]>([]);
+
   const [banners, setBanners] = useState<StorefrontBanner[]>([]);
 
   useEffect(() => {
     async function loadProducts() {
       try {
         const response = await getProducts();
+
         setProducts(response.data);
       } catch (error) {
         setProductsError(
@@ -77,7 +59,7 @@ export function Home() {
 
         setBanners(response.data);
       } catch (error) {
-        console.error("Erro ao carregar banners da vitrine:", error);
+        console.error("Erro ao carregar banners:", error);
       }
     }
 
@@ -91,54 +73,36 @@ export function Home() {
 
         setHeroSlides(response.data);
       } catch (error) {
-        console.error("Erro ao carregar slides da vitrine:", error);
+        console.error("Erro ao carregar slides:", error);
       }
     }
 
     loadHeroSlides();
   }, []);
 
-  const audienceProducts = useMemo(() => {
-    const selectedAudience = normalizeAudienceFilter(activeAudienceFilter);
-
-    if (selectedAudience === "todos") {
-      return products.slice(0, 8);
-    }
-
-    return products
-      .filter((product) => product.audience === selectedAudience)
-      .slice(0, 8);
-  }, [products, activeAudienceFilter]);
-
-  const categoryProducts = useMemo(() => {
-    const selectedCategory = normalizeCategoryFilter(activeCategoryFilter);
-
-    if (selectedCategory === "todos") {
-      return products.slice(0, 8);
-    }
-
-    return products
-      .filter((product) => product.category?.slug === selectedCategory)
-      .slice(0, 8);
-  }, [products, activeCategoryFilter]);
   const homeBanner = banners.find((banner) => banner.key === "home_banner");
+
   const campaignBanner = banners.find(
     (banner) => banner.key === "campaign_banner",
   );
+
   const quoteBanner = banners.find((banner) => banner.key === "quote_banner");
 
   return (
     <main className="home-page">
       <StorefrontThemeProvider />
+
       <Seo
         title="Ótica ShowRoom | Óculos, lentes e orçamento online"
         description="Ótica ShowRoom: óculos de grau, armações, lentes e orçamento online com atendimento personalizado."
       />
+
       <HeroCarousel slides={heroSlides} />
 
       <CategoryShortcuts />
 
       <HomeBanner banner={homeBanner} />
+
       {productsError && (
         <section className="site-container">
           <p className="section-empty-message">{productsError}</p>
@@ -150,40 +114,20 @@ export function Home() {
           <p className="section-empty-message">Carregando produtos...</p>
         </section>
       ) : (
-        <>{/* AQUI ficam seus ProductPreviewSection */}</>
+        <ProductPreviewSection
+          kicker="Vitrine"
+          title="Destaques da loja"
+          description="Explore alguns modelos selecionados. Veja o catálogo completo para acessar filtros e todos os produtos."
+          products={products}
+          emptyMessage="Nenhum produto encontrado."
+        />
       )}
 
-      <ProductPreviewSection
-        id="modelos"
-        kicker="Escolha por estilo"
-        title="Encontre seu modelo ideal"
-        description="Escolha por público e veja produtos selecionados para você."
-        filters={audienceFilters}
-        activeFilter={activeAudienceFilter}
-        onFilterChange={setActiveAudienceFilter}
-        products={audienceProducts}
-        emptyMessage="Nenhum produto encontrado para esse público."
-      />
-
       <CampaignBanner banner={campaignBanner} />
-
-      <ProductPreviewSection
-        id="categorias"
-        kicker="Compre por categoria"
-        title="Explore nossas categorias"
-        description="Escolha entre óculos solares, grau, armações, lentes e acessórios."
-        filters={categoryFilters}
-        activeFilter={activeCategoryFilter}
-        onFilterChange={setActiveCategoryFilter}
-        products={categoryProducts}
-        emptyMessage="Nenhum produto encontrado para essa categoria."
-      />
-
+      <BlogPreview />
       <QuoteBanner banner={quoteBanner} />
 
       <LensBrands />
-
-      <BlogPreview />
 
       <Testimonials />
     </main>
