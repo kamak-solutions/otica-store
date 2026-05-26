@@ -35,13 +35,16 @@ function normalizeText(value: string) {
 export function ProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("busca") ?? "");
+
   const [selectedCategory, setSelectedCategory] = useState(
     searchParams.get("categoria") ?? "todos",
   );
+
   const [selectedAudience, setSelectedAudience] = useState(
     searchParams.get("publico") ?? "todos",
   );
+
   const [selectedType, setSelectedType] = useState(
     searchParams.get("tipo") ?? "todos",
   );
@@ -78,6 +81,8 @@ export function ProductsPage() {
     setSelectedAudience(searchParams.get("publico") ?? "todos");
 
     setSelectedType(searchParams.get("tipo") ?? "todos");
+
+    setSearchTerm(searchParams.get("busca") ?? "");
   }, [searchParams]);
   const productTypeOptions = useMemo(() => {
     return [
@@ -175,7 +180,21 @@ export function ProductsPage() {
               type="search"
               placeholder="Ex: infantil, solar, feminino..."
               value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
+              onChange={(event) => {
+                const value = event.target.value;
+
+                setSearchTerm(value);
+
+                const nextParams = new URLSearchParams(searchParams);
+
+                if (!value.trim()) {
+                  nextParams.delete("busca");
+                } else {
+                  nextParams.set("busca", value);
+                }
+
+                setSearchParams(nextParams);
+              }}
             />
           </div>
 

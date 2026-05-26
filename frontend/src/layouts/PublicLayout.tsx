@@ -1,10 +1,27 @@
 import { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useCart } from "../store/cart/use-cart";
 
 export function PublicLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { totalItems } = useCart();
+  const navigate = useNavigate();
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+
+  function handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const value = searchTerm.trim();
+
+    if (!value) return;
+
+    navigate(`/produtos?busca=${encodeURIComponent(value)}`);
+
+    setShowSearch(false);
+    setSearchTerm("");
+  }
 
   function closeMobileMenu() {
     setIsMobileMenuOpen(false);
@@ -67,10 +84,13 @@ export function PublicLayout() {
           </nav>
 
           <div className="public-header-actions" aria-label="Ações rápidas">
-            <button type="button" aria-label="Buscar">
-              <img src="/icons/search.svg" alt="" className="header-icon" />
+            <button
+              type="button"
+              aria-label="Buscar"
+              onClick={() => setShowSearch((current) => !current)}
+            >
+              <img src="/icons/search.png" alt="" className="header-icon" />
             </button>
-
             <button type="button" aria-label="Entrar">
               <img src="/icons/user.svg" alt="" className="header-icon" />
             </button>
@@ -101,6 +121,21 @@ export function PublicLayout() {
           </div>
         </div>
       </header>
+      {showSearch && (
+        <div className="header-search-popup">
+          <form className="header-search-form" onSubmit={handleSearchSubmit}>
+            <input
+              type="search"
+              placeholder="Buscar produtos..."
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              autoFocus
+            />
+
+            <button type="submit">Buscar</button>
+          </form>
+        </div>
+      )}
 
       <Outlet />
 
