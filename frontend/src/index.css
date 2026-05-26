@@ -6269,10 +6269,11 @@ a {
   border-radius:10px;
 }
 
-.mini-cart-product div{
+.mini-cart-product > div{
   display:flex;
   flex-direction:column;
   gap:.3rem;
+  flex:1;
 }
 
 .mini-cart-footer{
@@ -6303,14 +6304,14 @@ a {
 .mini-cart-quantity{
   display:flex;
   align-items:center;
-  justify-content:flex-start;
   gap:12px;
-  margin-top:12px;
+  margin-top:10px;
 }
 
 .mini-cart-quantity button{
-  width:32px;
-  height:32px;
+  width:28px;
+  height:28px;
+
   display:flex;
   align-items:center;
   justify-content:center;
@@ -6318,14 +6319,12 @@ a {
   border:1px solid #ddd;
   border-radius:50%;
   background:#fff;
-  cursor:pointer;
 
-  font-size:18px;
-  font-weight:600;
+  cursor:pointer;
 }
 
 .mini-cart-quantity span{
-  min-width:24px;
+  min-width:20px;
   text-align:center;
   font-weight:600;
 }
