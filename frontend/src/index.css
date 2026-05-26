@@ -6129,3 +6129,21 @@ transform:scale(1.12);
 .footer-socials a:hover {
   transform: translateY(-4px);
 }
+.payment-icons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.payment-icons img {
+  height: 26px;
+  width: auto;
+  object-fit: contain;
+
+  transition: transform .3s ease;
+}
+
+.payment-icons img:hover {
+  transform: translateY(-3px);
+}

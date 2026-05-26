@@ -205,11 +205,11 @@ export function PublicLayout() {
             <strong>Formas de pagamento</strong>
 
             <div className="payment-icons">
-              <span>Pix</span>
-              <span>Visa</span>
-              <span>Mastercard</span>
-              <span>Elo</span>
-              <span>Boleto</span>
+              <img src="/icons/payments/pix.png" alt="Pix" />
+              <img src="/icons/payments/visa.png" alt="Visa" />
+              <img src="/icons/payments/mastercard.png" alt="Mastercard" />
+              <img src="/icons/payments/elo.png" alt="Elo" />
+              <img src="/icons/payments/boleto.png" alt="Boleto" />
             </div>
           </div>
 
