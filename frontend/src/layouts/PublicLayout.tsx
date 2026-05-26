@@ -217,8 +217,17 @@ export function PublicLayout() {
             <strong>Segurança</strong>
 
             <div className="payment-icons">
-              <span>SSL</span>
-              <span>Compra segura</span>
+              <img
+                src="/icons/security/ssl.png"
+                alt="Certificado SSL"
+                title="Certificado SSL"
+              />
+
+              <img
+                src="/icons/security/secure-shopping.png"
+                alt="Compra segura"
+                title="Compra segura"
+              />
             </div>
           </div>
         </div>
