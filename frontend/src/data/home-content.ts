@@ -32,11 +32,31 @@ export const heroSlides = [
 ];
 
 export const categoryShortcuts = [
-  { initials: "OS", label: "Óculos Solar" },
-  { initials: "OG", label: "Óculos de Grau" },
-  { initials: "AR", label: "Armações" },
-  { initials: "LE", label: "Lentes" },
-  { initials: "AC", label: "Acessórios" },
+  {
+    image: "/category-shortcuts/oculos-sol.png",
+    label: "Óculos Solar",
+    link: "/produtos?categoria=oculos-solar",
+  },
+  {
+    image: "/category-shortcuts/oculos-grau.png",
+    label: "Óculos de Grau",
+    link: "/produtos?categoria=oculos-de-grau",
+  },
+  {
+    image: "/category-shortcuts/lentes.png",
+    label: "Lentes",
+    link: "/lentes",
+  },
+  {
+    image: "/category-shortcuts/acessorios.png",
+    label: "Acessórios",
+    link: "/acessorios",
+  },
+  {
+    image: "/category-shortcuts/servicos.png",
+    label: "Serviços",
+    link: "/servicos",
+  },
 ];
 
 export const audienceFilters = [
@@ -57,14 +77,34 @@ export const categoryFilters = [
 ];
 
 export const lensBrands = [
-  "Varilux",
-  "Essilor",
-  "Crizal",
-  "Transitions",
-  "Hoya",
-  "Zeiss",
-  "Rodenstock",
-  "Kodak Lens",
+  {
+    name: "Varilux",
+    logo: "/brands/varilux.png",
+  },
+  {
+    name: "Essilor",
+    logo: "/brands/essilor.png",
+  },
+  {
+    name: "Crizal",
+    logo: "/brands/crizal.png",
+  },
+  {
+    name: "Transitions",
+    logo: "/brands/transitions.png",
+  },
+  {
+    name: "Hoya",
+    logo: "/brands/hoya.png",
+  },
+  {
+    name: "Zeiss",
+    logo: "/brands/zeiss.png",
+  },
+    {
+    name: "Kodak Lens",
+    logo: "/brands/kodak.png",
+  },
 ];
 
 export const blogPosts = [
@@ -99,21 +139,18 @@ export const testimonials = [
     initials: "AP",
     name: "Ana Paula",
     label: "Cliente Ótica ShowRoom",
-    text:
-      "Atendimento excelente. Me ajudaram a escolher a armação e explicaram as opções de lentes com muita atenção.",
+    text: "Atendimento excelente. Me ajudaram a escolher a armação e explicaram as opções de lentes com muita atenção.",
   },
   {
     initials: "CM",
     name: "Carlos Mendes",
     label: "Orçamento com receita",
-    text:
-      "Enviei minha receita e recebi um orçamento claro. Foi muito mais fácil decidir qual lente escolher.",
+    text: "Enviei minha receita e recebi um orçamento claro. Foi muito mais fácil decidir qual lente escolher.",
   },
   {
     initials: "RS",
     name: "Renata Souza",
     label: "Cliente Ótica ShowRoom",
-    text:
-      "Gostei muito das opções de armações e do cuidado no atendimento. A orientação fez diferença na escolha.",
+    text: "Gostei muito das opções de armações e do cuidado no atendimento. A orientação fez diferença na escolha.",
   },
 ];

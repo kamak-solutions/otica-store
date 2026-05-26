@@ -2,20 +2,31 @@ import { lensBrands } from "../../../data/home-content";
 
 export function LensBrands() {
   return (
-    <section className="site-container lens-brands-section">
+    <section className="site-container home-section">
       <div className="section-heading">
-        <span>Lentes</span>
-        <h2>Lentes que trabalhamos</h2>
+        <span>Marcas</span>
+        <h2>Trabalhamos com grandes fabricantes</h2>
         <p>
-          Trabalhamos com opções de marcas reconhecidas no mercado óptico.
-          Consulte disponibilidade no orçamento.
+          Lentes e tecnologias das principais marcas do mercado.
         </p>
       </div>
 
-      <div className="lens-brand-grid">
-        {lensBrands.map((brand) => (
-          <article key={brand}>{brand}</article>
-        ))}
+      <div className="brands-marquee">
+        <div className="brands-track">
+          {[...lensBrands, ...lensBrands].map((brand, index) => (
+            <article
+              key={`${brand.name}-${index}`}
+              className="brand-card"
+            >
+              <img
+                src={brand.logo}
+                alt={brand.name}
+              />
+
+              <span>{brand.name}</span>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
