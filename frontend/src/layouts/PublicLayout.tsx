@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useCart } from "../store/cart/use-cart";
+import { MiniCart } from "../components/public/MiniCart";
 
 export function PublicLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMiniCartOpen, setIsMiniCartOpen] = useState(false);
   const { totalItems } = useCart();
   const navigate = useNavigate();
 
@@ -94,16 +96,20 @@ export function PublicLayout() {
             <button type="button" aria-label="Entrar">
               <img src="/icons/user.svg" alt="" className="header-icon" />
             </button>
+            <div className="header-cart-wrapper">
+              <button
+                type="button"
+                className="header-cart-button"
+                onClick={() => setIsMiniCartOpen((current) => !current)}
+                aria-label="Carrinho"
+              >
+                <img src="/icons/cart.png" alt="" className="header-icon" />
 
-            <Link
-              className="header-cart-button"
-              to="/carrinho"
-              aria-label="Carrinho"
-            >
-              <img src="/icons/cart.svg" alt="" className="header-icon" />
+                {totalItems > 0 && <span>{totalItems}</span>}
+              </button>
 
-              {totalItems > 0 && <span>{totalItems}</span>}
-            </Link>
+              {isMiniCartOpen && <MiniCart />}
+            </div>
 
             <button
               className="mobile-menu-button"
