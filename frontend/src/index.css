@@ -6113,3 +6113,19 @@ grid-template-columns:1fr 1fr;
 transform:scale(1.12);
 
 }
+.footer-socials img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.footer-socials a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .3s ease;
+}
+
+.footer-socials a:hover {
+  transform: translateY(-4px);
+}

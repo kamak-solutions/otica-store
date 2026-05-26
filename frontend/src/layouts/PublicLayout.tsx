@@ -114,20 +114,49 @@ export function PublicLayout() {
             </p>
 
             <div className="footer-socials">
-              <a href="#" aria-label="Instagram">
-                Instagram
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+              >
+                <img src="/icons/social/instagram.png" alt="Instagram" />
               </a>
-              <a href="#" aria-label="Facebook">
-                Facebook
+
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Facebook"
+              >
+                <img src="/icons/social/facebook.png" alt="Facebook" />
               </a>
-              <a href="#" aria-label="X">
-                X
+
+              <a
+                href="https://x.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="X"
+              >
+                <img src="/icons/social/x.png" alt="X" />
               </a>
-              <a href="#" aria-label="YouTube">
-                YouTube
+
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Youtube"
+              >
+                <img src="/icons/social/youtube.png" alt="Youtube" />
               </a>
-              <a href="#" aria-label="LinkedIn">
-                LinkedIn
+
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Linkedin"
+              >
+                <img src="/icons/social/linkedin.png" alt="Linkedin" />
               </a>
             </div>
           </div>
