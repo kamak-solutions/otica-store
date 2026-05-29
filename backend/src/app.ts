@@ -20,6 +20,7 @@ import { mercadoPagoWebhookRoutes } from "./modules/webhooks/mercado-pago-webhoo
 import { storefrontRoutes } from "./modules/storefront/storefront.routes.js";
 import { campaignsRoutes } from "./modules/campaigns/campaigns.routes.js";
 import { blogRoutes } from "./modules/blog/blog.routes.js";
+import { crmRoutes } from "./modules/crm/crm.routes.js";
 
 export const app = Fastify({
   logger: {
@@ -94,3 +95,4 @@ app.register(mercadoPagoWebhookRoutes);
 app.register(storefrontRoutes);
 app.register(campaignsRoutes);
 app.register(blogRoutes);
+app.register(crmRoutes);
