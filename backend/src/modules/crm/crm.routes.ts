@@ -1,4 +1,5 @@
 import type { FastifyInstance } from "fastify";
+import { crmRemindersRoutes } from "./reminders/crm-reminders.routes.js";
 
 import {
   requireAdminAuth,
@@ -23,12 +24,7 @@ export async function crmRoutes(app: FastifyInstance) {
     {
       preHandler: [
         requireAdminAuth,
-        requireAdminRole([
-          "owner",
-          "admin",
-          "collaborator",
-          "viewer",
-        ]),
+        requireAdminRole(["owner", "admin", "collaborator", "viewer"]),
       ],
     },
     getCustomerNotesController,
@@ -42,13 +38,11 @@ export async function crmRoutes(app: FastifyInstance) {
     {
       preHandler: [
         requireAdminAuth,
-        requireAdminRole([
-          "owner",
-          "admin",
-          "collaborator",
-        ]),
+        requireAdminRole(["owner", "admin", "collaborator"]),
       ],
     },
     createCustomerNoteController,
   );
+
+  await app.register(crmRemindersRoutes);
 }

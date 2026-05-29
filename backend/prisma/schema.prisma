@@ -87,6 +87,7 @@ model Customer {
 
   orders    Order[]
   notes CustomerNote[]
+  reminders CustomerReminder[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -305,4 +306,22 @@ model BlogPost {
   note       String
 
   createdAt  DateTime @default(now())
+}
+model CustomerReminder {
+  id         String   @id @default(uuid())
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  type       String
+
+  title      String
+
+  dueDate    DateTime
+
+  completed  Boolean @default(false)
+
+  createdAt  DateTime @default(now())
+
+  updatedAt  DateTime @updatedAt
 }
