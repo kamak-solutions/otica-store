@@ -29,6 +29,9 @@ import { AdminStorefrontBanners } from "./pages/admin/storefront/AdminStorefront
 import { AdminStorefrontColors } from "./pages/admin/storefront/AdminStorefrontColors";
 import { ProductsPage } from "./pages/public/ProductsPage";
 import { AdminCategories } from "./pages/admin/AdminCategories";
+import { AdminCampaigns } from "./pages/admin/AdminCampaigns";
+import { AdminCampaignCreate } from "./pages/admin/AdminCampaignCreate";
+
 
 export default function App() {
   return (
@@ -56,8 +59,7 @@ export default function App() {
           <Route path="/admin/produtos" element={<AdminProducts />} />
           <Route path="/admin/categorias" element={<AdminCategories />} />
           <Route path="/admin/produtos/novo" element={<AdminProductCreate />} />
-          <Route path="/admin/categorias"element={<AdminCategories />}
-/>
+          <Route path="/admin/categorias" element={<AdminCategories />} />
           <Route
             path="/admin/produtos/:id/editar"
             element={<AdminProductEdit />}
@@ -79,6 +81,11 @@ export default function App() {
           <Route path="/admin/clientes" element={<AdminCustomers />} />
           <Route path="/admin/usuarios" element={<AdminUsers />} />
           <Route path="/admin/pedidos/:id" element={<AdminOrderDetail />} />
+          <Route path="/admin/campanhas" element={<AdminCampaigns />} />
+          <Route
+            path="/admin/campanhas/nova"
+            element={<AdminCampaignCreate />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

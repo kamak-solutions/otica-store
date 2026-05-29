@@ -244,3 +244,29 @@ model StorefrontTheme {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 }
+model Campaign {
+  id            String   @id @default(uuid())
+
+  title         String
+  description   String?
+
+  imageUrl      String?
+
+  buttonText    String?
+  buttonLink    String?
+
+  location      String
+
+  active        Boolean  @default(true)
+
+  showDelay     Int      @default(3)
+  showOnlyOnce  Boolean  @default(true)
+
+  startDate     DateTime?
+  endDate       DateTime?
+
+  deletedAt     DateTime?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

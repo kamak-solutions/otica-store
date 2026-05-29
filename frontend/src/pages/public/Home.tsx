@@ -24,6 +24,9 @@ import {
 import { StorefrontThemeProvider } from "../../components/public/StorefrontThemeProvider";
 
 import type { Product } from "../../types/product";
+import { PromoModal } from "../../components/public/PromoModal";
+import type { Campaign } from "../../types/campaign";
+import { listPublicCampaigns } from "../../services/campaigns.service";
 
 export function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -33,6 +36,7 @@ export function Home() {
   const [heroSlides, setHeroSlides] = useState<StorefrontHeroSlide[]>([]);
 
   const [banners, setBanners] = useState<StorefrontBanner[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
 
   useEffect(() => {
     async function loadProducts() {
@@ -79,6 +83,18 @@ export function Home() {
 
     loadHeroSlides();
   }, []);
+  async function loadCampaigns() {
+    try {
+      const data = await listPublicCampaigns("home");
+
+      setCampaigns(data);
+    } catch (error) {
+      console.error("Erro ao carregar campanhas:", error);
+    }
+  }
+  useEffect(() => {
+    loadCampaigns();
+  }, []);
 
   const homeBanner = banners.find((banner) => banner.key === "home_banner");
 
@@ -87,10 +103,12 @@ export function Home() {
   );
 
   const quoteBanner = banners.find((banner) => banner.key === "quote_banner");
-
+  console.log(campaigns);
+  const activeCampaign = campaigns[0] ?? null;
   return (
     <main className="home-page">
       <StorefrontThemeProvider />
+      <PromoModal campaign={activeCampaign} />
 
       <Seo
         title="Ótica ShowRoom | Óculos, lentes e orçamento online"

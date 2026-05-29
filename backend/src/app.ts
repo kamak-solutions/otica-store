@@ -18,6 +18,7 @@ import { customersRoutes } from "./modules/customers/customers.routes.js";
 import { adminUsersRoutes } from "./modules/admin-users/admin-users.routes.js";
 import { mercadoPagoWebhookRoutes } from "./modules/webhooks/mercado-pago-webhook.routes.js";
 import { storefrontRoutes } from "./modules/storefront/storefront.routes.js";
+import { campaignsRoutes } from "./modules/campaigns/campaigns.routes.js";
 
 export const app = Fastify({
   logger: {
@@ -38,7 +39,6 @@ export const app = Fastify({
 await app.register(helmet, {
   global: true,
 });
-
 
 await app.register(cors, {
   origin(origin, callback) {
@@ -91,3 +91,4 @@ app.register(customersRoutes);
 app.register(adminUsersRoutes);
 app.register(mercadoPagoWebhookRoutes);
 app.register(storefrontRoutes);
+app.register(campaignsRoutes);

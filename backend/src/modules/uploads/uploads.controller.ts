@@ -5,6 +5,7 @@ import {
   uploadPrescriptionFile,
   uploadProductImageFile,
   uploadStorefrontImageFile,
+  uploadCampaignImageFile,
 } from "./uploads.service.js";
 
 const allowedMimeTypes = [
@@ -155,5 +156,68 @@ export async function uploadStorefrontImageController(
       mimetype: file.mimetype,
     },
     message: "Imagem da vitrine enviada com sucesso.",
+  });
+}
+export async function uploadCampaignImageController(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  const file = await request.file();
+
+  if (!file) {
+    throw new AppError(
+      "Imagem não enviada.",
+      400,
+      "Bad Request",
+    );
+  }
+
+  if (
+    !allowedProductImageMimeTypes.includes(
+      file.mimetype,
+    )
+  ) {
+    throw new AppError(
+      "Tipo de imagem inválido. Envie JPG, PNG ou WEBP.",
+      400,
+      "Bad Request",
+    );
+  }
+
+  const buffer = await file.toBuffer();
+
+  const signatureValidation =
+    validateFileSignature({
+      buffer,
+      allowedTypes: [
+        "jpg",
+        "png",
+        "webp",
+      ],
+    });
+
+  if (!signatureValidation.valid) {
+    throw new AppError(
+      "Imagem inválida.",
+      400,
+      "Bad Request",
+    );
+  }
+
+  const uploadedFile =
+    await uploadCampaignImageFile({
+      buffer,
+    });
+
+  return reply.status(201).send({
+    data: {
+      url: uploadedFile.secure_url,
+      publicId: uploadedFile.public_id,
+      originalFilename: file.filename,
+      mimetype: file.mimetype,
+    },
+
+    message:
+      "Imagem da campanha enviada com sucesso.",
   });
 }
