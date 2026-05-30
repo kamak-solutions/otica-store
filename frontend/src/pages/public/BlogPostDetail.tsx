@@ -3,10 +3,14 @@ import { getBlogPostBySlug, type BlogPost } from "../../services/blog.service";
 import { useEffect, useState } from "react";
 import { Seo } from "../../components/seo/Seo";
 
-function formatDate(value: string) {
+function formatDate(value?: string | null) {
+  if (!value) {
+    return "Sem data";
+  }
+
   return new Intl.DateTimeFormat("pt-BR", {
     dateStyle: "long",
-  }).format(new Date(`${value}T00:00:00`));
+  }).format(new Date(value));
 }
 
 export function BlogPostDetail() {
@@ -72,7 +76,7 @@ export function BlogPostDetail() {
             ← Voltar para o blog
           </Link>
 
-          <span>{post.category}</span>
+          <span>{post.category?.name ?? "Sem categoria"}</span>
           <h1>{post.title}</h1>
           <p>{post.excerpt}</p>
 

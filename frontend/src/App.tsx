@@ -31,7 +31,9 @@ import { ProductsPage } from "./pages/public/ProductsPage";
 import { AdminCategories } from "./pages/admin/AdminCategories";
 import { AdminCampaigns } from "./pages/admin/AdminCampaigns";
 import { AdminCampaignCreate } from "./pages/admin/AdminCampaignCreate";
-
+import { AdminBlog } from "./pages/admin/AdminBlog";
+import { AdminBlogCreate } from "./pages/admin/AdminBlogCreate";
+import { AdminBlogCategories } from "./pages/admin/AdminBlogCategories";
 
 export default function App() {
   return (
@@ -86,6 +88,12 @@ export default function App() {
             path="/admin/campanhas/nova"
             element={<AdminCampaignCreate />}
           />
+          <Route path="/admin/blog" element={<AdminBlog />} />
+          <Route
+            path="/admin/blog/categorias"
+            element={<AdminBlogCategories />}
+          />
+          <Route path="/admin/blog/novo" element={<AdminBlogCreate />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -68,7 +68,7 @@ export function Blog() {
               </div>
 
               <div className="blog-page-card-content">
-                <span>{post.category}</span>
+              <span>{post.category?.name ?? "Sem categoria"}</span>
 
                 <h2>{post.title}</h2>
 

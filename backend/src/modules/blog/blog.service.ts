@@ -17,6 +17,10 @@ class BlogService {
         deletedAt: null,
       },
 
+      include: {
+        category: true,
+      },
+
       orderBy: {
         publishedAt: "desc",
       },
@@ -27,6 +31,9 @@ class BlogService {
     return prisma.blogPost.findMany({
       where: {
         deletedAt: null,
+      },
+      include: {
+        category: true,
       },
 
       orderBy: {
@@ -42,19 +49,40 @@ class BlogService {
         deletedAt: null,
         published: true,
       },
+      include: {
+        category: true,
+      },
     });
   }
 
   async create(data: any) {
     return prisma.blogPost.create({
       data: {
-        ...data,
+        title: data.title,
 
         slug: generateSlug(data.title),
 
-        publishedAt: data.published
-          ? new Date()
-          : null,
+        excerpt: data.excerpt,
+
+        content: data.content,
+
+        imageUrl: data.imageUrl,
+
+        cloudinaryPublicId: data.cloudinaryPublicId,
+
+        categoryId: data.categoryId,
+
+        readingTime: data.readingTime,
+
+        featured: data.featured ?? false,
+
+        published: data.published,
+
+        publishedAt: data.published ? new Date() : null,
+      },
+
+      include: {
+        category: true,
       },
     });
   }
@@ -72,5 +100,4 @@ class BlogService {
   }
 }
 
-export const blogService =
-  new BlogService();
+export const blogService = new BlogService();

@@ -16,11 +16,15 @@ export type BlogPost = {
 
   imageUrl?: string | null;
 
-  category: string;
+  categoryId?: string | null;
+
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+  } | null;
 
   readingTime?: string | null;
-
-  featured: boolean;
 
   published: boolean;
 
@@ -32,15 +36,41 @@ export type BlogPost = {
 };
 
 export function listBlogPosts() {
-  return apiFetch<BlogPost[]>(
-    "/blog/posts",
-  );
+  return apiFetch<BlogPost[]>("/blog/posts");
 }
 
-export function getBlogPostBySlug(
-  slug: string,
-) {
-  return apiFetch<BlogPost>(
-    `/blog/posts/${slug}`,
-  );
+export function getBlogPostBySlug(slug: string) {
+  return apiFetch<BlogPost>(`/blog/posts/${slug}`);
+}
+export function deleteBlogPost(id: string) {
+  return apiFetch<void>(`/admin/blog/posts/${id}`, {
+    method: "DELETE",
+  });
+}
+export type CreateBlogPostInput = {
+  title: string;
+
+  excerpt: string;
+
+  categoryId: string;
+
+  content: {
+    heading: string;
+    paragraphs: string[];
+  }[];
+
+  imageUrl?: string;
+
+  cloudinaryPublicId?: string;
+
+  readingTime?: string;
+
+  published: boolean;
+};
+export function createBlogPost(data: CreateBlogPostInput) {
+  return apiFetch<BlogPost>("/admin/blog/posts", {
+    method: "POST",
+
+    body: JSON.stringify(data),
+  });
 }

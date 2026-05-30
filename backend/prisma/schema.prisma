@@ -89,8 +89,11 @@ model Customer {
   notes CustomerNote[]
   reminders CustomerReminder[]
 
+  interactions CustomerInteraction[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  @@index([phone])
 }
 
 model Order {
@@ -253,6 +256,7 @@ model Campaign {
   description   String?
 
   imageUrl      String?
+  cloudinaryPublicId String?
 
   buttonText    String?
   buttonLink    String?
@@ -272,32 +276,54 @@ model Campaign {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
+
 model BlogPost {
-  id           String   @id @default(uuid())
+  id                 String   @id @default(uuid())
 
-  title        String
-  slug         String   @unique
+  title              String
+  slug               String   @unique
 
-  excerpt      String
-  content      Json
+  excerpt            String
+  content            Json
 
-  imageUrl     String?
+  categoryId         String?
+  category           BlogCategory? @relation(fields: [categoryId], references: [id])
 
-  category     String
+  imageUrl           String?
+  cloudinaryPublicId String?
 
-  readingTime  String?
+  readingTime        String?
 
-  featured     Boolean  @default(false)
+  featured           Boolean  @default(false)
 
-  published    Boolean  @default(false)
+  published          Boolean  @default(false)
 
-  publishedAt  DateTime?
+  publishedAt        DateTime?
 
-  deletedAt    DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  deletedAt          DateTime?
+}
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}model CustomerNote {
+model BlogCategory {
+  id          String   @id @default(uuid())
+
+  name        String
+  slug        String   @unique
+
+  description String?
+
+  position    Int      @default(0)
+
+  active      Boolean  @default(true)
+
+  posts       BlogPost[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CustomerNote {
   id         String   @id @default(uuid())
 
   customerId String
@@ -325,3 +351,16 @@ model CustomerReminder {
 
   updatedAt  DateTime @updatedAt
 }
+model CustomerInteraction {
+  id          String   @id @default(uuid())
+
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  type        String
+
+  description String
+
+  createdAt   DateTime @default(now())
+}
+
