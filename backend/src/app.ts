@@ -21,7 +21,7 @@ import { storefrontRoutes } from "./modules/storefront/storefront.routes.js";
 import { campaignsRoutes } from "./modules/campaigns/campaigns.routes.js";
 import { blogRoutes } from "./modules/blog/blog.routes.js";
 import { crmRoutes } from "./modules/crm/crm.routes.js";
-import { whatsappRoutes } from "./modules/whatsapp/whatsapp.routes.js";
+//import { whatsappRoutes } from "./modules/whatsapp/whatsapp.routes.js";
 import { blogCategoryRoutes } from "./modules/blog-category/blog-category.routes.js";
 
 export const app = Fastify({
@@ -98,5 +98,5 @@ app.register(storefrontRoutes);
 app.register(campaignsRoutes);
 app.register(blogRoutes);
 app.register(crmRoutes);
-app.register(whatsappRoutes);
+//app.register(whatsappRoutes);
 app.register(blogCategoryRoutes);
