@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   listAdminCustomers,
   type AdminCustomer,
@@ -47,9 +48,7 @@ export function AdminCustomers() {
       setCustomers(response.data);
     } catch (error) {
       setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Erro ao carregar clientes.",
+        error instanceof Error ? error.message : "Erro ao carregar clientes.",
       );
     } finally {
       setIsLoading(false);
@@ -189,6 +188,14 @@ export function AdminCustomers() {
                 ))}
               </div>
             )}
+            <div className="admin-customer-actions">
+              <Link
+                to={`/admin/clientes/${customer.id}`}
+                className="crm-link-button"
+              >
+                👤 Abrir CRM
+              </Link>
+            </div>
           </article>
         ))}
       </div>

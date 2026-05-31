@@ -28,4 +28,6 @@ docker/postgres-data/
 
 # IDE
 .vscode/
-.idea/
+.idea/docker/
+backend/src/modules/whatsapp/
+docker/

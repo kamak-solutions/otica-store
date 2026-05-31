@@ -14,6 +14,10 @@ export function AdminLayout() {
     location.pathname.startsWith("/admin/produtos") ||
       location.pathname.startsWith("/admin/categorias"),
   );
+  const [isCrmMenuOpen, setIsCrmMenuOpen] = useState(
+    location.pathname.startsWith("/admin/crm") ||
+      location.pathname.startsWith("/admin/clientes"),
+  );
   const [isBlogMenuOpen, setIsBlogMenuOpen] = useState(
     location.pathname.startsWith("/admin/blog"),
   );
@@ -28,6 +32,9 @@ export function AdminLayout() {
   const isProductsActive =
     location.pathname.startsWith("/admin/produtos") ||
     location.pathname.startsWith("/admin/categorias");
+  const isCrmActive =
+    location.pathname.startsWith("/admin/crm") ||
+    location.pathname.startsWith("/admin/clientes");
 
   return (
     <div className="admin-shell">
@@ -122,7 +129,26 @@ export function AdminLayout() {
 
           <Link to="/admin/pedidos">Pedidos</Link>
 
-          <Link to="/admin/clientes">Clientes</Link>
+          <div className="admin-nav-group">
+            <button
+              type="button"
+              className={`admin-nav-dropdown-button ${
+                isCrmActive ? "active" : ""
+              }`}
+              onClick={() => setIsCrmMenuOpen((currentValue) => !currentValue)}
+            >
+              <span>CRM</span>
+              <strong>{isCrmMenuOpen ? "⌄" : "›"}</strong>
+            </button>
+
+            {isCrmMenuOpen && (
+              <div className="admin-nav-submenu">
+                <Link to="/admin/crm">Dashboard CRM</Link>
+
+                <Link to="/admin/clientes">Clientes</Link>
+              </div>
+            )}
+          </div>
 
           <Link to="/admin/usuarios">Usuários</Link>
 

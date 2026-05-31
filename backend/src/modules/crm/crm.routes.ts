@@ -9,6 +9,7 @@ import {
 import {
   createCustomerNoteController,
   getCustomerNotesController,
+  getCrmDashboardController,
 } from "./crm.controller.js";
 
 import type {
@@ -17,6 +18,16 @@ import type {
 } from "./crm.schemas.js";
 
 export async function crmRoutes(app: FastifyInstance) {
+  app.get(
+    "/admin/crm/dashboard",
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator", "viewer"]),
+      ],
+    },
+    getCrmDashboardController,
+  );
   app.get<{
     Params: CustomerIdParams;
   }>(

@@ -1,16 +1,9 @@
-import type {
-  FastifyReply,
-  FastifyRequest,
-} from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
-import {
-  createCustomerNote,
-  listCustomerNotes,
-} from "./crm.service.js";
+import { createCustomerNote, listCustomerNotes } from "./crm.service.js";
 
-import {
-  mapCustomerNoteToHttp,
-} from "./crm.mapper.js";
+import { mapCustomerNoteToHttp } from "./crm.mapper.js";
+import { getCrmDashboard } from "./crm.service.js";
 
 export async function getCustomerNotesController(
   request: FastifyRequest<{
@@ -20,9 +13,7 @@ export async function getCustomerNotesController(
   }>,
   reply: FastifyReply,
 ) {
-  const notes = await listCustomerNotes(
-    request.params.customerId,
-  );
+  const notes = await listCustomerNotes(request.params.customerId);
 
   return reply.send({
     data: notes.map(mapCustomerNoteToHttp),
@@ -47,5 +38,15 @@ export async function createCustomerNoteController(
 
   return reply.status(201).send({
     data: mapCustomerNoteToHttp(note),
+  });
+}
+export async function getCrmDashboardController(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  const dashboard = await getCrmDashboard();
+
+  return reply.send({
+    data: dashboard,
   });
 }

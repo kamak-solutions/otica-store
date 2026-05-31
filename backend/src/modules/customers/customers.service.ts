@@ -21,3 +21,24 @@ export async function listAdminCustomers() {
     },
   });
 }
+export async function findAdminCustomerById(id: string) {
+  return prisma.customer.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      orders: {
+        select: {
+          id: true,
+          orderNumber: true,
+          status: true,
+          subtotal: true,
+          createdAt: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+    },
+  });
+}
