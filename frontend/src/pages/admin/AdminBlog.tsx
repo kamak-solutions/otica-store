@@ -78,6 +78,8 @@ export function AdminBlog() {
           <table className="admin-table">
             <thead>
               <tr>
+                <th>Imagem</th>
+
                 <th>Título</th>
 
                 <th>Categoria</th>
@@ -93,6 +95,23 @@ export function AdminBlog() {
             <tbody>
               {posts.map((post) => (
                 <tr key={post.id}>
+                  <td>
+                    {post.imageUrl ? (
+                      <img
+                        src={post.imageUrl}
+                        alt={post.title}
+                        style={{
+                          width: "80px",
+                          height: "60px",
+                          objectFit: "cover",
+                          borderRadius: "8px",
+                        }}
+                      />
+                    ) : (
+                      "-"
+                    )}
+                  </td>
+
                   <td>{post.title}</td>
                   <td>{post.category?.name ?? "-"}</td>
 

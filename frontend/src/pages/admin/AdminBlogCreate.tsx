@@ -8,6 +8,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { createBlogPost } from "../../services/blog.service";
+import { uploadBlogImageFile } from "../../services/uploads.service";
 
 export function AdminBlogCreate() {
   const navigate = useNavigate();
@@ -16,9 +17,17 @@ export function AdminBlogCreate() {
 
   const [excerpt, setExcerpt] = useState("");
 
+  const [content, setContent] = useState("");
+
   const [categoryId, setCategoryId] = useState("");
 
   const [categories, setCategories] = useState<BlogCategory[]>([]);
+
+  const [imageUrl, setImageUrl] = useState("");
+
+  const [cloudinaryPublicId, setCloudinaryPublicId] = useState("");
+
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const [readingTime, setReadingTime] = useState("");
 
@@ -40,6 +49,30 @@ export function AdminBlogCreate() {
     loadCategories();
   }, []);
 
+  async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      setUploadingImage(true);
+
+      const response = await uploadBlogImageFile(file);
+
+      setImageUrl(response.data.url);
+
+      setCloudinaryPublicId(response.data.publicId);
+    } catch (error) {
+      console.error(error);
+
+      alert("Erro ao enviar imagem.");
+    } finally {
+      setUploadingImage(false);
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
 
@@ -52,12 +85,12 @@ export function AdminBlogCreate() {
         categoryId,
         readingTime,
         published,
-
+        imageUrl,
+        cloudinaryPublicId,
         content: [
           {
-            heading: "Introdução",
-
-            paragraphs: ["Conteúdo inicial do artigo."],
+            heading: "Conteúdo",
+            paragraphs: content.split("\n").filter(Boolean),
           },
         ],
       });
@@ -98,6 +131,15 @@ export function AdminBlogCreate() {
             onChange={(e) => setExcerpt(e.target.value)}
           />
         </label>
+        <label>
+          Conteúdo
+          <textarea
+            rows={12}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Digite o conteúdo do artigo..."
+          />
+        </label>
 
         <label>
           Categoria
@@ -123,6 +165,24 @@ export function AdminBlogCreate() {
             placeholder="5 min"
           />
         </label>
+        <label>
+          Imagem do artigo
+          <input type="file" accept="image/*" onChange={handleImageUpload} />
+        </label>
+
+        {uploadingImage && <p>Enviando imagem...</p>}
+
+        {imageUrl && (
+          <img
+            src={imageUrl}
+            alt="Preview"
+            style={{
+              maxWidth: "300px",
+              borderRadius: "8px",
+              marginTop: "12px",
+            }}
+          />
+        )}
 
         <label>
           <input

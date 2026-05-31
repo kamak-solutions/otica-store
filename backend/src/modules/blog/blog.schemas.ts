@@ -9,7 +9,7 @@ export const blogPostSchema = z.object({
 
   imageUrl: z.string().optional().nullable(),
 
-  category: z.string().min(2, "Categoria obrigatória."),
+  categoryId: z.string().min(1, "Categoria obrigatória."),
 
   readingTime: z.string().optional().nullable(),
 

@@ -57,8 +57,13 @@ export function Blog() {
         {loading ? (
           <p>Carregando artigos...</p>
         ) : (
-          posts.map((post) => (
-            <article className="blog-page-card" key={post.id}>
+          posts.map((post, index) => (
+            <article
+              className={`blog-page-card ${
+                index === 0 ? "blog-page-card-featured" : ""
+              }`}
+              key={post.id}
+            >
               <div className="blog-page-card-image-wrapper">
                 <img
                   className="blog-page-card-image"
@@ -68,7 +73,7 @@ export function Blog() {
               </div>
 
               <div className="blog-page-card-content">
-              <span>{post.category?.name ?? "Sem categoria"}</span>
+                <span>{post.category?.name ?? "Sem categoria"}</span>
 
                 <h2>{post.title}</h2>
 

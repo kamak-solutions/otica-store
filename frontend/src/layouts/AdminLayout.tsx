@@ -14,6 +14,10 @@ export function AdminLayout() {
     location.pathname.startsWith("/admin/produtos") ||
       location.pathname.startsWith("/admin/categorias"),
   );
+  const [isBlogMenuOpen, setIsBlogMenuOpen] = useState(
+    location.pathname.startsWith("/admin/blog"),
+  );
+  const isBlogActive = location.pathname.startsWith("/admin/blog");
 
   if (!isAuthenticated) {
     return <Navigate to="/admin/login" replace />;
@@ -88,6 +92,30 @@ export function AdminLayout() {
                 <Link to="/admin/produtos">Lista de produtos</Link>
 
                 <Link to="/admin/categorias">Categorias</Link>
+              </div>
+            )}
+          </div>
+          {/* BLOG */}
+          <div className="admin-nav-group">
+            <button
+              type="button"
+              className={`admin-nav-dropdown-button ${
+                isBlogActive ? "active" : ""
+              }`}
+              onClick={() => setIsBlogMenuOpen((currentValue) => !currentValue)}
+            >
+              <span>Blog</span>
+
+              <strong>{isBlogMenuOpen ? "⌄" : "›"}</strong>
+            </button>
+
+            {isBlogMenuOpen && (
+              <div className="admin-nav-submenu">
+                <Link to="/admin/blog">Artigos</Link>
+
+                <Link to="/admin/blog/novo">Novo artigo</Link>
+
+                <Link to="/admin/blog/categorias">Categorias</Link>
               </div>
             )}
           </div>
