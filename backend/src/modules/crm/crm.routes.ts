@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { crmRemindersRoutes } from "./reminders/crm-reminders.routes.js";
-
+import { crmInteractionsRoutes } from "./interactions/crm-interactions.routes.js";
 import {
   requireAdminAuth,
   requireAdminRole,
@@ -45,4 +45,5 @@ export async function crmRoutes(app: FastifyInstance) {
   );
 
   await app.register(crmRemindersRoutes);
+  await app.register(crmInteractionsRoutes);
 }
