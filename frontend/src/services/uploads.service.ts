@@ -75,3 +75,28 @@ export async function uploadCampaignImageFile(file: File) {
 
   return data as UploadPrescriptionResponse;
 }
+export async function uploadBlogImageFile(file: File) {
+  const formData = new FormData();
+
+  formData.append("file", file);
+
+  const token = window.localStorage.getItem("@otica-showroom:admin-token");
+
+  const response = await fetch(`${API_URL}/admin/blog/upload-image`, {
+    method: "POST",
+
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+
+    body: formData,
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data?.message ?? "Erro ao enviar imagem do blog.");
+  }
+
+  return data;
+}

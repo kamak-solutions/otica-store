@@ -4,6 +4,7 @@ import {
   uploadProductImageController,
   uploadStorefrontImageController,
   uploadCampaignImageController,
+  uploadBlogImageController,
 } from "./uploads.controller.js";
 import {
   requireAdminAuth,
@@ -33,5 +34,15 @@ export async function uploadsRoutes(app: FastifyInstance) {
     },
 
     uploadCampaignImageController,
+  );
+  app.post(
+    "/admin/blog/upload-image",
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator"]),
+      ],
+    },
+    uploadBlogImageController,
   );
 }

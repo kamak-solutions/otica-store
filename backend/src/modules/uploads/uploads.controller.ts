@@ -6,6 +6,7 @@ import {
   uploadProductImageFile,
   uploadStorefrontImageFile,
   uploadCampaignImageFile,
+  uploadBlogImageFile,
 } from "./uploads.service.js";
 
 const allowedMimeTypes = [
@@ -165,18 +166,10 @@ export async function uploadCampaignImageController(
   const file = await request.file();
 
   if (!file) {
-    throw new AppError(
-      "Imagem não enviada.",
-      400,
-      "Bad Request",
-    );
+    throw new AppError("Imagem não enviada.", 400, "Bad Request");
   }
 
-  if (
-    !allowedProductImageMimeTypes.includes(
-      file.mimetype,
-    )
-  ) {
+  if (!allowedProductImageMimeTypes.includes(file.mimetype)) {
     throw new AppError(
       "Tipo de imagem inválido. Envie JPG, PNG ou WEBP.",
       400,
@@ -186,28 +179,18 @@ export async function uploadCampaignImageController(
 
   const buffer = await file.toBuffer();
 
-  const signatureValidation =
-    validateFileSignature({
-      buffer,
-      allowedTypes: [
-        "jpg",
-        "png",
-        "webp",
-      ],
-    });
+  const signatureValidation = validateFileSignature({
+    buffer,
+    allowedTypes: ["jpg", "png", "webp"],
+  });
 
   if (!signatureValidation.valid) {
-    throw new AppError(
-      "Imagem inválida.",
-      400,
-      "Bad Request",
-    );
+    throw new AppError("Imagem inválida.", 400, "Bad Request");
   }
 
-  const uploadedFile =
-    await uploadCampaignImageFile({
-      buffer,
-    });
+  const uploadedFile = await uploadCampaignImageFile({
+    buffer,
+  });
 
   return reply.status(201).send({
     data: {
@@ -217,7 +200,29 @@ export async function uploadCampaignImageController(
       mimetype: file.mimetype,
     },
 
-    message:
-      "Imagem da campanha enviada com sucesso.",
+    message: "Imagem da campanha enviada com sucesso.",
+  });
+}
+export async function uploadBlogImageController(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  const file = await request.file();
+
+  if (!file) {
+    throw new AppError("Imagem não enviada.", 400, "Bad Request");
+  }
+
+  const buffer = await file.toBuffer();
+
+  const uploadedFile = await uploadBlogImageFile({
+    buffer,
+  });
+
+  return reply.status(201).send({
+    data: {
+      url: uploadedFile.secure_url,
+      publicId: uploadedFile.public_id,
+    },
   });
 }
