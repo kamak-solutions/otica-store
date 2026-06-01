@@ -40,8 +40,18 @@ export const app = Fastify({
   },
 });
 
+// 1. Deixe o registro do helmet simples como estava (sem erros de TS)
 await app.register(helmet, {
   global: true,
+});
+
+// 2. Adicione este hook logo abaixo para injetar o cabeçalho que o Nikto cobrou
+app.addHook("onSend", async (request, reply, payload) => {
+  reply.header(
+    "Permissions-Policy",
+    "geolocation=(), microphone=(), camera=()",
+  );
+  return payload;
 });
 
 await app.register(cors, {
