@@ -19,6 +19,17 @@ export async function blogRoutes(app: FastifyInstance) {
     },
     blogController.listAdmin,
   );
+  app.get<{
+    Params: {
+      id: string;
+    };
+  }>(
+    "/admin/blog/posts/:id",
+    {
+      preHandler: [requireAdminAuth],
+    },
+    blogController.findById,
+  );
 
   app.post(
     "/admin/blog/posts",
@@ -30,6 +41,20 @@ export async function blogRoutes(app: FastifyInstance) {
       ],
     },
     blogController.create,
+  );
+  app.put<{
+    Params: {
+      id: string;
+    };
+  }>(
+    "/admin/blog/posts/:id",
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator"]),
+      ],
+    },
+    blogController.update,
   );
 
   app.delete<{

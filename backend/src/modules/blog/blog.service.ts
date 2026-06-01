@@ -54,6 +54,18 @@ class BlogService {
       },
     });
   }
+  async findById(id: string) {
+    return prisma.blogPost.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+      },
+
+      include: {
+        category: true,
+      },
+    });
+  }
 
   async create(data: any) {
     return prisma.blogPost.create({
@@ -75,6 +87,38 @@ class BlogService {
         readingTime: data.readingTime,
 
         featured: data.featured ?? false,
+
+        published: data.published,
+
+        publishedAt: data.published ? new Date() : null,
+      },
+
+      include: {
+        category: true,
+      },
+    });
+  }
+
+  async update(id: string, data: any) {
+    return prisma.blogPost.update({
+      where: {
+        id,
+      },
+
+      data: {
+        title: data.title,
+
+        slug: generateSlug(data.title),
+
+        excerpt: data.excerpt,
+
+        content: data.content,
+
+        imageUrl: data.imageUrl,
+
+        categoryId: data.categoryId,
+
+        readingTime: data.readingTime,
 
         published: data.published,
 

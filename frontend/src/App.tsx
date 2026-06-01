@@ -36,6 +36,7 @@ import { AdminBlogCreate } from "./pages/admin/AdminBlogCreate";
 import { AdminBlogCategories } from "./pages/admin/AdminBlogCategories";
 import { AdminCustomerDetail } from "./pages/admin/AdminCustomerDetail";
 import { AdminCrmDashboard } from "./pages/admin/AdminCrmDashboard";
+import { AdminBlogEdit } from "./pages/admin/AdminBlogEdit";
 
 export default function App() {
   return (
@@ -97,6 +98,7 @@ export default function App() {
             element={<AdminBlogCategories />}
           />
           <Route path="/admin/blog/novo" element={<AdminBlogCreate />} />
+          <Route path="/admin/blog/:id/editar" element={<AdminBlogEdit />} />
           <Route path="/admin/crm" element={<AdminCrmDashboard />} />
         </Route>
       </Routes>
