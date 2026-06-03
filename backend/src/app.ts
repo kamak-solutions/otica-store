@@ -40,12 +40,14 @@ export const app = Fastify({
   },
 });
 
-// 1. Deixe o registro do helmet simples como estava (sem erros de TS)
+// Altere o registro do helmet para forçar a ativação explícita de sub-recursos
 await app.register(helmet, {
   global: true,
+  hidePoweredBy: true, // Remove o cabeçalho X-Powered-By se houver
+  contentSecurityPolicy: true, // Força a inicialização da política padrão se o front for integrado
 });
 
-// 2. Adicione este hook logo abaixo para injetar o cabeçalho que o Nikto cobrou
+// O seu hook do Permissions-Policy está perfeito e complementa o helmet:
 app.addHook("onSend", async (request, reply, payload) => {
   reply.header(
     "Permissions-Policy",
