@@ -2,9 +2,11 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import {
   listAdminCustomers,
   findAdminCustomerById,
+  updateCustomerCrmStatus,
 } from "./customers.service.js";
 import { mapCustomerToHttp } from "./customers.mapper.js";
 import { AppError } from "../../errors/app-error.js";
+
 
 export async function getAdminCustomersController(
   request: FastifyRequest,
@@ -35,6 +37,26 @@ export async function getAdminCustomerByIdController(
   if (!customer) {
     throw new AppError("Cliente não encontrado.", 404, "Not found");
   }
+
+  return reply.send({
+    data: mapCustomerToHttp(customer),
+  });
+}
+export async function updateCustomerCrmStatusController(
+  request: FastifyRequest<{
+    Params: {
+      id: string;
+    };
+    Body: {
+      crmStatus: string;
+    };
+  }>,
+  reply: FastifyReply,
+) {
+  const customer = await updateCustomerCrmStatus(
+    request.params.id,
+    request.body.crmStatus,
+  );
 
   return reply.send({
     data: mapCustomerToHttp(customer),

@@ -71,6 +71,8 @@ model Customer {
   email     String
   phone     String
 
+  crmStatus String @default("lead")
+
   cpf       String?
   birthDate DateTime?
 

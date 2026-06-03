@@ -3,9 +3,7 @@ import { apiFetch } from "./api";
 const ADMIN_TOKEN_STORAGE_KEY = "@otica-showroom:admin-token";
 
 function getAdminAuthHeaders(): Record<string, string> {
-  const token = window.localStorage.getItem(
-    ADMIN_TOKEN_STORAGE_KEY,
-  );
+  const token = window.localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY);
 
   if (!token) {
     return {};
@@ -21,6 +19,7 @@ export type AdminCustomerDetail = {
   name: string;
   email: string;
   phone: string;
+  crmStatus: string;
   cpf: string | null;
   birthDate: string | null;
 
@@ -56,10 +55,7 @@ type Response = {
 };
 
 export function getAdminCustomer(id: string) {
-  return apiFetch<Response>(
-    `/admin/customers/${id}`,
-    {
-      headers: getAdminAuthHeaders(),
-    },
-  );
+  return apiFetch<Response>(`/admin/customers/${id}`, {
+    headers: getAdminAuthHeaders(),
+  });
 }

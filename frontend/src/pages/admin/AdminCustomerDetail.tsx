@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
+import { updateCustomerCrmStatus } from "../../services/admin-customer-crm.service";
 import {
   getAdminCustomer,
   type AdminCustomerDetail,
@@ -50,6 +50,10 @@ export function AdminCustomerDetail() {
 
   const [customer, setCustomer] = useState<AdminCustomerDetail | null>(null);
 
+  const [crmStatus, setCrmStatus] = useState("");
+
+  const [isSavingCrmStatus, setIsSavingCrmStatus] = useState(false);
+
   const [notes, setNotes] = useState<CustomerNote[]>([]);
 
   const [newNote, setNewNote] = useState("");
@@ -96,6 +100,7 @@ export function AdminCustomerDetail() {
         ]);
 
         setCustomer(customerResponse.data);
+        setCrmStatus(customerResponse.data.crmStatus);
 
         setNotes(notesResponse.data);
 
@@ -197,6 +202,30 @@ export function AdminCustomerDetail() {
       setIsSavingInteraction(false);
     }
   }
+  async function handleUpdateCrmStatus(status: string) {
+    if (!id) {
+      return;
+    }
+
+    try {
+      setIsSavingCrmStatus(true);
+
+      await updateCustomerCrmStatus(id, status);
+
+      setCrmStatus(status);
+
+      setCustomer((current) =>
+        current
+          ? {
+              ...current,
+              crmStatus: status,
+            }
+          : null,
+      );
+    } finally {
+      setIsSavingCrmStatus(false);
+    }
+  }
 
   return (
     <section className="admin-page">
@@ -220,32 +249,88 @@ export function AdminCustomerDetail() {
       {!isLoading && customer && (
         <>
           <div className="crm-card">
-            <h2>{customer.name}</h2>
+            <div className="crm-customer-header">
+              <div>
+                <h2>{customer.name}</h2>
 
-            <p>
-              <strong>Email:</strong> {customer.email}
-            </p>
+                <span className={`crm-status crm-status-${crmStatus}`}>
+                  {crmStatus}
+                </span>
+              </div>
 
-            <p>
-              <strong>Telefone:</strong> {customer.phone}
-            </p>
+              <div className="crm-customer-stats">
+                <div>
+                  <strong>{customer.orders.length}</strong>
+                  <span>Pedidos</span>
+                </div>
 
-            <p>
-              <strong>CPF:</strong> {customer.cpf}
-            </p>
+                <div>
+                  <strong>{notes.length}</strong>
+                  <span>Notas</span>
+                </div>
 
-            <p>
-              <strong>Nascimento:</strong> {formatBirthDate(customer.birthDate)}
-            </p>
+                <div>
+                  <strong>{reminders.length}</strong>
+                  <span>Lembretes</span>
+                </div>
 
-            <p>
-              <strong>Cidade:</strong> {customer.address.city}/
-              {customer.address.state}
-            </p>
+                <div>
+                  <strong>{interactions.length}</strong>
+                  <span>Interações</span>
+                </div>
+              </div>
+            </div>
 
-            <p>
-              <strong>Cadastrado em:</strong> {formatDate(customer.createdAt)}
-            </p>
+            <div className="crm-customer-grid">
+              <div>
+                <strong>Email</strong>
+                <span>{customer.email}</span>
+              </div>
+
+              <div>
+                <strong>Telefone</strong>
+                <span>{customer.phone}</span>
+              </div>
+
+              <div>
+                <strong>CPF</strong>
+                <span>{customer.cpf ?? "-"}</span>
+              </div>
+
+              <div>
+                <strong>Nascimento</strong>
+                <span>{formatBirthDate(customer.birthDate)}</span>
+              </div>
+
+              <div>
+                <strong>Cidade</strong>
+                <span>
+                  {customer.address.city}/{customer.address.state}
+                </span>
+              </div>
+
+              <div>
+                <strong>Cadastrado em</strong>
+                <span>{formatDate(customer.createdAt)}</span>
+              </div>
+
+              <div>
+                <strong>Status CRM</strong>
+
+                <select
+                  value={crmStatus}
+                  disabled={isSavingCrmStatus}
+                  onChange={(event) =>
+                    handleUpdateCrmStatus(event.target.value)
+                  }
+                >
+                  <option value="lead">Lead</option>
+                  <option value="prospect">Prospect</option>
+                  <option value="customer">Cliente</option>
+                  <option value="inactive">Inativo</option>
+                </select>
+              </div>
+            </div>
 
             <h3>Pedidos</h3>
 
@@ -258,6 +343,8 @@ export function AdminCustomerDetail() {
                     <strong>{order.orderNumber ?? order.id}</strong>
 
                     <p>Status: {order.status}</p>
+
+                    <small>{formatDate(order.createdAt)}</small>
                   </div>
                 ))}
               </div>

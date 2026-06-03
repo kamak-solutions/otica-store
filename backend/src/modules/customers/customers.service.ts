@@ -42,3 +42,30 @@ export async function findAdminCustomerById(id: string) {
     },
   });
 }
+export async function updateCustomerCrmStatus(
+  customerId: string,
+  crmStatus: string,
+) {
+  return prisma.customer.update({
+    where: {
+      id: customerId,
+    },
+    data: {
+      crmStatus,
+    },
+    include: {
+      orders: {
+        select: {
+          id: true,
+          orderNumber: true,
+          status: true,
+          subtotal: true,
+          createdAt: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+    },
+  });
+}

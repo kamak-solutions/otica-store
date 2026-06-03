@@ -1,4 +1,5 @@
 type CustomerWithOrders = {
+  crmStatus: any;
   id: string;
   name: string;
   email: string;
@@ -45,6 +46,7 @@ export function mapCustomerToHttp(customer: CustomerWithOrders) {
     name: customer.name,
     email: customer.email,
     phone: customer.phone,
+    crmStatus: customer.crmStatus,
     cpf: maskCpf(customer.cpf),
     birthDate: customer.birthDate?.toISOString() ?? null,
     address: {
