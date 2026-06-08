@@ -6962,3 +6962,54 @@ flex-direction:column;
     justify-content: space-between;
   }
 }
+.tiptap-wrapper {
+  border: 1px solid #e7d8cc;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+}
+
+
+.tiptap-toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid #e7d8cc;
+  background: #f9f4ef;
+}
+
+
+.tiptap-toolbar button {
+  border: 1px solid #d8c4b5;
+  background: #fff;
+  color: #2c2520;
+  border-radius: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+
+.tiptap-toolbar button:hover {
+  background: #b8914b;
+  color: white;
+}
+
+
+.tiptap-wrapper .ProseMirror {
+  min-height: 260px;
+  padding: 18px;
+  outline: none;
+}
+
+
+.tiptap-wrapper .ProseMirror p {
+  margin-bottom: 12px;
+  line-height: 1.7;
+}
+
+
+.tiptap-wrapper .ProseMirror h2 {
+  margin-top: 20px;
+  color: #2c2520;
+}

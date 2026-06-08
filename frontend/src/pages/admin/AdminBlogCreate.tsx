@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { TiptapEditor } from "../../components/editor/TiptapEditor";
 import {
   listBlogCategories,
   type BlogCategory,
@@ -87,10 +87,11 @@ export function AdminBlogCreate() {
         published,
         imageUrl,
         cloudinaryPublicId,
+
         content: [
           {
             heading: "Conteúdo",
-            paragraphs: content.split("\n").filter(Boolean),
+            paragraphs: [content],
           },
         ],
       });
@@ -131,16 +132,11 @@ export function AdminBlogCreate() {
             onChange={(e) => setExcerpt(e.target.value)}
           />
         </label>
+
         <label>
           Conteúdo
-          <textarea
-            rows={12}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Digite o conteúdo do artigo..."
-          />
+          <TiptapEditor value={content} onChange={setContent} />
         </label>
-
         <label>
           Categoria
           <select
