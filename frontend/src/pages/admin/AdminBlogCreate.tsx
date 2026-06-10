@@ -101,6 +101,8 @@ export function AdminBlogCreate() {
   async function handleEditorImageUpload(file: File) {
     const response = await uploadBlogImageFile(file);
 
+    console.log("UPLOAD BLOG:", JSON.stringify(response, null, 2));
+
     return response.data.url;
   }
 

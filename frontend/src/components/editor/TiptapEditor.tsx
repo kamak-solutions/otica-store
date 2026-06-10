@@ -19,7 +19,9 @@ type Props = {
 export function TiptapEditor({ value, onChange, uploadImage }: Props) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        link: false,
+      }),
 
       Image.configure({
         inline: false,
@@ -33,7 +35,6 @@ export function TiptapEditor({ value, onChange, uploadImage }: Props) {
         types: ["heading", "paragraph"],
       }),
     ],
-
     content: value,
 
     onUpdate({ editor }) {
@@ -42,10 +43,10 @@ export function TiptapEditor({ value, onChange, uploadImage }: Props) {
   });
 
   useEffect(() => {
-  if (editor && value) {
-    editor.commands.setContent(value);
-  }
-}, [value, editor]);
+    if (editor && value) {
+      editor.commands.setContent(value);
+    }
+  }, [value, editor]);
 
   if (!editor) {
     return null;
@@ -59,6 +60,8 @@ export function TiptapEditor({ value, onChange, uploadImage }: Props) {
     }
 
     const url = await uploadImage(file);
+
+    console.log("IMAGEM TIPTAP URL:", url);
 
     editor
       .chain()
@@ -180,8 +183,9 @@ export function TiptapEditor({ value, onChange, uploadImage }: Props) {
           ↷
         </button>
       </div>
-
-      <EditorContent editor={editor} className="tiptap-editor" />
+      <div className="tiptap-editor">
+        <EditorContent editor={editor} />
+      </div>
     </div>
   );
 }

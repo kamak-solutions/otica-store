@@ -75,7 +75,9 @@ export async function uploadCampaignImageFile(file: File) {
 
   return data as UploadPrescriptionResponse;
 }
-export async function uploadBlogImageFile(file: File) {
+export async function uploadBlogImageFile(
+  file: File,
+): Promise<UploadPrescriptionResponse> {
   const formData = new FormData();
 
   formData.append("file", file);
