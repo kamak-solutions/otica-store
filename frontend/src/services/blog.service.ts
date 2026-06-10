@@ -9,10 +9,7 @@ export type BlogPost = {
 
   excerpt: string;
 
-  content: {
-    heading: string;
-    paragraphs: string[];
-  }[];
+content: string;
 
   imageUrl?: string | null;
 
@@ -57,10 +54,7 @@ export type CreateBlogPostInput = {
 
   categoryId: string;
 
-  content: {
-    heading: string;
-    paragraphs: string[];
-  }[];
+content: string;
 
   imageUrl?: string;
 

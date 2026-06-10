@@ -87,15 +87,8 @@ export function AdminBlogCreate() {
         published,
         imageUrl,
         cloudinaryPublicId,
-
-        content: [
-          {
-            heading: "Conteúdo",
-            paragraphs: [content],
-          },
-        ],
+        content,
       });
-
       navigate("/admin/blog");
     } catch (error) {
       console.error(error);
@@ -104,6 +97,11 @@ export function AdminBlogCreate() {
     } finally {
       setSubmitting(false);
     }
+  }
+  async function handleEditorImageUpload(file: File) {
+    const response = await uploadBlogImageFile(file);
+
+    return response.data.url;
   }
 
   return (
@@ -135,7 +133,11 @@ export function AdminBlogCreate() {
 
         <label>
           Conteúdo
-          <TiptapEditor value={content} onChange={setContent} />
+          <TiptapEditor
+            value={content}
+            onChange={setContent}
+            uploadImage={handleEditorImageUpload}
+          />
         </label>
         <label>
           Categoria

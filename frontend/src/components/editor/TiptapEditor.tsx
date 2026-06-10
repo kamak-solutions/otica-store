@@ -1,16 +1,33 @@
+import { useEffect } from "react";
+
 import { useEditor, EditorContent } from "@tiptap/react";
+
 import StarterKit from "@tiptap/starter-kit";
+
+import Image from "@tiptap/extension-image";
+
+import Link from "@tiptap/extension-link";
+
 import TextAlign from "@tiptap/extension-text-align";
 
 type Props = {
   value: string;
   onChange: (value: string) => void;
+  uploadImage?: (file: File) => Promise<string>;
 };
 
-export function TiptapEditor({ value, onChange }: Props) {
+export function TiptapEditor({ value, onChange, uploadImage }: Props) {
   const editor = useEditor({
     extensions: [
       StarterKit,
+
+      Image.configure({
+        inline: false,
+      }),
+
+      Link.configure({
+        openOnClick: false,
+      }),
 
       TextAlign.configure({
         types: ["heading", "paragraph"],
@@ -24,8 +41,48 @@ export function TiptapEditor({ value, onChange }: Props) {
     },
   });
 
+  useEffect(() => {
+  if (editor && value) {
+    editor.commands.setContent(value);
+  }
+}, [value, editor]);
+
   if (!editor) {
     return null;
+  }
+
+  async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file || !uploadImage) {
+      return;
+    }
+
+    const url = await uploadImage(file);
+
+    editor
+      .chain()
+      .focus()
+      .setImage({
+        src: url,
+      })
+      .run();
+  }
+
+  function addLink() {
+    const url = window.prompt("Digite o link:");
+
+    if (!url) {
+      return;
+    }
+
+    editor
+      .chain()
+      .focus()
+      .setLink({
+        href: url,
+      })
+      .run();
   }
 
   return (
@@ -35,14 +92,21 @@ export function TiptapEditor({ value, onChange }: Props) {
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
         >
-          Negrito
+          <b>B</b>
         </button>
 
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
         >
-          Itálico
+          <i>I</i>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+        >
+          Lista
         </button>
 
         <button
@@ -64,25 +128,60 @@ export function TiptapEditor({ value, onChange }: Props) {
           type="button"
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
         >
-          Esquerda
+          ←
         </button>
 
         <button
           type="button"
           onClick={() => editor.chain().focus().setTextAlign("center").run()}
         >
-          Centro
+          ↔
         </button>
 
         <button
           type="button"
           onClick={() => editor.chain().focus().setTextAlign("right").run()}
         >
-          Direita
+          →
+        </button>
+
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().setTextAlign("justify").run()}
+        >
+          ☰
+        </button>
+
+        <button type="button" onClick={addLink}>
+          🔗 Link
+        </button>
+
+        <label className="tiptap-button">
+          🖼 Imagem
+          <input
+            hidden
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+          />
+        </label>
+
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().undo().run()}
+        >
+          ↶
+        </button>
+
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().redo().run()}
+        >
+          ↷
         </button>
       </div>
 
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} className="tiptap-editor" />
     </div>
   );
 }

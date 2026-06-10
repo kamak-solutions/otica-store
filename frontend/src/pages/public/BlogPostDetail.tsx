@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { getBlogPostBySlug, type BlogPost } from "../../services/blog.service";
 import { useEffect, useState } from "react";
 import { Seo } from "../../components/seo/Seo";
+import { BlogShare } from "../../components/public/BlogShare";
 
 function formatDate(value?: string | null) {
   if (!value) {
@@ -95,18 +96,17 @@ export function BlogPostDetail() {
         </div>
 
         <div className="site-container blog-post-content">
-          {post.content.map((section) => (
-            <section key={section.heading}>
-              <h2>{section.heading}</h2>
+          <BlogShare title={post.title} />
 
-              {section.paragraphs.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-            </section>
-          ))}
+          <div
+            dangerouslySetInnerHTML={{
+              __html: post.content,
+            }}
+          />
 
           <div className="blog-post-cta">
             <strong>Precisa de ajuda para escolher seus óculos?</strong>
+
             <p>
               Envie sua receita ou solicite um orçamento personalizado com a
               Ótica ShowRoom.

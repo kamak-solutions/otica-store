@@ -53,44 +53,68 @@ export function Blog() {
         </p>
       </section>
 
-      <section className="site-container blog-page-grid">
+      <section className="site-container blog-layout">
         {loading ? (
           <p>Carregando artigos...</p>
         ) : (
-          posts.map((post, index) => (
-            <article
-              className={`blog-page-card ${
-                index === 0 ? "blog-page-card-featured" : ""
-              }`}
-              key={post.id}
-            >
-              <div className="blog-page-card-image-wrapper">
-                <img
-                  className="blog-page-card-image"
-                  src={post.imageUrl ?? "https://placehold.co/1200x700"}
-                  alt={post.title}
-                />
-              </div>
-
-              <div className="blog-page-card-content">
-                <span>{post.category?.name ?? "Sem categoria"}</span>
-
-                <h2>{post.title}</h2>
-
-                <p>{post.excerpt}</p>
-
-                <div className="blog-page-card-meta">
-                  <small>
-                    {formatDate(post.publishedAt ?? post.createdAt)}
-                  </small>
-
-                  <small>{post.readingTime}</small>
+          <>
+            {posts[0] && (
+              <article className="blog-featured-card">
+                <div className="blog-featured-image">
+                  <img
+                    src={posts[0].imageUrl ?? "https://placehold.co/1200x700"}
+                    alt={posts[0].title}
+                  />
                 </div>
 
-                <Link to={`/blog/${post.slug}`}>Ler artigo</Link>
-              </div>
-            </article>
-          ))
+                <div className="blog-featured-content">
+                  <span>{posts[0].category?.name ?? "Blog"}</span>
+
+                  <h2>{posts[0].title}</h2>
+
+                  <p>{posts[0].excerpt}</p>
+
+                  <div className="blog-page-card-meta">
+                    <small>
+                      {formatDate(posts[0].publishedAt ?? posts[0].createdAt)}
+                    </small>
+
+                    <small>
+                      {posts[0].readingTime
+                        ? `${posts[0].readingTime} min`
+                        : ""}
+                    </small>
+                  </div>
+
+                  <Link to={`/blog/${posts[0].slug}`}>Ler artigo</Link>
+                </div>
+              </article>
+            )}
+
+            <div className="blog-page-grid">
+              {posts.slice(1, 7).map((post) => (
+                <article className="blog-page-card" key={post.id}>
+                  <div className="blog-page-card-image-wrapper">
+                    <img
+                      className="blog-page-card-image"
+                      src={post.imageUrl ?? "https://placehold.co/800x500"}
+                      alt={post.title}
+                    />
+                  </div>
+
+                  <div className="blog-page-card-content">
+                    <span>{post.category?.name ?? "Blog"}</span>
+
+                    <h3>{post.title}</h3>
+
+                    <p>{post.excerpt}</p>
+
+                    <Link to={`/blog/${post.slug}`}>Ler artigo</Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </>
         )}
       </section>
     </main>

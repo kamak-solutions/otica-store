@@ -48,9 +48,7 @@ export function AdminBlogEdit() {
 
         setExcerpt(post.excerpt);
 
-        setContent(
-          post.content.flatMap((section) => section.paragraphs).join("\n\n"),
-        );
+        setContent(post.content);
 
         setCategoryId(post.categoryId ?? "");
 
@@ -107,10 +105,7 @@ export function AdminBlogEdit() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
 
-    if (!id) {
-      alert("Artigo não encontrado.");
-      return;
-    }
+    if (!id) return;
 
     try {
       setSubmitting(true);
@@ -123,12 +118,7 @@ export function AdminBlogEdit() {
         published,
         imageUrl,
         cloudinaryPublicId,
-        content: [
-          {
-            heading: "Conteúdo",
-            paragraphs: content.split("\n").filter(Boolean),
-          },
-        ],
+        content,
       });
 
       navigate("/admin/blog");
