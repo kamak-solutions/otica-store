@@ -36,7 +36,7 @@ export function Seo({ title, description, imageUrl }: SeoProps) {
   useEffect(() => {
     const currentUrl = window.location.href;
     const finalImageUrl =
-      imageUrl ?? "https://otica-store.vercel.app/og-image.png";
+      imageUrl ?? "https://oticashowroom.com.br/og-image.png";
 
     document.title = title;
 
@@ -50,6 +50,7 @@ export function Seo({ title, description, imageUrl }: SeoProps) {
     getOrCreateMetaByName("twitter:title").content = title;
     getOrCreateMetaByName("twitter:description").content = description;
     getOrCreateMetaByName("twitter:image").content = finalImageUrl;
+    getOrCreateMetaByName("twitter:card").content = "summary_large_image";
   }, [title, description, imageUrl]);
 
   return null;
