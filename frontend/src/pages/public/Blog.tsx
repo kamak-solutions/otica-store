@@ -3,11 +3,12 @@ import { useEffect, useState } from "react";
 
 import { listBlogPosts, type BlogPost } from "../../services/blog.service";
 import { Seo } from "../../components/seo/Seo";
-import {
-  listPublicBanners,
-  type StorefrontBanner,
-} from "../../services/storefront.service";
+import { BlogSidebar } from "../../components/public/BlogSidebar";
 
+import {
+  listWidgets,
+  type Widget
+} from "../../services/widget.service";
 
 
 function formatDate(value?: string | null) {
@@ -19,12 +20,22 @@ function formatDate(value?: string | null) {
     dateStyle: "long",
   }).format(new Date(value));
 }
+function truncateText(text: string, max = 140) {
+  if (!text) return "";
+
+  if (text.length <= max) {
+    return text;
+  }
+
+  return text.substring(0, max) + "...";
+}
 
 export function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
 
   const [loading, setLoading] = useState(true);
-  const [blogBanner, setBlogBanner] = useState<StorefrontBanner | null>(null);
+
+  const [widgets, setWidgets] = useState<Widget[]>([]);
 
   useEffect(() => {
     async function loadPosts() {
@@ -42,22 +53,19 @@ export function Blog() {
     loadPosts();
   }, []);
   useEffect(() => {
-    async function loadBanner() {
+    async function loadWidgets() {
       try {
-        const response = await listPublicBanners();
+        const response = await listWidgets();
 
-        const banner = response.data.find(
-          (item) => item.key === "blog_sidebar",
-        );
-
-        setBlogBanner(banner ?? null);
+        setWidgets(response.data.filter((widget) => widget.active));
       } catch (error) {
-        console.error("Erro ao carregar banner blog", error);
+        console.error("Erro ao carregar widgets", error);
       }
     }
 
-    loadBanner();
+    loadWidgets();
   }, []);
+
 
   return (
     <main className="page-shell">
@@ -78,105 +86,77 @@ export function Blog() {
       </section>
 
       <section className="site-container blog-layout">
-        <div className="blog-content">
-          {loading ? (
-            <p>Carregando artigos...</p>
-          ) : (
-            <>
-              {posts[0] && (
-                <article className="blog-featured-card">
-                  <div className="blog-featured-image">
-                    <img
-                      src={posts[0].imageUrl ?? "https://placehold.co/1200x700"}
-                      alt={posts[0].title}
-                    />
-                  </div>
-
-                  <div className="blog-featured-content">
-                    <span>{posts[0].category?.name ?? "Blog"}</span>
-
-                    <h2>{posts[0].title}</h2>
-
-                    <p>{posts[0].excerpt}</p>
-
-                    <div className="blog-page-card-meta">
-                      <small>
-                        {formatDate(posts[0].publishedAt ?? posts[0].createdAt)}
-                      </small>
-
-                      <small>
-                        {posts[0].readingTime
-                          ? `${posts[0].readingTime} min`
-                          : ""}
-                      </small>
-                    </div>
-
-                    <Link to={`/blog/${posts[0].slug}`}>Ler artigo</Link>
-                  </div>
-                </article>
-              )}
-
-              <div className="blog-page-grid">
-                {posts.slice(1, 7).map((post) => (
-                  <article className="blog-page-card" key={post.id}>
-                    <div className="blog-page-card-image-wrapper">
+        <div className="blog-main">
+          <div className="blog-content">
+            {loading ? (
+              <p>Carregando artigos...</p>
+            ) : (
+              <>
+                {posts[0] && (
+                  <article className="blog-featured-card">
+                    <div className="blog-featured-image">
                       <img
-                        className="blog-page-card-image"
-                        src={post.imageUrl ?? "https://placehold.co/800x500"}
-                        alt={post.title}
+                        src={
+                          posts[0].imageUrl ?? "https://placehold.co/1200x700"
+                        }
+                        alt={posts[0].title}
                       />
                     </div>
 
-                    <div className="blog-page-card-content">
-                      <span>{post.category?.name ?? "Blog"}</span>
+                    <div className="blog-featured-content">
+                      <span>{posts[0].category?.name ?? "Blog"}</span>
 
-                      <h3>{post.title}</h3>
+                      <h2>{posts[0].title}</h2>
 
-                      <p>{post.excerpt}</p>
+                      <p>{posts[0].excerpt}</p>
 
-                      <Link to={`/blog/${post.slug}`}>Ler artigo</Link>
+                      <div className="blog-page-card-meta">
+                        <small>
+                          {formatDate(
+                            posts[0].publishedAt ?? posts[0].createdAt,
+                          )}
+                        </small>
+
+                        <small>
+                          {posts[0].readingTime
+                            ? `${posts[0].readingTime} min`
+                            : ""}
+                        </small>
+                      </div>
+
+                      <Link to={`/blog/${posts[0].slug}`}>Ler artigo</Link>
                     </div>
                   </article>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+                )}
 
-        <aside className="blog-sidebar">
-          <div className="blog-sidebar-card">
-            <h3>Últimos artigos</h3>
+                <div className="blog-page-grid">
+                  {posts.slice(1, 7).map((post) => (
+                    <article className="blog-page-card" key={post.id}>
+                      <div className="blog-page-card-image-wrapper">
+                        <img
+                          className="blog-page-card-image"
+                          src={post.imageUrl ?? "https://placehold.co/800x500"}
+                          alt={post.title}
+                        />
+                      </div>
 
-            {posts.slice(0, 5).map((post) => (
-              <Link
-                key={post.id}
-                to={`/blog/${post.slug}`}
-                className="blog-sidebar-item"
-              >
-                {post.title}
-              </Link>
-            ))}
+                      <div className="blog-page-card-content">
+                        <span>{post.category?.name ?? "Blog"}</span>
+
+                        <h3>{post.title}</h3>
+
+                        <p>{truncateText(post.excerpt, 140)}</p>
+
+                        <Link to={`/blog/${post.slug}`}>Ler artigo</Link>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
-
-          {blogBanner && (
-            <div className="blog-sidebar-card blog-sidebar-ad">
-              {blogBanner.imageUrl && (
-                <img src={blogBanner.imageUrl} alt="Banner blog" />
-              )}
-
-              <h3>{blogBanner.title}</h3>
-
-              <p>{blogBanner.description}</p>
-
-              <Link
-                to={blogBanner.buttonHref ?? "/orcamento"}
-                className="button-primary"
-              >
-                Saiba mais
-              </Link>
-            </div>
-          )}
-        </aside>
+        </div>
+        <BlogSidebar posts={posts} widgets={widgets} />
       </section>
     </main>
   );

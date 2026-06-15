@@ -23,6 +23,7 @@ import { blogRoutes } from "./modules/blog/blog.routes.js";
 import { crmRoutes } from "./modules/crm/crm.routes.js";
 //import { whatsappRoutes } from "./modules/whatsapp/whatsapp.routes.js";
 import { blogCategoryRoutes } from "./modules/blog-category/blog-category.routes.js";
+import { widgetRoutes } from "./modules/widgets/widget.routes.js";
 
 export const app = Fastify({
   logger: {
@@ -112,3 +113,4 @@ app.register(blogRoutes);
 app.register(crmRoutes);
 //app.register(whatsappRoutes);
 app.register(blogCategoryRoutes);
+app.register(widgetRoutes);

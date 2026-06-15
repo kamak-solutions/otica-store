@@ -1,52 +1,57 @@
 import { Link } from "react-router-dom";
+
 import type { BlogPost } from "../../services/blog.service";
+
+import type { Widget } from "../../services/widget.service";
+
+import { BlogSidebarBanner } from "./BlogSidebarBanner";
 
 type Props = {
   posts: BlogPost[];
+  widgets: Widget[];
 };
 
-export function BlogSidebar({ posts }: Props) {
+export function BlogSidebar({ posts, widgets }: Props) {
   return (
     <aside className="blog-sidebar">
-      <div className="blog-sidebar-card blog-sidebar-banner">
-        <h3>Cuide da sua visão 👓</h3>
-
-        <p>Encontre lentes e armações ideais para seu dia a dia.</p>
-
-        <Link to="/orcamento">Fazer orçamento</Link>
-      </div>
-
       <div className="blog-sidebar-card">
         <h3>Últimos artigos</h3>
 
-        <div className="blog-sidebar-posts">
-          {posts.slice(0, 5).map((post) => (
-            <Link
-              key={post.id}
-              to={`/blog/${post.slug}`}
-              className="blog-sidebar-post"
-            >
-              <img src={post.imageUrl ?? "https://placehold.co/120x80"} />
+        {posts.slice(0, 3).map((post) => (
+          <Link
+            key={post.id}
+            to={`/blog/${post.slug}`}
+            className="blog-sidebar-post"
+          >
+            <img src={post.imageUrl ?? "https://placehold.co/120x80"} />
 
-              <div>
-                <strong>{post.title}</strong>
-
-                <small>{post.category?.name ?? "Blog"}</small>
-              </div>
-            </Link>
-          ))}
-        </div>
+            <strong>{post.title}</strong>
+          </Link>
+        ))}
       </div>
 
-      <div className="blog-sidebar-card">
-        <h3>Categorias</h3>
+      {widgets.map((widget) => (
+        <BlogSidebarBanner
+          key={widget.id}
+          type={widget.type}
+          title={widget.title ?? ""}
+          description={widget.description}
+          mediaUrl={widget.mediaUrl}
+          embedCode={widget.embedCode}
+          redirectUrl={widget.redirectUrl}
+          buttonLabel={widget.buttonLabel}
+          aspectRatio={widget.aspectRatio}
+        />
+      ))}
 
-        <ul>
-          <li>Lentes</li>
-          <li>Armações</li>
-          <li>Cuidados</li>
-          <li>Saúde visual</li>
-        </ul>
+      <div className="blog-sidebar-card">
+        <h3>Precisa de ajuda?</h3>
+
+        <p>Envie sua receita e receba orçamento.</p>
+
+        <Link to="/orcamento" className="button-primary">
+          Solicitar orçamento
+        </Link>
       </div>
     </aside>
   );
