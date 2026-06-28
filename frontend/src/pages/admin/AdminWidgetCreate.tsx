@@ -20,8 +20,6 @@ export function AdminWidgetCreate() {
 
   const [mediaUrl, setMediaUrl] = useState("");
 
-  const [embedCode, setEmbedCode] = useState("");
-
   const [redirectUrl, setRedirectUrl] = useState("");
 
   const [buttonLabel, setButtonLabel] = useState("");
@@ -66,8 +64,6 @@ export function AdminWidgetCreate() {
         description,
 
         mediaUrl: mediaUrl || undefined,
-
-        embedCode: embedCode || undefined,
 
         redirectUrl,
 
@@ -115,8 +111,6 @@ export function AdminWidgetCreate() {
             <option value="IMAGE">Imagem</option>
 
             <option value="VIDEO">Vídeo</option>
-
-            <option value="EMBED">Embed</option>
 
             <option value="HTML">HTML</option>
           </select>
@@ -171,16 +165,6 @@ export function AdminWidgetCreate() {
             <input
               value={mediaUrl}
               onChange={(e) => setMediaUrl(e.target.value)}
-            />
-          </label>
-        )}
-
-        {type === "EMBED" && (
-          <label>
-            Código embed
-            <textarea
-              value={embedCode}
-              onChange={(e) => setEmbedCode(e.target.value)}
             />
           </label>
         )}

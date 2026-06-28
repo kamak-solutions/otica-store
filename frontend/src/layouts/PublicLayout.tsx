@@ -275,6 +275,7 @@ export function PublicLayout() {
 
         <div className="site-container footer-bottom">
           <span>© oticashowroom.com.br</span>
+            <span>© oticashowroom.com.br</span>
           <span>by Kamak Solutions</span>
         </div>
       </footer>

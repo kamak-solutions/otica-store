@@ -3,10 +3,10 @@ import {
   listAdminCustomers,
   findAdminCustomerById,
   updateCustomerCrmStatus,
+  createAdminCustomer,
 } from "./customers.service.js";
 import { mapCustomerToHttp } from "./customers.mapper.js";
 import { AppError } from "../../errors/app-error.js";
-
 
 export async function getAdminCustomersController(
   request: FastifyRequest,
@@ -59,6 +59,34 @@ export async function updateCustomerCrmStatusController(
   );
 
   return reply.send({
+    data: mapCustomerToHttp(customer),
+  });
+}
+export async function createAdminCustomerController(
+  request: FastifyRequest<{
+    Body: {
+      name: string;
+      email: string;
+      phone: string;
+      cpf?: string;
+      birthDate?: string;
+      zipcode: string;
+      state: string;
+      street: string;
+      number: string;
+      complement?: string;
+      district: string;
+      city: string;
+      crmStatus?: string;
+      lgpdAccepted: boolean;
+      lgpdConsentSource?: string;
+    };
+  }>,
+  reply: FastifyReply,
+) {
+  const customer = await createAdminCustomer(request.body);
+
+  return reply.status(201).send({
     data: mapCustomerToHttp(customer),
   });
 }

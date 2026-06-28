@@ -93,9 +93,15 @@ export function AdminCustomers() {
           </p>
         </div>
 
-        <button type="button" onClick={loadCustomers}>
-          Atualizar
-        </button>
+        <div className="campaign-actions">
+          <Link to="/admin/clientes/novo">
+            <button type="button">Novo cliente</button>
+          </Link>
+
+          <button type="button" onClick={loadCustomers}>
+            Atualizar
+          </button>
+        </div>
       </div>
 
       <div className="admin-toolbar">

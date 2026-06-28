@@ -37,7 +37,6 @@ export function BlogSidebar({ posts, widgets }: Props) {
           title={widget.title ?? ""}
           description={widget.description}
           mediaUrl={widget.mediaUrl}
-          embedCode={widget.embedCode}
           redirectUrl={widget.redirectUrl}
           buttonLabel={widget.buttonLabel}
           aspectRatio={widget.aspectRatio}

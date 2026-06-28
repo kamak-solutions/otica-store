@@ -5,7 +5,7 @@ export type Widget = {
 
   name: string;
 
-  type: "IMAGE" | "VIDEO" | "EMBED" | "HTML";
+  type: "IMAGE" | "VIDEO" | "HTML";
 
   position: string;
 
@@ -14,8 +14,6 @@ export type Widget = {
   description?: string | null;
 
   mediaUrl?: string | null;
-
-  embedCode?: string | null;
 
   imageUrl?: string | null;
 

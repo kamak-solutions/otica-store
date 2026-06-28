@@ -39,6 +39,7 @@ import { AdminCrmDashboard } from "./pages/admin/AdminCrmDashboard";
 import { AdminBlogEdit } from "./pages/admin/AdminBlogEdit";
 import { AdminWidgets } from "./pages/admin/AdminWidgets";
 import { AdminWidgetCreate } from "./pages/admin/AdminWidgetCreate";
+import { AdminCustomerCreate } from "./pages/admin/AdminCustomerCreate";
 
 export default function App() {
   return (
@@ -104,6 +105,10 @@ export default function App() {
           <Route path="/admin/crm" element={<AdminCrmDashboard />} />
           <Route path="/admin/widgets" element={<AdminWidgets />} />
           <Route path="/admin/widgets/novo" element={<AdminWidgetCreate />} />
+          <Route
+            path="/admin/clientes/novo"
+            element={<AdminCustomerCreate />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

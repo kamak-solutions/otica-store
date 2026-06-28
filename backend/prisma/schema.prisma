@@ -388,8 +388,6 @@ model Widget {
 
   mediaUrl String?
 
-  embedCode String?
-
 
   redirectUrl String
 

@@ -4,10 +4,9 @@ type Props = {
   title: string;
   description?: string | null;
 
-  type: "IMAGE" | "VIDEO" | "EMBED" | "HTML";
+  type: "IMAGE" | "VIDEO" | "HTML";
 
   mediaUrl?: string | null;
-  embedCode?: string | null;
 
   redirectUrl?: string | null;
 
@@ -21,78 +20,58 @@ export function BlogSidebarBanner({
   description,
   type,
   mediaUrl,
-  embedCode,
   redirectUrl,
   buttonLabel,
   aspectRatio,
 }: Props) {
+  const isVertical = aspectRatio === "9:16";
+
+  const finalAspectRatio =
+    aspectRatio === "9:16"
+      ? "9 / 16"
+      : aspectRatio === "1:1"
+        ? "1 / 1"
+        : "16 / 9";
 
   return (
     <div className="blog-widget">
-
       <div
-        className={`blog-widget-media ${aspectRatio ?? "16-9"}`}
+        className={`blog-widget-media ${
+          isVertical ? "widget-vertical" : ""
+        }`}
+        style={{
+          aspectRatio: finalAspectRatio,
+        }}
       >
-
         {type === "IMAGE" && mediaUrl && (
           <img
             src={mediaUrl}
             alt={title}
+            className="widget-media-content"
           />
         )}
-
 
         {type === "VIDEO" && mediaUrl && (
           <video
             src={mediaUrl}
             controls
+            playsInline
+            className="widget-media-content"
           />
         )}
-
-
-        {type === "EMBED" && embedCode && (
-          <div
-            className="blog-widget-embed"
-            dangerouslySetInnerHTML={{
-              __html: embedCode,
-            }}
-          />
-        )}
-
-
-        {type === "HTML" && embedCode && (
-          <div
-            dangerouslySetInnerHTML={{
-              __html: embedCode,
-            }}
-          />
-        )}
-
       </div>
 
+      <div className="blog-widget-content">
+        <h3>{title}</h3>
 
-      <h3>
-        {title}
-      </h3>
+        {description && <p>{description}</p>}
 
-
-      {description && (
-        <p>
-          {description}
-        </p>
-      )}
-
-
-
-      {redirectUrl && (
-        <Link
-          className="button-primary"
-          to={redirectUrl}
-        >
-          {buttonLabel ?? "Saiba mais"}
-        </Link>
-      )}
-
+        {redirectUrl && (
+          <Link className="button-primary" to={redirectUrl}>
+            {buttonLabel ?? "Saiba mais"}
+          </Link>
+        )}
+      </div>
     </div>
   );
 }

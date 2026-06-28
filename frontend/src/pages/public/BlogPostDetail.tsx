@@ -3,6 +3,9 @@ import { getBlogPostBySlug, type BlogPost } from "../../services/blog.service";
 import { useEffect, useState } from "react";
 import { Seo } from "../../components/seo/Seo";
 import { BlogShare } from "../../components/public/BlogShare";
+import { BlogSidebar } from "../../components/public/BlogSidebar";
+import { listBlogPosts } from "../../services/blog.service";
+import { listWidgets, type Widget } from "../../services/widget.service";
 
 function formatDate(value?: string | null) {
   if (!value) {
@@ -18,6 +21,9 @@ export function BlogPostDetail() {
   const { slug } = useParams();
 
   const [post, setPost] = useState<BlogPost | null>(null);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+
+  const [widgets, setWidgets] = useState<Widget[]>([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -38,6 +44,24 @@ export function BlogPostDetail() {
 
     loadPost();
   }, [slug]);
+  useEffect(() => {
+    async function loadSidebarData() {
+      try {
+        const [postsResponse, widgetsResponse] = await Promise.all([
+          listBlogPosts(),
+          listWidgets(),
+        ]);
+
+        setPosts(postsResponse);
+
+        setWidgets(widgetsResponse.data.filter((widget) => widget.active));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadSidebarData();
+  }, []);
   if (loading) {
     return (
       <main className="page-shell">
@@ -95,34 +119,38 @@ export function BlogPostDetail() {
           />
         </div>
 
-        <div className="site-container blog-post-content">
-          <BlogShare title={post.title} />
+        <section className="site-container blog-post-layout">
+          <div className="blog-post-content">
+            <BlogShare title={post.title} />
 
-          <div
-            dangerouslySetInnerHTML={{
-              __html: post.content,
-            }}
-          />
+            <div
+              dangerouslySetInnerHTML={{
+                __html: post.content,
+              }}
+            />
 
-          <div className="blog-post-cta">
-            <strong>Precisa de ajuda para escolher seus óculos?</strong>
+            <div className="blog-post-cta">
+              <strong>Precisa de ajuda para escolher seus óculos?</strong>
 
-            <p>
-              Envie sua receita ou solicite um orçamento personalizado com a
-              Ótica ShowRoom.
-            </p>
+              <p>
+                Envie sua receita ou solicite um orçamento personalizado com a
+                Ótica ShowRoom.
+              </p>
 
-            <div>
-              <Link className="button-primary" to="/orcamento">
-                Solicitar orçamento
-              </Link>
+              <div>
+                <Link className="button-primary" to="/orcamento">
+                  Solicitar orçamento
+                </Link>
 
-              <Link className="button-secondary" to="/">
-                Ver produtos
-              </Link>
+                <Link className="button-secondary" to="/">
+                  Ver produtos
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+
+          <BlogSidebar posts={posts} widgets={widgets} />
+        </section>
       </article>
     </main>
   );

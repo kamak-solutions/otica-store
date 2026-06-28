@@ -56,3 +56,29 @@ export function listAdminCustomers() {
     headers: getAdminAuthHeaders(),
   });
 }
+
+export type CreateAdminCustomerInput = {
+  name: string;
+  email: string;
+  phone: string;
+  cpf?: string;
+  birthDate?: string;
+  zipcode: string;
+  state: string;
+  street: string;
+  number: string;
+  complement?: string;
+  district: string;
+  city: string;
+  crmStatus?: string;
+  lgpdAccepted: boolean;
+  lgpdConsentSource?: string;
+};
+
+export function createAdminCustomer(data: CreateAdminCustomerInput) {
+  return apiFetch<{ data: AdminCustomer }>("/admin/customers", {
+    method: "POST",
+    headers: getAdminAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+}

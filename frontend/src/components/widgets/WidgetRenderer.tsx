@@ -27,14 +27,7 @@ export function WidgetRenderer({ widget }: Props) {
         <video className="widget-media" controls src={widget.mediaUrl} />
       )}
 
-      {widget.type === "EMBED" && widget.embedCode && (
-        <div
-          className="widget-media"
-          dangerouslySetInnerHTML={{
-            __html: widget.embedCode,
-          }}
-        />
-      )}
+  
 
       {widget.buttonLabel && (
         <button className="button-primary" onClick={openLink}>
