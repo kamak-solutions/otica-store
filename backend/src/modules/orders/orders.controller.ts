@@ -2,6 +2,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { AppError } from "../../errors/app-error.js";
 import {
   createOrder,
+  createAdminOrder,
   findAdminOrderById,
   listAdminOrders,
   createOrderPaymentLink,
@@ -35,6 +36,40 @@ export async function createOrderController(
   );
 
   const order = await createOrder(body);
+
+  return reply.status(201).send({
+    data: mapOrderToHttp(order),
+    message: "Pedido criado com sucesso.",
+  });
+}
+export async function createAdminOrderController(
+  request: FastifyRequest<{
+    Body: {
+      customerId: string;
+      notes?: string;
+      items: Array<{
+        productId: string;
+        quantity: number;
+      }>;
+    };
+  }>,
+  reply: FastifyReply,
+) {
+  const order = await createAdminOrder(request.body);
+
+  await createAdminAuditLog({
+    adminId: request.admin?.sub,
+    adminEmail: request.admin?.email,
+    adminRole: request.admin?.role,
+    action: "order.created_from_crm",
+    entity: "Order",
+    entityId: order.id,
+    metadata: {
+      customerId: order.customerId,
+      itemsCount: order.items.length,
+      subtotal: String(order.subtotal),
+    },
+  });
 
   return reply.status(201).send({
     data: mapOrderToHttp(order),

@@ -13,6 +13,14 @@ function generateOrderNumber() {
 
   return `OSR-${timestamp}`;
 }
+export type CreateAdminOrderInput = {
+  customerId: string;
+  notes?: string;
+  items: Array<{
+    productId: string;
+    quantity: number;
+  }>;
+};
 
 export async function createOrder(data: CreateOrderBody) {
   return prisma.$transaction(async (tx) => {
@@ -102,6 +110,91 @@ export async function createOrder(data: CreateOrderBody) {
         customerId: customer.id,
         subtotal,
         notes: data.customer.notes || null,
+        items: {
+          create: orderItems,
+        },
+      },
+      include: {
+        customer: true,
+        items: true,
+      },
+    });
+
+    return order;
+  });
+}
+export async function createAdminOrder(data: CreateAdminOrderInput) {
+  return prisma.$transaction(async (tx) => {
+    const customer = await tx.customer.findUnique({
+      where: {
+        id: data.customerId,
+      },
+    });
+
+    if (!customer) {
+      throw new AppError("Cliente não encontrado.", 404, "Not found");
+    }
+
+    const productIds = data.items.map((item) => item.productId);
+
+    const products = await tx.product.findMany({
+      where: {
+        id: {
+          in: productIds,
+        },
+        active: true,
+      },
+    });
+
+    if (products.length !== productIds.length) {
+      throw new AppError(
+        "Um ou mais produtos do pedido não foram encontrados.",
+        400,
+        "Bad Request",
+      );
+    }
+
+    const orderItems = data.items.map((item) => {
+      const product = products.find(
+        (currentProduct) => currentProduct.id === item.productId,
+      );
+
+      if (!product) {
+        throw new AppError(
+          "Produto não encontrado no pedido.",
+          400,
+          "Bad Request",
+        );
+      }
+
+      if (product.stock < item.quantity) {
+        throw new AppError(
+          `Estoque insuficiente para o produto ${product.name}.`,
+          400,
+          "Bad Request",
+        );
+      }
+
+      const unitPrice = product.salePrice ?? product.price;
+
+      return {
+        productId: product.id,
+        productName: product.name,
+        unitPrice,
+        quantity: item.quantity,
+      };
+    });
+
+    const subtotal = orderItems.reduce((total, item) => {
+      return total + Number(item.unitPrice) * item.quantity;
+    }, 0);
+
+    const order = await tx.order.create({
+      data: {
+        orderNumber: generateOrderNumber(),
+        customerId: customer.id,
+        subtotal,
+        notes: data.notes || null,
         items: {
           create: orderItems,
         },

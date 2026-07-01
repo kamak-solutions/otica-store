@@ -40,6 +40,8 @@ import { AdminBlogEdit } from "./pages/admin/AdminBlogEdit";
 import { AdminWidgets } from "./pages/admin/AdminWidgets";
 import { AdminWidgetCreate } from "./pages/admin/AdminWidgetCreate";
 import { AdminCustomerCreate } from "./pages/admin/AdminCustomerCreate";
+import { AdminCustomerAttendanceCreate } from "./pages/admin/AdminCustomerAttendanceCreate";
+import { AdminCustomerOrderCreate } from "./pages/admin/AdminCustomerOrderCreate";
 
 export default function App() {
   return (
@@ -108,6 +110,14 @@ export default function App() {
           <Route
             path="/admin/clientes/novo"
             element={<AdminCustomerCreate />}
+          />
+          <Route
+            path="/admin/clientes/:id/atendimento/novo"
+            element={<AdminCustomerAttendanceCreate />}
+          />
+          <Route
+            path="/admin/clientes/:id/pedidos/novo"
+            element={<AdminCustomerOrderCreate />}
           />
         </Route>
       </Routes>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { updateCustomerCrmStatus } from "../../services/admin-customer-crm.service";
 import {
@@ -316,6 +317,12 @@ export function AdminCustomerDetail() {
 
               <div>
                 <strong>Status CRM</strong>
+                <Link
+                  to={`/admin/clientes/${customer.id}/atendimento/novo`}
+                  className="button-primary"
+                >
+                  Novo atendimento
+                </Link>
 
                 <select
                   value={crmStatus}
