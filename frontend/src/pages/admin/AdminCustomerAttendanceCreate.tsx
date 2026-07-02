@@ -1,4 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { createAttendance } from "../../services/attendances.service";
 import { useState } from "react";
 
 export function AdminCustomerAttendanceCreate() {
@@ -8,15 +9,27 @@ export function AdminCustomerAttendanceCreate() {
   const [type, setType] = useState("ORDER");
   const [notes, setNotes] = useState("");
 
-  function handleContinue(event: React.FormEvent) {
+  async function handleContinue(event: React.FormEvent) {
     event.preventDefault();
 
-    if (type === "ORDER") {
-      navigate(`/admin/clientes/${id}/pedidos/novo`);
+    if (!id) {
       return;
     }
 
-    alert("Esse tipo de atendimento será implementado depois.");
+    const response = await createAttendance({
+      customerId: id,
+      type,
+      notes: notes || undefined,
+    });
+
+    if (type === "ORDER") {
+      navigate(
+        `/admin/clientes/${id}/pedidos/novo?attendance=${response.data.id}`,
+      );
+      return;
+    }
+
+    navigate(`/admin/clientes/${id}`);
   }
 
   return (

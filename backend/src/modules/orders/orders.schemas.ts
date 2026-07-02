@@ -17,6 +17,7 @@ export const createOrderBodySchema = z.object({
     complement: z.string().optional(),
     district: z.string().min(2, "Bairro é obrigatório."),
     city: z.string().min(2, "Cidade é obrigatória."),
+    attendanceId: z.string().uuid().optional(),
     notes: z.string().optional(),
   }),
   items: z

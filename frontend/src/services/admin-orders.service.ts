@@ -109,3 +109,25 @@ export function createAdminOrderPaymentLink(id: string) {
     },
   );
 }
+export type CreateAdminOrderInput = {
+  customerId: string;
+  attendanceId?: string;
+  notes?: string;
+  items: Array<{
+    productId: string;
+    quantity: number;
+  }>;
+};
+
+type CreateAdminOrderResponse = {
+  data: AdminOrder;
+  message: string;
+};
+
+export function createAdminOrder(data: CreateAdminOrderInput) {
+  return apiFetch<CreateAdminOrderResponse>("/admin/orders", {
+    method: "POST",
+    headers: getAdminAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+}

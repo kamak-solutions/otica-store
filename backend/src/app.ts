@@ -7,6 +7,7 @@ import { healthRoutes } from "./routes/health.routes.js";
 import { ordersRoutes } from "./modules/orders/orders.routes.js";
 import { adminAuthRoutes } from "./modules/admin-auth/admin-auth.routes.js";
 import { categoriesRoutes } from "./modules/categories/categories.routes.js";
+import { brandsRoutes } from "./modules/brands/brands.routes.js";
 import { quoteRequestRoutes } from "./modules/quote-requests/quote-requests.routes.js";
 import { adminQuoteRequestRoutes } from "./modules/quote-requests/admin-quote-requests.routes.js";
 import rateLimit from "@fastify/rate-limit";
@@ -24,6 +25,8 @@ import { crmRoutes } from "./modules/crm/crm.routes.js";
 //import { whatsappRoutes } from "./modules/whatsapp/whatsapp.routes.js";
 import { blogCategoryRoutes } from "./modules/blog-category/blog-category.routes.js";
 import { widgetRoutes } from "./modules/widgets/widget.routes.js";
+import { attendancesRoutes } from "./modules/attendances/attendances.routes.js";
+
 
 export const app = Fastify({
   logger: {
@@ -100,6 +103,7 @@ app.register(productsRoutes);
 app.register(ordersRoutes);
 app.register(adminAuthRoutes);
 app.register(categoriesRoutes);
+app.register(brandsRoutes);
 app.register(quoteRequestRoutes);
 app.register(adminQuoteRequestRoutes);
 app.register(adminAuditRoutes);
@@ -114,3 +118,4 @@ app.register(crmRoutes);
 //app.register(whatsappRoutes);
 app.register(blogCategoryRoutes);
 app.register(widgetRoutes);
+app.register(attendancesRoutes);

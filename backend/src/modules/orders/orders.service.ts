@@ -15,6 +15,7 @@ function generateOrderNumber() {
 }
 export type CreateAdminOrderInput = {
   customerId: string;
+  attendanceId?: string;
   notes?: string;
   items: Array<{
     productId: string;
@@ -193,6 +194,7 @@ export async function createAdminOrder(data: CreateAdminOrderInput) {
       data: {
         orderNumber: generateOrderNumber(),
         customerId: customer.id,
+        attendanceId: data.attendanceId ?? null,
         subtotal,
         notes: data.notes || null,
         items: {

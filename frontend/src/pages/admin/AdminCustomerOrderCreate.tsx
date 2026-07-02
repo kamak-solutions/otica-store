@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
+import { createAdminOrder } from "../../services/admin-orders.service";
 
 import { listAdminProducts } from "../../services/admin-products.service";
 import type { Product } from "../../types/product";
@@ -18,15 +24,28 @@ function formatPrice(value: string | number) {
 
 export function AdminCustomerOrderCreate() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [searchParams] = useSearchParams();
+
+  const attendanceId = searchParams.get("attendance");
 
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [items, setItems] = useState<OrderItemDraft[]>([]);
   const [notes, setNotes] = useState("");
+  const [orderType, setOrderType] = useState("LENSES_ONLY");
 
   useEffect(() => {
     async function loadProducts() {
       const response = await listAdminProducts();
+
+      console.table(
+        response.data.map((product) => ({
+          name: product.name,
+          productType: product.productType,
+        })),
+      );
 
       setProducts(response.data);
     }
@@ -37,18 +56,24 @@ export function AdminCustomerOrderCreate() {
   const filteredProducts = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
 
-    if (!normalizedSearch) {
-      return products.slice(0, 8);
-    }
+    const filtered = products.filter((product) => {
+      const searchableText = [
+        product.name,
+        product.sku ?? "",
+        product.brand ?? "",
+        product.productType ?? "",
+      ]
+        .join(" ")
+        .toLowerCase();
 
-    return products
-      .filter((product) =>
-        [product.name, product.sku ?? "", product.brand ?? ""]
-          .join(" ")
-          .toLowerCase()
-          .includes(normalizedSearch),
-      )
-      .slice(0, 8);
+      if (!normalizedSearch) {
+        return true;
+      }
+
+      return searchableText.includes(normalizedSearch);
+    });
+
+    return filtered.slice(0, 8);
   }, [products, searchTerm]);
 
   const subtotal = items.reduce((total, item) => {
@@ -108,7 +133,23 @@ export function AdminCustomerOrderCreate() {
       ),
     );
   }
+  async function handleSaveOrder() {
+    if (!id || items.length === 0) {
+      return;
+    }
 
+    const response = await createAdminOrder({
+      customerId: id,
+      attendanceId: attendanceId ?? undefined,
+      notes: notes || undefined,
+      items: items.map((item) => ({
+        productId: item.product.id,
+        quantity: item.quantity,
+      })),
+    });
+
+    navigate(`/admin/pedidos/${response.data.id}`);
+  }
   return (
     <section className="admin-page">
       <div className="admin-page-heading">
@@ -122,6 +163,51 @@ export function AdminCustomerOrderCreate() {
           <button type="button">Voltar ao CRM</button>
         </Link>
       </div>
+      <section className="admin-form-card">
+        <h2>Tipo de atendimento</h2>
+
+        <div className="admin-order-type-grid">
+          <button
+            type="button"
+            className={orderType === "LENSES_ONLY" ? "is-active" : ""}
+            onClick={() => setOrderType("LENSES_ONLY")}
+          >
+            Somente lentes
+          </button>
+
+          <button
+            type="button"
+            className={orderType === "FRAME_AND_LENSES" ? "is-active" : ""}
+            onClick={() => setOrderType("FRAME_AND_LENSES")}
+          >
+            Armação + lentes
+          </button>
+
+          <button
+            type="button"
+            className={orderType === "FRAME_ONLY" ? "is-active" : ""}
+            onClick={() => setOrderType("FRAME_ONLY")}
+          >
+            Somente armação
+          </button>
+
+          <button
+            type="button"
+            className={orderType === "SUNGLASSES" ? "is-active" : ""}
+            onClick={() => setOrderType("SUNGLASSES")}
+          >
+            Óculos de sol
+          </button>
+
+          <button
+            type="button"
+            className={orderType === "CONTACT_LENSES" ? "is-active" : ""}
+            onClick={() => setOrderType("CONTACT_LENSES")}
+          >
+            Lentes de contato
+          </button>
+        </div>
+      </section>
 
       <div className="admin-order-create-layout">
         <section className="admin-form-card">
@@ -212,6 +298,7 @@ export function AdminCustomerOrderCreate() {
             className="admin-submit-button"
             type="button"
             disabled={items.length === 0}
+            onClick={handleSaveOrder}
           >
             Salvar pedido
           </button>
