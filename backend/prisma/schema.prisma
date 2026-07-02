@@ -25,9 +25,33 @@ model Product {
 
   audience    String?
   productType String?
+  frameUse    String?
+  frameShape  String?
+  color       String?
+
+  brandId  String?
+  brandRef Brand?  @relation(fields: [brandId], references: [id])
 
   images     ProductImage[]
   orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Brand {
+  id String @id @default(uuid())
+
+  name String
+  slug String @unique
+
+  description String?
+  logoUrl     String?
+  website     String?
+
+  active Boolean @default(true)
+
+  products Product[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -87,6 +111,8 @@ model Customer {
   lgpdAcceptedAt    DateTime?
   lgpdConsentSource String?
 
+  attendances CustomerAttendance[]
+
   orders    Order[]
   notes     CustomerNote[]
   reminders CustomerReminder[]
@@ -122,6 +148,12 @@ model Order {
   shippingPrice  Decimal? @db.Decimal(10, 2)
   shippingStatus String?  @default("not_required")
 
+  attendanceId String?
+  attendance   CustomerAttendance? @relation(fields: [attendanceId], references: [id])
+
+  createdByAdminId String?
+  createdByAdmin   AdminUser? @relation("OrderCreatedByAdmin", fields: [createdByAdminId], references: [id])
+
   items OrderItem[]
 
   createdAt        DateTime          @default(now())
@@ -152,6 +184,11 @@ model AdminUser {
   passwordHash String
   role         String  @default("owner")
   active       Boolean @default(true)
+
+  createdOrders Order[] @relation("OrderCreatedByAdmin")
+
+  createdLaboratoryOrders LaboratoryOrder[]    @relation("LaboratoryOrderCreatedByAdmin")
+  createdAttendances      CustomerAttendance[] @relation("AttendanceCreatedByAdmin")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -474,6 +511,39 @@ model OpticalPrescription {
   updatedAt DateTime @updatedAt
 }
 
+model CustomerAttendance {
+  id String @id @default(uuid())
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  createdByAdminId String?
+  createdByAdmin   AdminUser? @relation("AttendanceCreatedByAdmin", fields: [createdByAdminId], references: [id])
+
+  type String
+  // complete_glasses
+  // lenses_only
+  // frame_only
+  // adjustment
+  // warranty
+  // repair
+  // review
+
+  status String @default("open")
+  // open
+  // in_progress
+  // converted_to_order
+  // completed
+  // cancelled
+
+  notes String?
+
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model LaboratoryOrder {
   id String @id @default(uuid())
 
@@ -487,6 +557,9 @@ model LaboratoryOrder {
   prescription   OpticalPrescription? @relation(fields: [prescriptionId], references: [id])
 
   externalOrderNumber String?
+
+  createdByAdminId String?
+  createdByAdmin   AdminUser? @relation("LaboratoryOrderCreatedByAdmin", fields: [createdByAdminId], references: [id])
 
   status String @default("pending")
   // pending

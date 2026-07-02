@@ -42,6 +42,9 @@ type CreateAdminProductPayload = {
   featured: boolean;
   audience?: string | null;
   productType?: string | null;
+  frameUse?: string | null;
+  frameShape?: string | null;
+  color?: string | null;
   categoryId?: string | null;
 };
 
@@ -68,6 +71,9 @@ export function updateAdminProduct(
     featured: boolean;
     audience: string | null;
     productType: string | null;
+    frameUse: string | null;
+    frameShape: string | null;
+    color: string | null;
     categoryId: string | null;
   }>,
 ) {

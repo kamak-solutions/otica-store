@@ -28,6 +28,9 @@ export const createProductBodySchema = z.object({
   categoryId: z.string().uuid("ID da categoria inválido.").optional(),
   audience: z.string().max(40).optional(),
   productType: z.string().trim().min(1).max(80).optional(),
+  frameShape: z.string().trim().max(80).optional(),
+  frameUse: z.string().trim().max(80).optional(),
+  color: z.string().trim().max(80).optional(),
 });
 
 export type CreateProductBody = z.infer<typeof createProductBodySchema>;

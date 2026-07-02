@@ -28,7 +28,10 @@ export type Product = {
   active: boolean;
   featured: boolean;
   audience: string | null;
+  frameShape: string | null;
+  color: string | null;
   productType?: string | null;
+  frameUse: string | null;
   category: ProductCategory;
   images: ProductImage[];
   createdAt: string;

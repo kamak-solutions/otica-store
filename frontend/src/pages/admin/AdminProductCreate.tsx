@@ -16,6 +16,9 @@ type ProductFormData = {
   categoryId: string;
   audience: string;
   productType: string;
+  frameUse: string;
+  frameShape: string;
+  color: string;
   active: boolean;
   featured: boolean;
 };
@@ -31,6 +34,9 @@ const initialFormData: ProductFormData = {
   stock: "0",
   audience: "",
   productType: "",
+  frameUse: "",
+  frameShape: "",
+  color: "",
   categoryId: "",
   active: true,
   featured: false,
@@ -111,6 +117,9 @@ export function AdminProductCreate() {
         stock: Number(formData.stock),
         audience: formData.audience || undefined,
         productType: formData.productType || undefined,
+        frameUse: formData.frameUse || undefined,
+        frameShape: formData.frameShape || undefined,
+        color: formData.color || undefined,
         categoryId: formData.categoryId || undefined,
         active: formData.active,
         featured: formData.featured,
@@ -263,14 +272,48 @@ export function AdminProductCreate() {
               </select>
             </label>
             <label>
-              Tipo / Modelo
-              <input
-                type="text"
+              Tipo do produto
+              <select
                 value={formData.productType}
                 onChange={(event) =>
                   updateField("productType", event.target.value)
                 }
-                placeholder="Gatinho, Redondo, Esportivo, Estojo..."
+              >
+                <option value="">Não definido</option>
+                <option value="frame">Armação</option>
+                <option value="lens">Lente</option>
+                <option value="sunglasses">Óculos de sol</option>
+                <option value="contact_lens">Lente de contato</option>
+                <option value="accessory">Acessório</option>
+              </select>
+            </label>
+          </div>
+          <div className="admin-form-grid">
+            <label>
+              Formato da armação
+              <select
+                value={formData.frameShape}
+                onChange={(event) =>
+                  updateField("frameShape", event.target.value)
+                }
+              >
+                <option value="">Não definido</option>
+                <option value="redondo">Redondo</option>
+                <option value="gatinho">Gatinho</option>
+                <option value="quadrado">Quadrado</option>
+                <option value="retangular">Retangular</option>
+                <option value="aviador">Aviador</option>
+                <option value="oval">Oval</option>
+              </select>
+            </label>
+
+            <label>
+              Cor
+              <input
+                type="text"
+                value={formData.color}
+                onChange={(event) => updateField("color", event.target.value)}
+                placeholder="Preto, dourado, transparente..."
               />
             </label>
           </div>

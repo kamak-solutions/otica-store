@@ -12,7 +12,8 @@ export function AdminLayout() {
 
   const [isProductsMenuOpen, setIsProductsMenuOpen] = useState(
     location.pathname.startsWith("/admin/produtos") ||
-      location.pathname.startsWith("/admin/categorias"),
+      location.pathname.startsWith("/admin/categorias") ||
+      location.pathname.startsWith("/admin/marcas"),
   );
   const [isCrmMenuOpen, setIsCrmMenuOpen] = useState(
     location.pathname.startsWith("/admin/crm") ||
@@ -31,7 +32,8 @@ export function AdminLayout() {
 
   const isProductsActive =
     location.pathname.startsWith("/admin/produtos") ||
-    location.pathname.startsWith("/admin/categorias");
+    location.pathname.startsWith("/admin/categorias") ||
+    location.pathname.startsWith("/admin/marcas");
   const isCrmActive =
     location.pathname.startsWith("/admin/crm") ||
     location.pathname.startsWith("/admin/clientes");
@@ -90,7 +92,7 @@ export function AdminLayout() {
                 setIsProductsMenuOpen((currentValue) => !currentValue)
               }
             >
-              <span>Produtos</span>
+              <span>Catálogo</span>
               <strong>{isProductsMenuOpen ? "⌄" : "›"}</strong>
             </button>
 
@@ -99,6 +101,8 @@ export function AdminLayout() {
                 <Link to="/admin/produtos">Lista de produtos</Link>
 
                 <Link to="/admin/categorias">Categorias</Link>
+
+                <Link to="/admin/marcas">Marcas</Link>
               </div>
             )}
           </div>

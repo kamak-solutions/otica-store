@@ -42,6 +42,8 @@ import { AdminWidgetCreate } from "./pages/admin/AdminWidgetCreate";
 import { AdminCustomerCreate } from "./pages/admin/AdminCustomerCreate";
 import { AdminCustomerAttendanceCreate } from "./pages/admin/AdminCustomerAttendanceCreate";
 import { AdminCustomerOrderCreate } from "./pages/admin/AdminCustomerOrderCreate";
+import { AdminBrands } from "./pages/admin/AdminBrands";
+import { AdminBrandCreate } from "./pages/admin/AdminBrandCreate";
 
 export default function App() {
   return (
@@ -119,6 +121,8 @@ export default function App() {
             path="/admin/clientes/:id/pedidos/novo"
             element={<AdminCustomerOrderCreate />}
           />
+          <Route path="/admin/marcas" element={<AdminBrands />} />
+          <Route path="/admin/marcas/nova" element={<AdminBrandCreate />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -23,6 +23,9 @@ type ProductFormData = {
   stock: string;
   audience: string;
   productType: string;
+  frameUse: string;
+  frameShape: string;
+  color: string;
   categoryId: string;
   active: boolean;
   featured: boolean;
@@ -39,7 +42,10 @@ const initialFormData: ProductFormData = {
   stock: "0",
   audience: "",
   productType: "",
+  frameUse: "",
   categoryId: "",
+  frameShape: "",
+  color: "",
   active: true,
   featured: false,
 };
@@ -109,7 +115,10 @@ export function AdminProductEdit() {
           stock: String(product.stock),
           audience: product.audience ?? "",
           productType: product.productType ?? "",
+          frameUse: product.frameUse ?? "",
           categoryId: product.category?.id ?? "",
+          frameShape: product.frameShape ?? "",
+          color: product.color ?? "",
           active: product.active,
           featured: product.featured,
         });
@@ -281,6 +290,9 @@ export function AdminProductEdit() {
         stock: Number(formData.stock),
         audience: formData.audience || undefined,
         productType: formData.productType || undefined,
+        frameUse: formData.frameUse || undefined,
+        frameShape: formData.frameShape || undefined,
+        color: formData.color || undefined,
         categoryId: formData.categoryId || undefined,
         active: formData.active,
         featured: formData.featured,
@@ -468,15 +480,50 @@ export function AdminProductEdit() {
               ))}
             </select>
           </label>
+          <div className="admin-form-grid">
+            <label>
+              Tipo do produto
+              <select
+                value={formData.productType}
+                onChange={(event) =>
+                  updateField("productType", event.target.value)
+                }
+              >
+                <option value="">Não definido</option>
+                <option value="frame">Armação</option>
+                <option value="lens">Lente</option>
+                <option value="sunglasses">Óculos de Sol</option>
+                <option value="contact_lens">Lente de Contato</option>
+                <option value="accessory">Acessório</option>
+              </select>
+            </label>
+
+            <label>
+              Formato da armação
+              <select
+                value={formData.frameShape}
+                onChange={(event) =>
+                  updateField("frameShape", event.target.value)
+                }
+              >
+                <option value="">Não definido</option>
+                <option value="redondo">Redondo</option>
+                <option value="gatinho">Gatinho</option>
+                <option value="quadrado">Quadrado</option>
+                <option value="retangular">Retangular</option>
+                <option value="aviador">Aviador</option>
+                <option value="oval">Oval</option>
+              </select>
+            </label>
+          </div>
+
           <label>
-            Tipo / Modelo
+            Cor
             <input
               type="text"
-              value={formData.productType}
-              onChange={(event) =>
-                updateField("productType", event.target.value)
-              }
-              placeholder="Gatinho, Redondo, Esportivo, Estojo..."
+              value={formData.color}
+              onChange={(event) => updateField("color", event.target.value)}
+              placeholder="Preto, Dourado, Transparente..."
             />
           </label>
 
