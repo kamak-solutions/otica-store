@@ -13,6 +13,11 @@ import {
 } from "../../services/admin-customer-notes.service";
 
 import {
+  listCustomerAttendances,
+  type Attendance,
+} from "../../services/attendances.service";
+
+import {
   getCustomerReminders,
   createCustomerReminder,
   completeCustomerReminder,
@@ -76,6 +81,8 @@ export function AdminCustomerDetail() {
 
   const [isSavingInteraction, setIsSavingInteraction] = useState(false);
 
+  const [attendances, setAttendances] = useState<Attendance[]>([]);
+
   const [isLoading, setIsLoading] = useState(true);
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -93,11 +100,13 @@ export function AdminCustomerDetail() {
           notesResponse,
           remindersResponse,
           interactionsResponse,
+          attendancesResponse,
         ] = await Promise.all([
           getAdminCustomer(id),
           getCustomerNotes(id),
           getCustomerReminders(id),
           getCustomerInteractions(id),
+          listCustomerAttendances(id),
         ]);
 
         setCustomer(customerResponse.data);
@@ -108,6 +117,7 @@ export function AdminCustomerDetail() {
         setReminders(remindersResponse.data);
 
         setInteractions(interactionsResponse.data);
+        setAttendances(attendancesResponse.data);
       } catch (error) {
         setErrorMessage(
           error instanceof Error ? error.message : "Erro ao carregar cliente.",
@@ -115,9 +125,6 @@ export function AdminCustomerDetail() {
       } finally {
         setIsLoading(false);
       }
-      const remindersResponse = await getCustomerReminders(id);
-
-      setReminders(remindersResponse.data);
     }
 
     loadCustomer();
@@ -264,6 +271,10 @@ export function AdminCustomerDetail() {
                   <strong>{customer.orders.length}</strong>
                   <span>Pedidos</span>
                 </div>
+                <div>
+                  <strong>{attendances.length}</strong>
+                  <span>Atendimentos</span>
+                </div>
 
                 <div>
                   <strong>{notes.length}</strong>
@@ -338,7 +349,27 @@ export function AdminCustomerDetail() {
                 </select>
               </div>
             </div>
+            <h3>Atendimentos</h3>
 
+            {attendances.length === 0 ? (
+              <p>Nenhum atendimento.</p>
+            ) : (
+              <div className="crm-list">
+                {attendances.map((attendance) => (
+                  <div key={attendance.id} className="crm-item">
+                    <strong>{attendance.type}</strong>
+
+                    <p>Status: {attendance.status}</p>
+
+                    {attendance.collaborator && (
+                      <p>Colaborador: {attendance.collaborator.name}</p>
+                    )}
+
+                    <small>{formatDate(attendance.createdAt)}</small>
+                  </div>
+                ))}
+              </div>
+            )}
             <h3>Pedidos</h3>
 
             {customer.orders.length === 0 ? (

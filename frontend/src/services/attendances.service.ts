@@ -47,3 +47,15 @@ export function createAttendance(data: CreateAttendanceInput) {
     body: JSON.stringify(data),
   });
 }
+type ListAttendancesResponse = {
+  data: Attendance[];
+};
+
+export function listCustomerAttendances(customerId: string) {
+  return apiFetch<ListAttendancesResponse>(
+    `/admin/customers/${customerId}/attendances`,
+    {
+      headers: getAdminAuthHeaders(),
+    },
+  );
+}

@@ -5,6 +5,7 @@ import {
   createAttendance,
   findAttendanceById,
   listAttendances,
+  listAttendancesByCustomerId,
 } from "./attendances.service.js";
 
 const createAttendanceSchema = z.object({
@@ -17,6 +18,9 @@ const createAttendanceSchema = z.object({
 
 const attendanceIdSchema = z.object({
   id: z.string().uuid(),
+});
+const customerIdSchema = z.object({
+  customerId: z.string().uuid(),
 });
 
 function mapAttendance(attendance: any) {
@@ -88,5 +92,21 @@ export async function getAttendanceByIdController(
 
   return reply.send({
     data: mapAttendance(attendance),
+  });
+}
+export async function getCustomerAttendancesController(
+  request: FastifyRequest<{
+    Params: {
+      customerId: string;
+    };
+  }>,
+  reply: FastifyReply,
+) {
+  const { customerId } = customerIdSchema.parse(request.params);
+
+  const attendances = await listAttendancesByCustomerId(customerId);
+
+  return reply.send({
+    data: attendances.map(mapAttendance),
   });
 }

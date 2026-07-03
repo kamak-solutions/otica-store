@@ -42,3 +42,18 @@ export async function findAttendanceById(id: string) {
     },
   });
 }
+export async function listAttendancesByCustomerId(customerId: string) {
+  return prisma.customerAttendance.findMany({
+    where: {
+      customerId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      customer: true,
+      createdByAdmin: true,
+      orders: true,
+    },
+  });
+}

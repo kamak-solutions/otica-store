@@ -47,6 +47,7 @@ export async function createAdminOrderController(
     Body: {
       customerId: string;
       notes?: string;
+      attendanceId?: string;
       items: Array<{
         productId: string;
         quantity: number;
@@ -55,7 +56,10 @@ export async function createAdminOrderController(
   }>,
   reply: FastifyReply,
 ) {
-  const order = await createAdminOrder(request.body);
+  const order = await createAdminOrder({
+    ...request.body,
+    createdByAdminId: request.admin?.sub,
+  });
 
   await createAdminAuditLog({
     adminId: request.admin?.sub,

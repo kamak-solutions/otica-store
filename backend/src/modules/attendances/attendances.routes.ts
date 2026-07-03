@@ -9,6 +9,7 @@ import {
   createAttendanceController,
   getAttendanceByIdController,
   getAttendancesController,
+  getCustomerAttendancesController,
 } from "./attendances.controller.js";
 
 export async function attendancesRoutes(app: FastifyInstance) {
@@ -53,5 +54,19 @@ export async function attendancesRoutes(app: FastifyInstance) {
       ],
     },
     createAttendanceController,
+  );
+  app.get<{
+    Params: {
+      customerId: string;
+    };
+  }>(
+    "/admin/customers/:customerId/attendances",
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator", "viewer"]),
+      ],
+    },
+    getCustomerAttendancesController,
   );
 }

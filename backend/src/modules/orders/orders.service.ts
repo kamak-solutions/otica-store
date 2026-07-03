@@ -16,6 +16,7 @@ function generateOrderNumber() {
 export type CreateAdminOrderInput = {
   customerId: string;
   attendanceId?: string;
+  createdByAdminId?: string;
   notes?: string;
   items: Array<{
     productId: string;
@@ -111,6 +112,7 @@ export async function createOrder(data: CreateOrderBody) {
         customerId: customer.id,
         subtotal,
         notes: data.customer.notes || null,
+
         items: {
           create: orderItems,
         },
@@ -195,6 +197,7 @@ export async function createAdminOrder(data: CreateAdminOrderInput) {
         orderNumber: generateOrderNumber(),
         customerId: customer.id,
         attendanceId: data.attendanceId ?? null,
+        createdByAdminId: data.createdByAdminId ?? null,
         subtotal,
         notes: data.notes || null,
         items: {
@@ -206,6 +209,16 @@ export async function createAdminOrder(data: CreateAdminOrderInput) {
         items: true,
       },
     });
+    if (data.attendanceId) {
+      await tx.customerAttendance.update({
+        where: {
+          id: data.attendanceId,
+        },
+        data: {
+          status: "converted_to_order",
+        },
+      });
+    }
 
     return order;
   });

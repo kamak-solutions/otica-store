@@ -227,11 +227,18 @@ export function AdminCustomerOrderCreate() {
               <article className="admin-product-picker-item" key={product.id}>
                 <div>
                   <strong>{product.name}</strong>
+
                   <span>{formatPrice(product.salePrice ?? product.price)}</span>
+
+                  <small>Estoque: {product.stock}</small>
                 </div>
 
-                <button type="button" onClick={() => addProduct(product)}>
-                  Adicionar
+                <button
+                  type="button"
+                  disabled={product.stock <= 0}
+                  onClick={() => addProduct(product)}
+                >
+                  {product.stock <= 0 ? "Sem estoque" : "Adicionar"}
                 </button>
               </article>
             ))}
@@ -259,6 +266,7 @@ export function AdminCustomerOrderCreate() {
                   <input
                     type="number"
                     min={1}
+                    max={item.product.stock}
                     value={item.quantity}
                     onChange={(event) =>
                       updateQuantity(

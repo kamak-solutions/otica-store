@@ -18,6 +18,7 @@ export async function ordersRoutes(app: FastifyInstance) {
   app.post<{
     Body: {
       customerId: string;
+      attendanceId?: string;
       notes?: string;
       items: Array<{
         productId: string;
