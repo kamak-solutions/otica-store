@@ -46,6 +46,15 @@ function mapAttendance(attendance: any) {
       : null,
 
     createdAt: attendance.createdAt,
+
+    orders:
+      attendance.orders?.map((order: any) => ({
+        id: order.id,
+        orderNumber: order.orderNumber,
+        status: order.status,
+        subtotal: String(order.subtotal),
+        createdAt: order.createdAt.toISOString(),
+      })) ?? [],
   };
 }
 

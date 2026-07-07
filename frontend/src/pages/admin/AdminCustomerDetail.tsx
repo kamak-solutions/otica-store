@@ -360,6 +360,19 @@ export function AdminCustomerDetail() {
                     <strong>{attendance.type}</strong>
 
                     <p>Status: {attendance.status}</p>
+                    {attendance.orders?.length > 0 && (
+                      <div>
+                        <strong>Pedido gerado:</strong>
+
+                        {attendance.orders.map((order) => (
+                          <p key={order.id}>
+                            <Link to={`/admin/pedidos/${order.id}`}>
+                              {order.orderNumber ?? order.id}
+                            </Link>
+                          </p>
+                        ))}
+                      </div>
+                    )}
 
                     {attendance.collaborator && (
                       <p>Colaborador: {attendance.collaborator.name}</p>
@@ -370,6 +383,7 @@ export function AdminCustomerDetail() {
                 ))}
               </div>
             )}
+
             <h3>Pedidos</h3>
 
             {customer.orders.length === 0 ? (

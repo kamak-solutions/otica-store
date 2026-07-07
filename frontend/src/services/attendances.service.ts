@@ -16,6 +16,13 @@ export type Attendance = {
     name: string;
   } | null;
   createdAt: string;
+  orders: Array<{
+    id: string;
+    orderNumber: string | null;
+    status: string;
+    subtotal: string;
+    createdAt: string;
+  }>;
 };
 
 type CreateAttendanceInput = {
