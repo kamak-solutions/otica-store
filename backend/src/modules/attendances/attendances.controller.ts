@@ -47,6 +47,25 @@ function mapAttendance(attendance: any) {
         }
       : null,
 
+    prescription: attendance.prescription
+      ? {
+          id: attendance.prescription.id,
+          examDate: attendance.prescription.examDate?.toISOString() ?? null,
+          expiresAt: attendance.prescription.expiresAt?.toISOString() ?? null,
+
+          rightSpherical: attendance.prescription.rightSpherical,
+          rightCylindrical: attendance.prescription.rightCylindrical,
+          rightAxis: attendance.prescription.rightAxis,
+
+          leftSpherical: attendance.prescription.leftSpherical,
+          leftCylindrical: attendance.prescription.leftCylindrical,
+          leftAxis: attendance.prescription.leftAxis,
+
+          addition: attendance.prescription.addition,
+          pupillaryDistance: attendance.prescription.pupillaryDistance,
+          height: attendance.prescription.height,
+        }
+      : null,
     createdAt: attendance.createdAt,
 
     orders:

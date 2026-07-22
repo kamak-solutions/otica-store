@@ -39,13 +39,14 @@ export async function attendancesRoutes(app: FastifyInstance) {
     getAttendanceByIdController,
   );
 
-  app.post<{
-    Body: {
-      customerId: string;
-      type: string;
-      notes?: string;
-    };
-  }>(
+app.post<{
+  Body: {
+    customerId: string;
+    prescriptionId?: string;
+    type: string;
+    notes?: string;
+  };
+}>(
     "/admin/attendances",
     {
       preHandler: [

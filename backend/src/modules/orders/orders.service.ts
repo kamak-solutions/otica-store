@@ -137,6 +137,47 @@ export async function createAdminOrder(data: CreateAdminOrderInput) {
     if (!customer) {
       throw new AppError("Cliente não encontrado.", 404, "Not found");
     }
+    if (data.attendanceId) {
+      const attendance = await tx.customerAttendance.findUnique({
+        where: {
+          id: data.attendanceId,
+        },
+        select: {
+          id: true,
+          customerId: true,
+          status: true,
+          prescriptionId: true,
+        },
+      });
+
+      if (!attendance) {
+        throw new AppError("Atendimento não encontrado.", 404, "Not found");
+      }
+
+      if (attendance.customerId !== data.customerId) {
+        throw new AppError(
+          "O atendimento não pertence ao cliente informado.",
+          409,
+          "Conflict",
+        );
+      }
+
+      if (attendance.status === "converted_to_order") {
+        throw new AppError(
+          "Este atendimento já foi convertido em pedido.",
+          409,
+          "Conflict",
+        );
+      }
+
+      if (attendance.status === "cancelled") {
+        throw new AppError(
+          "Não é possível criar pedido a partir de um atendimento cancelado.",
+          409,
+          "Conflict",
+        );
+      }
+    }
 
     const productIds = data.items.map((item) => item.productId);
 
