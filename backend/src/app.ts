@@ -29,6 +29,7 @@ import { attendancesRoutes } from "./modules/attendances/attendances.routes.js";
 import { prescriptionsRoutes } from "./modules/prescriptions/prescriptions.routes.js";
 import { laboratoriesRoutes } from "./modules/laboratories/laboratories.routes.js";
 import { suppliersRoutes } from "./modules/suppliers/suppliers.routes.js";
+import { productCollectionsRoutes } from "./modules/product-collections/product-collections.routes.js";
 
 
 export const app = Fastify({
@@ -125,3 +126,4 @@ app.register(attendancesRoutes);
 app.register(prescriptionsRoutes);
 app.register(laboratoriesRoutes);
 app.register(suppliersRoutes);
+app.register(productCollectionsRoutes);
