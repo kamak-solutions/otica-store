@@ -21,6 +21,7 @@ type CreateLaboratoryData = {
   state?: string;
   averageDeliveryDays?: number;
   acceptsApi?: boolean;
+  active?: boolean;
   notes?: string;
 };
 
@@ -39,6 +40,7 @@ export async function createLaboratory(data: CreateLaboratoryData) {
       state: data.state || null,
       averageDeliveryDays: data.averageDeliveryDays ?? null,
       acceptsApi: data.acceptsApi ?? false,
+      active: data.active ?? true,
       notes: data.notes || null,
     },
   });

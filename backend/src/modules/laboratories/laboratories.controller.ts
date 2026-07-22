@@ -21,6 +21,7 @@ const createLaboratorySchema = z.object({
   state: z.string().trim().max(2).optional(),
   averageDeliveryDays: z.number().int().positive().optional(),
   acceptsApi: z.boolean().optional(),
+  active: z.boolean().optional(),
   notes: z.string().trim().optional(),
 });
 
