@@ -1,69 +1,71 @@
 import type { FastifyInstance } from "fastify";
-import { requireAdminAuth } from "../admin-auth/admin-auth.middleware.js";
+
 import {
-  getAdminCustomersController,
-  getAdminCustomerByIdController,
-  updateCustomerCrmStatusController,
+  requireAdminAuth,
+  requireAdminRole,
+} from "../admin-auth/admin-auth.middleware.js";
+
+import {
   createAdminCustomerController,
+  getAdminCustomerByIdController,
+  getAdminCustomersController,
+  updateCustomerCrmStatusController,
 } from "./customers.controller.js";
+
+import type {
+  CreateAdminCustomerBody,
+  CustomerIdParams,
+  UpdateCustomerCrmStatusBody,
+} from "./customers.schemas.js";
 
 export async function customersRoutes(app: FastifyInstance) {
   app.get(
     "/admin/customers",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator", "viewer"]),
+      ],
+    },
     getAdminCustomersController,
   );
+
   app.get<{
-    Params: {
-      id: string;
-    };
+    Params: CustomerIdParams;
   }>(
     "/admin/customers/:id",
     {
-      preHandler: requireAdminAuth,
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator", "viewer"]),
+      ],
     },
     getAdminCustomerByIdController,
   );
+
   app.post<{
-    Body: {
-      name: string;
-      email: string;
-      phone: string;
-
-      cpf?: string;
-      birthDate?: string;
-
-      zipcode: string;
-      state: string;
-      street: string;
-      number: string;
-      complement?: string;
-      district: string;
-      city: string;
-
-      crmStatus?: string;
-
-      lgpdAccepted: boolean;
-      lgpdConsentSource?: string;
-    };
+    Body: CreateAdminCustomerBody;
   }>(
     "/admin/customers",
     {
-      preHandler: requireAdminAuth,
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator"]),
+      ],
     },
     createAdminCustomerController,
   );
+
   app.patch<{
-    Params: {
-      id: string;
-    };
-    Body: {
-      crmStatus: string;
-    };
+    Params: CustomerIdParams;
+    Body: UpdateCustomerCrmStatusBody;
   }>(
     "/admin/customers/:id/crm-status",
     {
-      preHandler: requireAdminAuth,
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator"]),
+      ],
     },
     updateCustomerCrmStatusController,
   );

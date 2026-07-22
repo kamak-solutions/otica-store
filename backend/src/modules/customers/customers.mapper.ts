@@ -1,5 +1,7 @@
+import type { CustomerCrmStatus } from "./customers.schemas.js";
+
 type CustomerWithOrders = {
-  crmStatus: any;
+  crmStatus: string;
   id: string;
   name: string;
   email: string;

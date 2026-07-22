@@ -1,4 +1,7 @@
 import { prisma } from "../../lib/prisma.js";
+import { AppError } from "../../errors/app-error.js";
+import type { CreateAdminCustomerBody } from "./customers.schemas.js";
+import type { Prisma } from "../../generated/prisma/client.js";
 
 export async function listAdminCustomers() {
   return prisma.customer.findMany({
@@ -69,32 +72,37 @@ export async function updateCustomerCrmStatus(
     },
   });
 }
-export async function createAdminCustomer(customerData: {
-  name: string;
-  email: string;
-  phone: string;
-  cpf?: string;
-  birthDate?: string;
-  zipcode: string;
-  state: string;
-  street: string;
-  number: string;
-  complement?: string;
-  district: string;
-  city: string;
-  crmStatus?: string;
-  lgpdAccepted: boolean;
-  lgpdConsentSource?: string;
-}) {
+export async function createAdminCustomer(
+  customerData: CreateAdminCustomerBody,
+) {
+  const duplicateConditions: Prisma.CustomerWhereInput[] = [
+    { email: customerData.email },
+    { phone: customerData.phone },
+  ];
+
+  if (customerData.cpf) {
+    duplicateConditions.push({
+      cpf: customerData.cpf,
+    });
+  }
+
   const existingCustomer = await prisma.customer.findFirst({
     where: {
-      OR: [{ email: customerData.email }, { phone: customerData.phone }],
+      OR: duplicateConditions,
+    },
+    select: {
+      id: true,
+      email: true,
+      phone: true,
+      cpf: true,
     },
   });
 
   if (existingCustomer) {
-    throw new Error(
-      "Já existe um cliente cadastrado com este e-mail ou telefone.",
+    throw new AppError(
+      "Já existe um cliente cadastrado com este e-mail, telefone ou CPF.",
+      409,
+      "Conflict",
     );
   }
 
@@ -103,10 +111,12 @@ export async function createAdminCustomer(customerData: {
       name: customerData.name,
       email: customerData.email,
       phone: customerData.phone,
-      cpf: customerData.cpf || null,
+      cpf: customerData.cpf ?? null,
+
       birthDate: customerData.birthDate
-        ? new Date(customerData.birthDate)
+        ? new Date(`${customerData.birthDate}T00:00:00.000Z`)
         : null,
+
       crmStatus: customerData.crmStatus ?? "lead",
 
       zipcode: customerData.zipcode,
@@ -114,13 +124,11 @@ export async function createAdminCustomer(customerData: {
       city: customerData.city,
       street: customerData.street,
       number: customerData.number,
-      complement: customerData.complement || null,
+      complement: customerData.complement ?? null,
       district: customerData.district,
 
-      lgpdAcceptedAt: customerData.lgpdAccepted ? new Date() : null,
-      lgpdConsentSource: customerData.lgpdAccepted
-        ? (customerData.lgpdConsentSource ?? "admin")
-        : null,
+      lgpdAcceptedAt: new Date(),
+      lgpdConsentSource: customerData.lgpdConsentSource ?? "admin",
     },
     include: {
       orders: {

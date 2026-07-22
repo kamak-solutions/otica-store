@@ -1,12 +1,24 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import {
-  listAdminCustomers,
-  findAdminCustomerById,
-  updateCustomerCrmStatus,
-  createAdminCustomer,
-} from "./customers.service.js";
-import { mapCustomerToHttp } from "./customers.mapper.js";
+
 import { AppError } from "../../errors/app-error.js";
+
+import { mapCustomerToHttp } from "./customers.mapper.js";
+
+import {
+  createAdminCustomerBodySchema,
+  customerIdParamsSchema,
+  updateCustomerCrmStatusBodySchema,
+  type CreateAdminCustomerBody,
+  type CustomerIdParams,
+  type UpdateCustomerCrmStatusBody,
+} from "./customers.schemas.js";
+
+import {
+  createAdminCustomer,
+  findAdminCustomerById,
+  listAdminCustomers,
+  updateCustomerCrmStatus,
+} from "./customers.service.js";
 
 export async function getAdminCustomersController(
   request: FastifyRequest,
@@ -20,15 +32,14 @@ export async function getAdminCustomersController(
     data: customers.map(mapCustomerToHttp),
   });
 }
+
 export async function getAdminCustomerByIdController(
   request: FastifyRequest<{
-    Params: {
-      id: string;
-    };
+    Params: CustomerIdParams;
   }>,
   reply: FastifyReply,
 ) {
-  const { id } = request.params;
+  const { id } = customerIdParamsSchema.parse(request.params);
 
   request.log.info({ id }, "Finding customer");
 
@@ -42,49 +53,34 @@ export async function getAdminCustomerByIdController(
     data: mapCustomerToHttp(customer),
   });
 }
+
 export async function updateCustomerCrmStatusController(
   request: FastifyRequest<{
-    Params: {
-      id: string;
-    };
-    Body: {
-      crmStatus: string;
-    };
+    Params: CustomerIdParams;
+    Body: UpdateCustomerCrmStatusBody;
   }>,
   reply: FastifyReply,
 ) {
-  const customer = await updateCustomerCrmStatus(
-    request.params.id,
-    request.body.crmStatus,
-  );
+  const { id } = customerIdParamsSchema.parse(request.params);
+
+  const body = updateCustomerCrmStatusBodySchema.parse(request.body);
+
+  const customer = await updateCustomerCrmStatus(id, body.crmStatus);
 
   return reply.send({
     data: mapCustomerToHttp(customer),
   });
 }
+
 export async function createAdminCustomerController(
   request: FastifyRequest<{
-    Body: {
-      name: string;
-      email: string;
-      phone: string;
-      cpf?: string;
-      birthDate?: string;
-      zipcode: string;
-      state: string;
-      street: string;
-      number: string;
-      complement?: string;
-      district: string;
-      city: string;
-      crmStatus?: string;
-      lgpdAccepted: boolean;
-      lgpdConsentSource?: string;
-    };
+    Body: CreateAdminCustomerBody;
   }>,
   reply: FastifyReply,
 ) {
-  const customer = await createAdminCustomer(request.body);
+  const body = createAdminCustomerBodySchema.parse(request.body);
+
+  const customer = await createAdminCustomer(body);
 
   return reply.status(201).send({
     data: mapCustomerToHttp(customer),
