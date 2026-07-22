@@ -53,11 +53,7 @@ export async function createLaboratoryOrder(
   });
 
   if (!order) {
-    throw new AppError(
-      "Pedido não encontrado.",
-      404,
-      "Not found",
-    );
+    throw new AppError("Pedido não encontrado.", 404, "Not found");
   }
 
   const laboratory = await prisma.laboratory.findUnique({
@@ -72,11 +68,7 @@ export async function createLaboratoryOrder(
   });
 
   if (!laboratory) {
-    throw new AppError(
-      "Laboratório não encontrado.",
-      404,
-      "Not found",
-    );
+    throw new AppError("Laboratório não encontrado.", 404, "Not found");
   }
 
   if (!laboratory.active) {
@@ -88,23 +80,18 @@ export async function createLaboratoryOrder(
   }
 
   if (data.prescriptionId) {
-    const prescription =
-      await prisma.opticalPrescription.findUnique({
-        where: {
-          id: data.prescriptionId,
-        },
-        select: {
-          id: true,
-          customerId: true,
-        },
-      });
+    const prescription = await prisma.opticalPrescription.findUnique({
+      where: {
+        id: data.prescriptionId,
+      },
+      select: {
+        id: true,
+        customerId: true,
+      },
+    });
 
     if (!prescription) {
-      throw new AppError(
-        "Receita não encontrada.",
-        404,
-        "Not found",
-      );
+      throw new AppError("Receita não encontrada.", 404, "Not found");
     }
 
     if (prescription.customerId !== order.customerId) {
@@ -116,19 +103,18 @@ export async function createLaboratoryOrder(
     }
   }
 
-  const existingLaboratoryOrder =
-    await prisma.laboratoryOrder.findFirst({
-      where: {
-        orderId: data.orderId,
-        laboratoryId: data.laboratoryId,
-        status: {
-          not: "delivered",
-        },
+  const existingLaboratoryOrder = await prisma.laboratoryOrder.findFirst({
+    where: {
+      orderId: data.orderId,
+      laboratoryId: data.laboratoryId,
+      status: {
+        not: "delivered",
       },
-      select: {
-        id: true,
-      },
-    });
+    },
+    select: {
+      id: true,
+    },
+  });
 
   if (existingLaboratoryOrder) {
     throw new AppError(
@@ -143,9 +129,7 @@ export async function createLaboratoryOrder(
   if (!expectedAt && laboratory.averageDeliveryDays) {
     expectedAt = new Date();
 
-    expectedAt.setDate(
-      expectedAt.getDate() + laboratory.averageDeliveryDays,
-    );
+    expectedAt.setDate(expectedAt.getDate() + laboratory.averageDeliveryDays);
   }
 
   return prisma.laboratoryOrder.create({
@@ -154,18 +138,36 @@ export async function createLaboratoryOrder(
       laboratoryId: data.laboratoryId,
       prescriptionId: data.prescriptionId ?? null,
 
-      externalOrderNumber:
-        data.externalOrderNumber ?? null,
+      externalOrderNumber: data.externalOrderNumber ?? null,
 
       expectedAt: expectedAt ?? null,
       notes: data.notes ?? null,
 
-      createdByAdminId:
-        data.createdByAdminId ?? null,
+      createdByAdminId: data.createdByAdminId ?? null,
     },
 
     include: laboratoryOrderInclude,
   });
+}
+export const allowedLaboratoryOrderTransitions: Record<
+  LaboratoryOrderStatus,
+  LaboratoryOrderStatus[]
+> = {
+  pending: ["sent"],
+  sent: ["received_by_laboratory"],
+  received_by_laboratory: ["in_production"],
+  in_production: ["ready"],
+  ready: ["received_at_store"],
+  received_at_store: ["mounted"],
+  mounted: ["delivered"],
+  delivered: [],
+};
+
+export function isLaboratoryOrderTransitionAllowed(
+  currentStatus: LaboratoryOrderStatus,
+  nextStatus: LaboratoryOrderStatus,
+) {
+  return allowedLaboratoryOrderTransitions[currentStatus].includes(nextStatus);
 }
 
 function buildStatusDates(status: LaboratoryOrderStatus) {
@@ -196,20 +198,16 @@ export async function updateLaboratoryOrderStatus(
   id: string,
   data: UpdateLaboratoryOrderStatusBody,
 ) {
-  const laboratoryOrder =
-    await findLaboratoryOrderById(id);
+  const laboratoryOrder = await findLaboratoryOrderById(id);
 
   if (!laboratoryOrder) {
-    throw new AppError(
-      "Pedido laboratorial não encontrado.",
-      404,
-      "Not found",
-    );
+    throw new AppError("Pedido laboratorial não encontrado.", 404, "Not found");
   }
+  const currentStatus = laboratoryOrder.status as LaboratoryOrderStatus;
 
-  if (laboratoryOrder.status === "delivered") {
+  if (!isLaboratoryOrderTransitionAllowed(currentStatus, data.status)) {
     throw new AppError(
-      "Um pedido já entregue não pode ter o status alterado.",
+      `Não é possível alterar o pedido laboratorial de "${currentStatus}" para "${data.status}".`,
       409,
       "Conflict",
     );
@@ -226,8 +224,7 @@ export async function updateLaboratoryOrderStatus(
       status: data.status,
 
       ...(data.externalOrderNumber !== undefined && {
-        externalOrderNumber:
-          data.externalOrderNumber ?? null,
+        externalOrderNumber: data.externalOrderNumber ?? null,
       }),
 
       ...(data.expectedAt !== undefined && {
