@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { AppError } from "../../errors/app-error.js";
 import { prisma } from "../../lib/prisma.js";
-import { signAdminToken } from "../../lib/admin-jwt.js";
+import { isAdminRole, signAdminToken } from "../../lib/admin-jwt.js";
 import type { AdminLoginBody } from "./admin-auth.schemas.js";
 
 export async function loginAdmin(data: AdminLoginBody) {
@@ -22,6 +22,9 @@ export async function loginAdmin(data: AdminLoginBody) {
 
   if (!passwordMatches) {
     throw new AppError("E-mail ou senha inválidos.", 401, "Unauthorized");
+  }
+  if (!isAdminRole(admin.role)) {
+    throw new AppError("Perfil administrativo inválido.", 500, "Server error");
   }
 
   const adminResponse = {

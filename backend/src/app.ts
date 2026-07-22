@@ -26,6 +26,8 @@ import { crmRoutes } from "./modules/crm/crm.routes.js";
 import { blogCategoryRoutes } from "./modules/blog-category/blog-category.routes.js";
 import { widgetRoutes } from "./modules/widgets/widget.routes.js";
 import { attendancesRoutes } from "./modules/attendances/attendances.routes.js";
+import { prescriptionsRoutes } from "./modules/prescriptions/prescriptions.routes.js";
+import { laboratoriesRoutes } from "./modules/laboratories/laboratories.routes.js";
 
 
 export const app = Fastify({
@@ -119,3 +121,5 @@ app.register(crmRoutes);
 app.register(blogCategoryRoutes);
 app.register(widgetRoutes);
 app.register(attendancesRoutes);
+app.register(prescriptionsRoutes);
+app.register(laboratoriesRoutes);

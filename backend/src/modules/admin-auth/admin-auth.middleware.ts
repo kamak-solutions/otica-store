@@ -1,8 +1,12 @@
-
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { verifyAdminToken } from "../../lib/admin-jwt.js";
 
-export type AdminRole = "owner" | "admin" | "collaborator" | "viewer";
+import {
+  isAdminRole,
+  verifyAdminToken,
+  type AdminRole,
+} from "../../lib/admin-jwt.js";
+
+import { prisma } from "../../lib/prisma.js";
 
 export async function requireAdminAuth(
   request: FastifyRequest,
@@ -29,7 +33,30 @@ export async function requireAdminAuth(
   try {
     const payload = verifyAdminToken(token);
 
-    request.admin = payload;
+    const admin = await prisma.adminUser.findUnique({
+      where: {
+        id: payload.sub,
+      },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        active: true,
+      },
+    });
+
+    if (!admin || !admin.active || !isAdminRole(admin.role)) {
+      return reply.status(401).send({
+        error: "Unauthorized",
+        message: "Sessão administrativa inválida.",
+      });
+    }
+
+    request.admin = {
+      sub: admin.id,
+      email: admin.email,
+      role: admin.role,
+    };
   } catch {
     return reply.status(401).send({
       error: "Unauthorized",
@@ -43,7 +70,7 @@ export function requireAdminRole(allowedRoles: AdminRole[]) {
     request: FastifyRequest,
     reply: FastifyReply,
   ) {
-    const adminRole = request.admin?.role as AdminRole | undefined;
+    const adminRole = request.admin?.role;
 
     if (!adminRole) {
       return reply.status(403).send({

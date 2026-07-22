@@ -1,34 +1,71 @@
-import { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
 
-import { listWidgets, createWidget } from "./widget.controller.js";
+import { createWidget, listWidgets } from "./widget.controller.js";
 
 import { WidgetService } from "./widget.service.js";
+
+import {
+  requireAdminAuth,
+  requireAdminRole,
+} from "../admin-auth/admin-auth.middleware.js";
+
+type WidgetIdParams = {
+  id: string;
+};
 
 export async function widgetRoutes(app: FastifyInstance) {
   const service = new WidgetService();
 
-  app.get("/widgets/:position", listWidgets);
-
-  app.get("/admin/widgets", async (req, reply) => {
-    const data = await service.listAll();
-
-    return reply.send({
-      data,
-    });
-  });
-
-  app.post("/admin/widgets", createWidget);
-
-
-  app.delete("/admin/widgets/:id", async (req, reply) => {
-    const { id } = req.params as {
-      id: string;
+  // Público: usado pela vitrine para renderizar widgets por posição.
+  app.get<{
+    Params: {
+      position: string;
     };
+  }>("/widgets/:position", listWidgets);
 
-    const data = await service.delete(id);
+  // Administrativo: todos os papéis podem consultar.
+  app.get(
+    "/admin/widgets",
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator", "viewer"]),
+      ],
+    },
+    async (_request, reply) => {
+      const data = await service.listAll();
 
-    return reply.send({
-      data,
-    });
-  });
+      return reply.send({
+        data,
+      });
+    },
+  );
+
+  // Somente owner e admin podem criar.
+  app.post(
+    "/admin/widgets",
+    {
+      preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
+    },
+    createWidget,
+  );
+
+  // Somente owner pode excluir.
+  app.delete<{
+    Params: WidgetIdParams;
+  }>(
+    "/admin/widgets/:id",
+    {
+      preHandler: [requireAdminAuth, requireAdminRole(["owner"])],
+    },
+    async (request, reply) => {
+      const { id } = request.params;
+
+      const data = await service.delete(id);
+
+      return reply.send({
+        data,
+      });
+    },
+  );
 }
