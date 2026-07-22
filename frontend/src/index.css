@@ -7572,9 +7572,9 @@ a {
   border-radius: 20px;
   background: #fff;
 
-  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 
-  transition: all .2s ease;
+  transition: all 0.2s ease;
 }
 
 .blog-widget:hover {
@@ -8049,4 +8049,69 @@ a {
   .admin-order-type-grid {
     grid-template-columns: 1fr;
   }
+}
+.admin-attendance-steps {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.admin-attendance-steps span {
+  padding: 10px 16px;
+  border: 1px solid #e4d6c7;
+  border-radius: 999px;
+  background: #fff;
+  color: #77685c;
+  font-weight: 700;
+}
+
+.admin-attendance-steps span.is-active {
+  background: #2c211a;
+  border-color: #2c211a;
+  color: #fff;
+}
+
+.admin-attendance-steps span.is-completed {
+  background: #f2e4d4;
+  border-color: #d4b38e;
+  color: #6d4523;
+}
+
+.admin-prescription-options {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.admin-prescription-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #e4d6c7;
+  border-radius: 14px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.admin-prescription-option.is-selected {
+  border-color: #b97835;
+  background: #fff8f0;
+}
+
+.admin-prescription-option div {
+  display: grid;
+  gap: 5px;
+}
+
+.admin-prescription-option span,
+.admin-prescription-option small {
+  color: #77685c;
+}
+
+.admin-attendance-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
 }

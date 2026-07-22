@@ -44,6 +44,7 @@ import { AdminCustomerAttendanceCreate } from "./pages/admin/AdminCustomerAttend
 import { AdminCustomerOrderCreate } from "./pages/admin/AdminCustomerOrderCreate";
 import { AdminBrands } from "./pages/admin/AdminBrands";
 import { AdminBrandCreate } from "./pages/admin/AdminBrandCreate";
+import { AdminCustomerPrescriptionCreate } from "./pages/admin/AdminCustomerPrescriptionCreate";
 
 export default function App() {
   return (
@@ -123,6 +124,10 @@ export default function App() {
           />
           <Route path="/admin/marcas" element={<AdminBrands />} />
           <Route path="/admin/marcas/nova" element={<AdminBrandCreate />} />
+          <Route
+            path="/admin/clientes/:id/receitas/nova"
+            element={<AdminCustomerPrescriptionCreate />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

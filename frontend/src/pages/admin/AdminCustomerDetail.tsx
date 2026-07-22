@@ -30,6 +30,11 @@ import {
   type CustomerInteraction,
 } from "../../services/admin-customer-interactions.service";
 
+import {
+  listCustomerPrescriptions,
+  type OpticalPrescription,
+} from "../../services/prescriptions.service";
+
 function formatDate(value: string | null) {
   if (!value) {
     return "-";
@@ -86,6 +91,7 @@ export function AdminCustomerDetail() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [prescriptions, setPrescriptions] = useState<OpticalPrescription[]>([]);
 
   useEffect(() => {
     async function loadCustomer() {
@@ -101,12 +107,14 @@ export function AdminCustomerDetail() {
           remindersResponse,
           interactionsResponse,
           attendancesResponse,
+          prescriptionsResponse,
         ] = await Promise.all([
           getAdminCustomer(id),
           getCustomerNotes(id),
           getCustomerReminders(id),
           getCustomerInteractions(id),
           listCustomerAttendances(id),
+          listCustomerPrescriptions(id),
         ]);
 
         setCustomer(customerResponse.data);
@@ -118,6 +126,7 @@ export function AdminCustomerDetail() {
 
         setInteractions(interactionsResponse.data);
         setAttendances(attendancesResponse.data);
+        setPrescriptions(prescriptionsResponse.data);
       } catch (error) {
         setErrorMessage(
           error instanceof Error ? error.message : "Erro ao carregar cliente.",
@@ -272,6 +281,10 @@ export function AdminCustomerDetail() {
                   <span>Pedidos</span>
                 </div>
                 <div>
+                  <strong>{prescriptions.length}</strong>
+                  <span>Receitas</span>
+                </div>
+                <div>
                   <strong>{attendances.length}</strong>
                   <span>Atendimentos</span>
                 </div>
@@ -334,6 +347,12 @@ export function AdminCustomerDetail() {
                 >
                   Novo atendimento
                 </Link>
+                <Link
+                  to={`/admin/clientes/${customer.id}/receitas/nova`}
+                  className="button-primary"
+                >
+                  Nova receita
+                </Link>
 
                 <select
                   value={crmStatus}
@@ -379,6 +398,38 @@ export function AdminCustomerDetail() {
                     )}
 
                     <small>{formatDate(attendance.createdAt)}</small>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <h3>Receitas oftálmicas</h3>
+
+            {prescriptions.length === 0 ? (
+              <p>Nenhuma receita cadastrada.</p>
+            ) : (
+              <div className="crm-list">
+                {prescriptions.map((prescription) => (
+                  <div key={prescription.id} className="crm-item">
+                    <strong>
+                      Receita de {formatBirthDate(prescription.examDate)}
+                    </strong>
+
+                    <p>
+                      OD: ESF {prescription.rightSpherical ?? "-"} | CIL{" "}
+                      {prescription.rightCylindrical ?? "-"} | Eixo{" "}
+                      {prescription.rightAxis ?? "-"}
+                    </p>
+
+                    <p>
+                      OE: ESF {prescription.leftSpherical ?? "-"} | CIL{" "}
+                      {prescription.leftCylindrical ?? "-"} | Eixo{" "}
+                      {prescription.leftAxis ?? "-"}
+                    </p>
+
+                    {prescription.doctorName && (
+                      <p>Oftalmologista: {prescription.doctorName}</p>
+                    )}
                   </div>
                 ))}
               </div>

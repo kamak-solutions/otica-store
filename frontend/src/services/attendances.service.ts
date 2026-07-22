@@ -27,6 +27,7 @@ export type Attendance = {
 
 type CreateAttendanceInput = {
   customerId: string;
+  prescriptionId?: string;
   type: string;
   notes?: string;
 };
