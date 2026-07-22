@@ -1,26 +1,39 @@
 import { prisma } from "../../lib/prisma.js";
+
 import type {
   CreateProductBody,
   CreateProductImageBody,
   UpdateProductBody,
 } from "./products.schemas.js";
 
+const productInclude = {
+  category: true,
+
+  frameDetails: {
+    include: {
+      collection: true,
+      supplier: true,
+    },
+  },
+
+  images: {
+    orderBy: {
+      position: "asc" as const,
+    },
+  },
+};
+
 export async function listProducts() {
   return prisma.product.findMany({
     where: {
       active: true,
     },
+
     orderBy: {
       createdAt: "desc",
     },
-    include: {
-      category: true,
-      images: {
-        orderBy: {
-          position: "asc",
-        },
-      },
-    },
+
+    include: productInclude,
   });
 }
 
@@ -29,14 +42,8 @@ export async function listAdminProducts() {
     orderBy: {
       createdAt: "desc",
     },
-    include: {
-      category: true,
-      images: {
-        orderBy: {
-          position: "asc",
-        },
-      },
-    },
+
+    include: productInclude,
   });
 }
 
@@ -46,14 +53,8 @@ export async function findProductBySlug(slug: string) {
       slug,
       active: true,
     },
-    include: {
-      category: true,
-      images: {
-        orderBy: {
-          position: "asc",
-        },
-      },
-    },
+
+    include: productInclude,
   });
 }
 
@@ -62,28 +63,16 @@ export async function findProductById(id: string) {
     where: {
       id,
     },
-    include: {
-      category: true,
-      images: {
-        orderBy: {
-          position: "asc",
-        },
-      },
-    },
+
+    include: productInclude,
   });
 }
 
 export async function createProduct(data: CreateProductBody) {
   return prisma.product.create({
     data,
-    include: {
-      category: true,
-      images: {
-        orderBy: {
-          position: "asc",
-        },
-      },
-    },
+
+    include: productInclude,
   });
 }
 
@@ -92,15 +81,10 @@ export async function updateProduct(id: string, data: UpdateProductBody) {
     where: {
       id,
     },
+
     data,
-    include: {
-      category: true,
-      images: {
-        orderBy: {
-          position: "asc",
-        },
-      },
-    },
+
+    include: productInclude,
   });
 }
 
@@ -109,19 +93,15 @@ export async function deactivateProduct(id: string) {
     where: {
       id,
     },
+
     data: {
       active: false,
     },
-    include: {
-      category: true,
-      images: {
-        orderBy: {
-          position: "asc",
-        },
-      },
-    },
+
+    include: productInclude,
   });
 }
+
 export async function addProductImage(
   productId: string,
   data: CreateProductImageBody,
@@ -133,6 +113,7 @@ export async function addProductImage(
           productId,
           isMain: true,
         },
+
         data: {
           isMain: false,
         },
@@ -143,8 +124,8 @@ export async function addProductImage(
       data: {
         productId,
         url: data.url,
-        publicId: data.publicId || null,
-        alt: data.alt || null,
+        publicId: data.publicId ?? null,
+        alt: data.alt ?? null,
         position: data.position,
         isMain: data.isMain,
       },
@@ -154,17 +135,12 @@ export async function addProductImage(
       where: {
         id: productId,
       },
-      include: {
-        category: true,
-        images: {
-          orderBy: {
-            position: "asc",
-          },
-        },
-      },
+
+      include: productInclude,
     });
   });
 }
+
 export async function setProductImageAsMain(
   productId: string,
   imageId: string,
@@ -186,6 +162,7 @@ export async function setProductImageAsMain(
         productId,
         isMain: true,
       },
+
       data: {
         isMain: false,
       },
@@ -195,6 +172,7 @@ export async function setProductImageAsMain(
       where: {
         id: imageId,
       },
+
       data: {
         isMain: true,
       },
@@ -204,14 +182,8 @@ export async function setProductImageAsMain(
       where: {
         id: productId,
       },
-      include: {
-        category: true,
-        images: {
-          orderBy: {
-            position: "asc",
-          },
-        },
-      },
+
+      include: productInclude,
     });
   });
 }
@@ -239,14 +211,8 @@ export async function removeProductImage(productId: string, imageId: string) {
       where: {
         id: productId,
       },
-      include: {
-        category: true,
-        images: {
-          orderBy: {
-            position: "asc",
-          },
-        },
-      },
+
+      include: productInclude,
     });
   });
 }

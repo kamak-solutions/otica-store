@@ -95,7 +95,7 @@ export async function getProductBySlugController(
   }
 
   return reply.send({
-    data: mapProductToAdminHttp(product),
+    data: mapProductToPublicHttp(product),
   });
 }
 
