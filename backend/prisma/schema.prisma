@@ -454,14 +454,21 @@ model Widget {
 model Laboratory {
   id String @id @default(uuid())
 
-  name String
+  code String? @unique
 
+  name        String
   companyName String?
 
   phone    String?
   whatsapp String?
   email    String?
   website  String?
+
+  contactName String?
+
+  averageDeliveryDays Int?
+
+  acceptsApi Boolean @default(false)
 
   city  String?
   state String?
@@ -506,6 +513,7 @@ model OpticalPrescription {
   filePublicId String?
 
   laboratoryOrders LaboratoryOrder[]
+  attendances      CustomerAttendance[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -539,6 +547,9 @@ model CustomerAttendance {
   notes String?
 
   orders Order[]
+
+  prescriptionId String?
+  prescription   OpticalPrescription? @relation(fields: [prescriptionId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
