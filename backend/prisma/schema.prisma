@@ -35,6 +35,11 @@ model Product {
   images     ProductImage[]
   orderItems OrderItem[]
 
+  costPrice    Decimal? @db.Decimal(10, 2)
+  minimumStock Int      @default(0)
+
+  frameDetails FrameDetails?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -87,6 +92,81 @@ model ProductImage {
   isMain   Boolean @default(false)
 
   createdAt DateTime @default(now())
+}
+
+model Supplier {
+  id String @id @default(uuid())
+
+  code String @unique
+  name String
+
+  contactName String?
+  phone       String?
+  email       String?
+
+  active Boolean @default(true)
+
+  frames FrameDetails[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductCollection {
+  id String @id @default(uuid())
+
+  code        String  @unique
+  name        String
+  description String?
+
+  active Boolean @default(true)
+
+  frames FrameDetails[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FrameDetails {
+  id String @id @default(uuid())
+
+  productId String  @unique
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+
+  collectionId String?
+  collection   ProductCollection? @relation(fields: [collectionId], references: [id])
+
+  supplierCode String?
+  internalCode String  @unique
+  modelCode    String
+
+  publicBrand String @default("Ótica Show Room")
+
+  audience String
+  material String
+  shape    String
+
+  primaryColor   String
+  secondaryColor String?
+  finish         String?
+
+  lensWidth    Int?
+  bridgeWidth  Int?
+  templeLength Int?
+  sizeLabel    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([supplierId])
+  @@index([collectionId])
+  @@index([audience])
+  @@index([material])
+  @@index([shape])
+  @@index([primaryColor])
 }
 
 model Customer {

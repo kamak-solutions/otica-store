@@ -11,7 +11,10 @@ import {
   setProductImageAsMain,
   updateProduct,
 } from "./products.service.js";
-import { mapProductToHttp } from "./products.mapper.js";
+import {
+  mapProductToAdminHttp,
+  mapProductToPublicHttp,
+} from "./products.mapper.js";
 import {
   createProductBodySchema,
   getProductBySlugParamsSchema,
@@ -38,7 +41,7 @@ export async function getProductsController(
   const products = await listProducts();
 
   return reply.send({
-    data: products.map(mapProductToHttp),
+    data: products.map(mapProductToPublicHttp),
   });
 }
 
@@ -51,7 +54,7 @@ export async function getAdminProductsController(
   const products = await listAdminProducts();
 
   return reply.send({
-    data: products.map(mapProductToHttp),
+    data: products.map(mapProductToAdminHttp),
   });
 }
 export async function getAdminProductByIdController(
@@ -71,7 +74,7 @@ export async function getAdminProductByIdController(
   }
 
   return reply.send({
-    data: mapProductToHttp(product),
+    data: mapProductToAdminHttp(product),
   });
 }
 
@@ -92,7 +95,7 @@ export async function getProductBySlugController(
   }
 
   return reply.send({
-    data: mapProductToHttp(product),
+    data: mapProductToAdminHttp(product),
   });
 }
 
@@ -122,7 +125,7 @@ export async function createProductController(
   });
 
   return reply.status(201).send({
-    data: mapProductToHttp(product),
+    data: mapProductToAdminHttp(product),
   });
 }
 
@@ -155,7 +158,7 @@ export async function updateProductController(
   });
 
   return reply.send({
-    data: mapProductToHttp(product),
+    data: mapProductToAdminHttp(product),
   });
 }
 
@@ -185,7 +188,7 @@ export async function deleteProductController(
   });
 
   return reply.send({
-    data: mapProductToHttp(product),
+    data: mapProductToAdminHttp(product),
     message: "Produto desativado com sucesso.",
   });
 }
@@ -220,7 +223,7 @@ export async function addProductImageController(
   });
 
   return reply.status(201).send({
-    data: mapProductToHttp(product),
+    data: mapProductToAdminHttp(product),
     message: "Imagem adicionada ao produto com sucesso.",
   });
 }
@@ -249,7 +252,7 @@ export async function setProductImageAsMainController(
   });
 
   return reply.send({
-    data: mapProductToHttp(product),
+    data: mapProductToAdminHttp(product),
     message: "Imagem principal atualizada com sucesso.",
   });
 }
@@ -279,7 +282,7 @@ export async function removeProductImageController(
   });
 
   return reply.send({
-    data: mapProductToHttp(product),
+    data: mapProductToAdminHttp(product),
     message: "Imagem removida do produto com sucesso.",
   });
 }
