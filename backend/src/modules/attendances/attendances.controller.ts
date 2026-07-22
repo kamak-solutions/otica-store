@@ -11,6 +11,8 @@ import {
 const createAttendanceSchema = z.object({
   customerId: z.string().uuid(),
 
+  prescriptionId: z.string().uuid().optional(),
+
   type: z.string(),
 
   notes: z.string().optional(),

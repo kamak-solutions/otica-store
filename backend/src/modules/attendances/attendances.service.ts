@@ -16,6 +16,8 @@ type CreateAttendanceData = {
   customerId: string;
   createdByAdminId?: string;
 
+  prescriptionId?: string;
+
   type: string;
 
   notes?: string;
