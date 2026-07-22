@@ -194,6 +194,26 @@ function buildStatusDates(status: LaboratoryOrderStatus) {
   }
 }
 
+function mapLaboratoryStatusToOrderStatus(status: LaboratoryOrderStatus) {
+  switch (status) {
+    case "pending":
+      return "pending";
+
+    case "sent":
+    case "received_by_laboratory":
+      return "confirmed";
+
+    case "in_production":
+    case "ready":
+    case "received_at_store":
+    case "mounted":
+      return "preparing";
+
+    case "delivered":
+      return "delivered";
+  }
+}
+
 export async function updateLaboratoryOrderStatus(
   id: string,
   data: UpdateLaboratoryOrderStatusBody,
@@ -203,6 +223,7 @@ export async function updateLaboratoryOrderStatus(
   if (!laboratoryOrder) {
     throw new AppError("Pedido laboratorial não encontrado.", 404, "Not found");
   }
+
   const currentStatus = laboratoryOrder.status as LaboratoryOrderStatus;
 
   if (!isLaboratoryOrderTransitionAllowed(currentStatus, data.status)) {
@@ -215,29 +236,42 @@ export async function updateLaboratoryOrderStatus(
 
   const statusDates = buildStatusDates(data.status);
 
-  return prisma.laboratoryOrder.update({
-    where: {
-      id,
-    },
+  const orderStatus = mapLaboratoryStatusToOrderStatus(data.status);
 
-    data: {
-      status: data.status,
+  return prisma.$transaction(async (tx) => {
+    await tx.order.update({
+      where: {
+        id: laboratoryOrder.orderId,
+      },
+      data: {
+        status: orderStatus,
+      },
+    });
 
-      ...(data.externalOrderNumber !== undefined && {
-        externalOrderNumber: data.externalOrderNumber ?? null,
-      }),
+    return tx.laboratoryOrder.update({
+      where: {
+        id,
+      },
 
-      ...(data.expectedAt !== undefined && {
-        expectedAt: data.expectedAt,
-      }),
+      data: {
+        status: data.status,
 
-      ...(data.notes !== undefined && {
-        notes: data.notes ?? null,
-      }),
+        ...(data.externalOrderNumber !== undefined && {
+          externalOrderNumber: data.externalOrderNumber ?? null,
+        }),
 
-      ...statusDates,
-    },
+        ...(data.expectedAt !== undefined && {
+          expectedAt: data.expectedAt,
+        }),
 
-    include: laboratoryOrderInclude,
+        ...(data.notes !== undefined && {
+          notes: data.notes ?? null,
+        }),
+
+        ...statusDates,
+      },
+
+      include: laboratoryOrderInclude,
+    });
   });
 }
