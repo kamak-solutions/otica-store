@@ -47,12 +47,17 @@ describe("Segurança das rotas administrativas", () => {
 
   describe("Categorias", () => {
     it("permite listar categorias sem autenticação", async () => {
+      vi.spyOn(prisma.category, "findMany").mockResolvedValue([]);
+
       const response = await app.inject({
         method: "GET",
         url: "/categories",
       });
 
       expect(response.statusCode).toBe(200);
+      expect(response.json()).toEqual({
+        data: [],
+      });
     });
 
     it("impede criar categoria sem token", async () => {
@@ -98,12 +103,17 @@ describe("Segurança das rotas administrativas", () => {
 
   describe("Marcas", () => {
     it("permite listar marcas sem autenticação", async () => {
+      vi.spyOn(prisma.brand, "findMany").mockResolvedValue([]);
+
       const response = await app.inject({
         method: "GET",
         url: "/brands",
       });
 
       expect(response.statusCode).toBe(200);
+      expect(response.json()).toEqual({
+        data: [],
+      });
     });
 
     it("impede criar marca sem token", async () => {
