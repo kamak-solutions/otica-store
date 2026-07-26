@@ -288,7 +288,46 @@ export async function findAdminOrderById(id: string) {
     },
   });
 }
+export const allowedOrderStatusTransitions: Record<OrderStatus, OrderStatus[]> =
+  {
+    pending: ["confirmed", "cancelled"],
+    confirmed: ["preparing", "cancelled"],
+    preparing: ["delivered", "cancelled"],
+    delivered: [],
+    cancelled: [],
+  };
+
+export function isOrderStatusTransitionAllowed(
+  currentStatus: OrderStatus,
+  nextStatus: OrderStatus,
+) {
+  return allowedOrderStatusTransitions[currentStatus].includes(nextStatus);
+}
 export async function updateOrderStatus(id: string, status: OrderStatus) {
+  const order = await prisma.order.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      status: true,
+    },
+  });
+
+  if (!order) {
+    throw new AppError("Pedido não encontrado.", 404, "Not found");
+  }
+
+  const currentStatus = order.status as OrderStatus;
+
+  if (!isOrderStatusTransitionAllowed(currentStatus, status)) {
+    throw new AppError(
+      `Não é possível alterar o pedido de "${currentStatus}" para "${status}".`,
+      409,
+      "Conflict",
+    );
+  }
+
   return prisma.order.update({
     where: {
       id,
