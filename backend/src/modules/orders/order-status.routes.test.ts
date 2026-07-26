@@ -12,11 +12,9 @@ import { app } from "../../app.js";
 import { signAdminToken } from "../../lib/admin-jwt.js";
 import { prisma } from "../../lib/prisma.js";
 
-const ORDER_ID =
-  "b890d320-16f2-477f-a6d3-8eb08f4e3dac";
+const ORDER_ID = "b890d320-16f2-477f-a6d3-8eb08f4e3dac";
 
-const ADMIN_ID =
-  "9bd99cc5-cc41-4ddb-8c80-5f897af3b411";
+const ADMIN_ID = "9bd99cc5-cc41-4ddb-8c80-5f897af3b411";
 
 const ADMIN_EMAIL = "admin@oticashowroom.com";
 
@@ -45,8 +43,7 @@ function createOrder(status: string) {
   return {
     id: ORDER_ID,
     orderNumber: "OSR-764495",
-    customerId:
-      "a07db6f5-30f6-4bdc-acbd-b50b0d90ba09",
+    customerId: "a07db6f5-30f6-4bdc-acbd-b50b0d90ba09",
     status,
     subtotal: {
       toFixed: () => "95.50",
@@ -85,8 +82,7 @@ function createOrder(status: string) {
       {
         id: "d28375ac-bb76-4f36-91aa-c353724e9223",
         orderId: ORDER_ID,
-        productId:
-          "1578f40c-1b27-4e20-ac76-1baba3c769d9",
+        productId: "1578f40c-1b27-4e20-ac76-1baba3c769d9",
         productName: "Rose",
         unitPrice: {
           toFixed: () => "95.50",
@@ -104,22 +100,21 @@ function createOrder(status: string) {
 async function patchOrderStatus(
   currentStatus: string,
   nextStatus: string,
+  paymentStatus = "paid",
 ) {
   mockActiveAdmin();
 
   vi.spyOn(prisma.order, "findUnique").mockResolvedValue({
     id: ORDER_ID,
     status: currentStatus,
+    paymentStatus,
   } as never);
 
   vi.spyOn(prisma.order, "update").mockResolvedValue(
     createOrder(nextStatus) as never,
   );
 
-  vi.spyOn(
-    prisma.adminAuditLog,
-    "create",
-  ).mockResolvedValue({} as never);
+  vi.spyOn(prisma.adminAuditLog, "create").mockResolvedValue({} as never);
 
   return app.inject({
     method: "PATCH",
@@ -147,10 +142,7 @@ describe("Rotas de status do pedido", () => {
   });
 
   it("permite pending → confirmed", async () => {
-    const response = await patchOrderStatus(
-      "pending",
-      "confirmed",
-    );
+    const response = await patchOrderStatus("pending", "confirmed");
 
     expect(response.statusCode).toBe(200);
 
@@ -175,17 +167,13 @@ describe("Rotas de status do pedido", () => {
   });
 
   it("bloqueia pending → delivered", async () => {
-    const response = await patchOrderStatus(
-      "pending",
-      "delivered",
-    );
+    const response = await patchOrderStatus("pending", "delivered");
 
     expect(response.statusCode).toBe(409);
 
     expect(response.json()).toMatchObject({
       error: "Conflict",
-      message:
-        'Não é possível alterar o pedido de "pending" para "delivered".',
+      message: 'Não é possível alterar o pedido de "pending" para "delivered".',
     });
 
     expect(prisma.order.update).not.toHaveBeenCalled();
@@ -193,10 +181,7 @@ describe("Rotas de status do pedido", () => {
   });
 
   it("permite confirmed → preparing", async () => {
-    const response = await patchOrderStatus(
-      "confirmed",
-      "preparing",
-    );
+    const response = await patchOrderStatus("confirmed", "preparing");
 
     expect(response.statusCode).toBe(200);
 
@@ -207,11 +192,8 @@ describe("Rotas de status do pedido", () => {
     });
   });
 
-  it("permite preparing → delivered", async () => {
-    const response = await patchOrderStatus(
-      "preparing",
-      "delivered",
-    );
+  it("permite preparing → delivered com pagamento confirmado", async () => {
+    const response = await patchOrderStatus("preparing", "delivered");
 
     expect(response.statusCode).toBe(200);
 
@@ -221,12 +203,27 @@ describe("Rotas de status do pedido", () => {
       },
     });
   });
+  it("bloqueia preparing → delivered com pagamento pendente", async () => {
+    const response = await patchOrderStatus(
+      "preparing",
+      "delivered",
+      "pending",
+    );
+
+    expect(response.statusCode).toBe(409);
+
+    expect(response.json()).toMatchObject({
+      error: "Conflict",
+      message:
+        "Não é possível marcar o pedido como entregue enquanto o pagamento não estiver confirmado.",
+    });
+
+    expect(prisma.order.update).not.toHaveBeenCalled();
+    expect(prisma.adminAuditLog.create).not.toHaveBeenCalled();
+  });
 
   it("bloqueia delivered → preparing", async () => {
-    const response = await patchOrderStatus(
-      "delivered",
-      "preparing",
-    );
+    const response = await patchOrderStatus("delivered", "preparing");
 
     expect(response.statusCode).toBe(409);
 
@@ -240,10 +237,7 @@ describe("Rotas de status do pedido", () => {
   });
 
   it("permite pending → cancelled", async () => {
-    const response = await patchOrderStatus(
-      "pending",
-      "cancelled",
-    );
+    const response = await patchOrderStatus("pending", "cancelled");
 
     expect(response.statusCode).toBe(200);
 
@@ -255,10 +249,7 @@ describe("Rotas de status do pedido", () => {
   });
 
   it("bloqueia cancelled → confirmed", async () => {
-    const response = await patchOrderStatus(
-      "cancelled",
-      "confirmed",
-    );
+    const response = await patchOrderStatus("cancelled", "confirmed");
 
     expect(response.statusCode).toBe(409);
 

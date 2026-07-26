@@ -311,6 +311,7 @@ export async function updateOrderStatus(id: string, status: OrderStatus) {
     select: {
       id: true,
       status: true,
+      paymentStatus: true,
     },
   });
 
@@ -323,6 +324,14 @@ export async function updateOrderStatus(id: string, status: OrderStatus) {
   if (!isOrderStatusTransitionAllowed(currentStatus, status)) {
     throw new AppError(
       `Não é possível alterar o pedido de "${currentStatus}" para "${status}".`,
+      409,
+      "Conflict",
+    );
+  }
+
+  if (status === "delivered" && order.paymentStatus !== "paid") {
+    throw new AppError(
+      "Não é possível marcar o pedido como entregue enquanto o pagamento não estiver confirmado.",
       409,
       "Conflict",
     );
