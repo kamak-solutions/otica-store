@@ -7,12 +7,15 @@ import {
   listAdminOrders,
   createOrderPaymentLink,
   updateOrderStatus,
+  confirmManualOrderPayment,
 } from "./orders.service.js";
 import { mapOrderToHttp } from "./orders.mapper.js";
 import {
+  confirmManualPaymentBodySchema,
   createOrderBodySchema,
   orderIdParamsSchema,
   updateOrderStatusBodySchema,
+  type ConfirmManualPaymentBody,
   type UpdateOrderStatusBody,
   type CreateOrderBody,
   type OrderIdParams,
@@ -174,5 +177,48 @@ export async function createAdminOrderPaymentLinkController(
   return reply.send({
     data: mapOrderToHttp(order),
     message: "Link de pagamento criado com sucesso.",
+  });
+}
+export async function confirmManualOrderPaymentController(
+  request: FastifyRequest<{
+    Params: OrderIdParams;
+    Body: ConfirmManualPaymentBody;
+  }>,
+  reply: FastifyReply,
+) {
+  const { id } = orderIdParamsSchema.parse(request.params);
+  const body = confirmManualPaymentBodySchema.parse(request.body);
+
+  request.log.info(
+    {
+      id,
+      method: body.method,
+      amount: body.amount,
+    },
+    "Confirming manual order payment",
+  );
+
+  const order = await confirmManualOrderPayment(id, body);
+
+  await createAdminAuditLog({
+    adminId: request.admin?.sub,
+    adminEmail: request.admin?.email,
+    adminRole: request.admin?.role,
+    action: "order.manual_payment_confirmed",
+    entity: "Order",
+    entityId: order.id,
+    metadata: {
+      method: body.method,
+      amount: body.amount,
+      reference: body.reference ?? null,
+      installments: body.installments ?? null,
+      paidAt: order.paidAt?.toISOString() ?? null,
+      notes: body.notes ?? null,
+    },
+  });
+
+  return reply.send({
+    data: mapOrderToHttp(order),
+    message: "Pagamento manual confirmado com sucesso.",
   });
 }

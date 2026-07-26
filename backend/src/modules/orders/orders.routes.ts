@@ -4,6 +4,7 @@ import {
   requireAdminRole,
 } from "../admin-auth/admin-auth.middleware.js";
 import {
+  confirmManualOrderPaymentController,
   createAdminOrderController,
   createAdminOrderPaymentLinkController,
   createOrderController,
@@ -11,7 +12,11 @@ import {
   getAdminOrdersController,
   updateOrderStatusController,
 } from "./orders.controller.js";
-import type { OrderIdParams, UpdateOrderStatusBody } from "./orders.schemas.js";
+import type {
+  ConfirmManualPaymentBody,
+  OrderIdParams,
+  UpdateOrderStatusBody,
+} from "./orders.schemas.js";
 
 export async function ordersRoutes(app: FastifyInstance) {
   app.post("/orders", createOrderController);
@@ -71,6 +76,16 @@ export async function ordersRoutes(app: FastifyInstance) {
       ],
     },
     createAdminOrderPaymentLinkController,
+  );
+  app.post<{
+    Params: OrderIdParams;
+    Body: ConfirmManualPaymentBody;
+  }>(
+    "/admin/orders/:id/manual-payment",
+    {
+      preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
+    },
+    confirmManualOrderPaymentController,
   );
 
   app.patch<{
