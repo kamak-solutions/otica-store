@@ -8,6 +8,7 @@ import {
   createOrderPaymentLink,
   updateOrderStatus,
   confirmManualOrderPayment,
+  refundManualOrderPayment,
 } from "./orders.service.js";
 import { mapOrderToHttp } from "./orders.mapper.js";
 import {
@@ -15,6 +16,8 @@ import {
   createOrderBodySchema,
   orderIdParamsSchema,
   updateOrderStatusBodySchema,
+  refundManualPaymentBodySchema,
+  type RefundManualPaymentBody,
   type ConfirmManualPaymentBody,
   type UpdateOrderStatusBody,
   type CreateOrderBody,
@@ -220,5 +223,43 @@ export async function confirmManualOrderPaymentController(
   return reply.send({
     data: mapOrderToHttp(order),
     message: "Pagamento manual confirmado com sucesso.",
+  });
+}
+export async function refundManualOrderPaymentController(
+  request: FastifyRequest<{
+    Params: OrderIdParams;
+    Body: RefundManualPaymentBody;
+  }>,
+  reply: FastifyReply,
+) {
+  const { id } = orderIdParamsSchema.parse(request.params);
+  const body = refundManualPaymentBodySchema.parse(request.body);
+
+  request.log.info(
+    {
+      id,
+      reason: body.reason,
+    },
+    "Refunding manual order payment",
+  );
+
+  const order = await refundManualOrderPayment(id, body);
+
+  await createAdminAuditLog({
+    adminId: request.admin?.sub,
+    adminEmail: request.admin?.email,
+    adminRole: request.admin?.role,
+    action: "order.manual_payment_refunded",
+    entity: "Order",
+    entityId: order.id,
+    metadata: {
+      reason: body.reason,
+      paymentStatus: order.paymentStatus,
+    },
+  });
+
+  return reply.send({
+    data: mapOrderToHttp(order),
+    message: "Pagamento manual estornado com sucesso.",
   });
 }

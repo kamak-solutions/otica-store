@@ -3,6 +3,7 @@ import type {
   ConfirmManualPaymentBody,
   CreateOrderBody,
   OrderStatus,
+  RefundManualPaymentBody,
 } from "./orders.schemas.js";
 import { AppError } from "../../errors/app-error.js";
 import { createMercadoPagoPreference } from "../payments/mercado-pago.service.js";
@@ -402,82 +403,140 @@ export async function createOrderPaymentLink(id: string) {
     },
   });
 }
-  export async function confirmManualOrderPayment(
-    id: string,
-    data: ConfirmManualPaymentBody,
-  ) {
-    const order = await prisma.order.findUnique({
-      where: {
-        id,
-      },
-      select: {
-        id: true,
-        status: true,
-        subtotal: true,
-        shippingPrice: true,
-        paymentStatus: true,
-      },
-    });
+export async function confirmManualOrderPayment(
+  id: string,
+  data: ConfirmManualPaymentBody,
+) {
+  const order = await prisma.order.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      status: true,
+      subtotal: true,
+      shippingPrice: true,
+      paymentStatus: true,
+    },
+  });
 
-    if (!order) {
-      throw new AppError("Pedido não encontrado.", 404, "Not found");
-    }
-
-    if (order.status === "cancelled") {
-      throw new AppError(
-        "Não é possível registrar pagamento em um pedido cancelado.",
-        409,
-        "Conflict",
-      );
-    }
-
-    if (order.paymentStatus === "paid") {
-      throw new AppError(
-        "Este pedido já possui pagamento confirmado.",
-        409,
-        "Conflict",
-      );
-    }
-
-    const expectedAmount =
-      Number(order.subtotal) + Number(order.shippingPrice ?? 0);
-
-    const expectedAmountInCents = Math.round(expectedAmount * 100);
-    const receivedAmountInCents = Math.round(data.amount * 100);
-
-    if (receivedAmountInCents !== expectedAmountInCents) {
-      throw new AppError(
-        `O valor informado deve ser exatamente R$ ${expectedAmount.toFixed(2).replace(".", ",")}.`,
-        409,
-        "Conflict",
-      );
-    }
-
-    const paidAt = data.paidAt ?? new Date();
-
-    if (paidAt.getTime() > Date.now() + 5 * 60 * 1000) {
-      throw new AppError(
-        "A data do pagamento não pode estar no futuro.",
-        400,
-        "Bad Request",
-      );
-    }
-
-    return prisma.order.update({
-      where: {
-        id,
-      },
-      data: {
-        paymentStatus: "paid",
-        paymentMethod: data.method,
-        paymentProvider: "manual",
-        paymentProviderId: data.reference ?? null,
-        paymentUrl: null,
-        paidAt,
-      },
-      include: {
-        customer: true,
-        items: true,
-      },
-    });
+  if (!order) {
+    throw new AppError("Pedido não encontrado.", 404, "Not found");
   }
+
+  if (order.status === "cancelled") {
+    throw new AppError(
+      "Não é possível registrar pagamento em um pedido cancelado.",
+      409,
+      "Conflict",
+    );
+  }
+
+  if (order.paymentStatus === "paid") {
+    throw new AppError(
+      "Este pedido já possui pagamento confirmado.",
+      409,
+      "Conflict",
+    );
+  }
+
+  const expectedAmount =
+    Number(order.subtotal) + Number(order.shippingPrice ?? 0);
+
+  const expectedAmountInCents = Math.round(expectedAmount * 100);
+  const receivedAmountInCents = Math.round(data.amount * 100);
+
+  if (receivedAmountInCents !== expectedAmountInCents) {
+    throw new AppError(
+      `O valor informado deve ser exatamente R$ ${expectedAmount.toFixed(2).replace(".", ",")}.`,
+      409,
+      "Conflict",
+    );
+  }
+
+  const paidAt = data.paidAt ?? new Date();
+
+  if (paidAt.getTime() > Date.now() + 5 * 60 * 1000) {
+    throw new AppError(
+      "A data do pagamento não pode estar no futuro.",
+      400,
+      "Bad Request",
+    );
+  }
+
+  return prisma.order.update({
+    where: {
+      id,
+    },
+    data: {
+      paymentStatus: "paid",
+      paymentMethod: data.method,
+      paymentProvider: "manual",
+      paymentProviderId: data.reference ?? null,
+      paymentUrl: null,
+      paidAt,
+    },
+    include: {
+      customer: true,
+      items: true,
+    },
+  });
+}
+export async function refundManualOrderPayment(
+  id: string,
+  data: RefundManualPaymentBody,
+) {
+  const order = await prisma.order.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      status: true,
+      paymentStatus: true,
+      paymentProvider: true,
+    },
+  });
+
+  if (!order) {
+    throw new AppError("Pedido não encontrado.", 404, "Not found");
+  }
+
+  if (order.status === "delivered") {
+    throw new AppError(
+      "Não é possível estornar manualmente um pedido já entregue.",
+      409,
+      "Conflict",
+    );
+  }
+
+  if (order.paymentStatus !== "paid") {
+    throw new AppError(
+      "Este pedido não possui pagamento confirmado para estorno.",
+      409,
+      "Conflict",
+    );
+  }
+
+  if (order.paymentProvider !== "manual") {
+    throw new AppError(
+      "Este pagamento não foi registrado manualmente.",
+      409,
+      "Conflict",
+    );
+  }
+
+  return prisma.order.update({
+    where: {
+      id,
+    },
+    data: {
+      paymentStatus: "refunded",
+      paidAt: null,
+    },
+    include: {
+      customer: true,
+      items: true,
+    },
+  });
+}

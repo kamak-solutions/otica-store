@@ -11,10 +11,12 @@ import {
   getAdminOrderByIdController,
   getAdminOrdersController,
   updateOrderStatusController,
+  refundManualOrderPaymentController,
 } from "./orders.controller.js";
 import type {
   ConfirmManualPaymentBody,
   OrderIdParams,
+  RefundManualPaymentBody,
   UpdateOrderStatusBody,
 } from "./orders.schemas.js";
 
@@ -86,6 +88,16 @@ export async function ordersRoutes(app: FastifyInstance) {
       preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
     },
     confirmManualOrderPaymentController,
+  );
+  app.post<{
+    Params: OrderIdParams;
+    Body: RefundManualPaymentBody;
+  }>(
+    "/admin/orders/:id/manual-payment/refund",
+    {
+      preHandler: [requireAdminAuth, requireAdminRole(["owner"])],
+    },
+    refundManualOrderPaymentController,
   );
 
   app.patch<{

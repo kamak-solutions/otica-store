@@ -111,6 +111,17 @@ export const confirmManualPaymentBodySchema = z
       });
     }
   });
+  export const refundManualPaymentBodySchema = z.object({
+  reason: z
+    .string()
+    .trim()
+    .min(10, "O motivo do estorno precisa ter ao menos 10 caracteres.")
+    .max(500, "O motivo do estorno pode ter no máximo 500 caracteres."),
+});
+
+export type RefundManualPaymentBody = z.infer<
+  typeof refundManualPaymentBodySchema
+>;
 
 export type OrderStatus = z.infer<typeof orderStatusSchema>;
 
