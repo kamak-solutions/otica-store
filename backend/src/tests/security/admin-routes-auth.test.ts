@@ -207,6 +207,8 @@ describe("Segurança das rotas administrativas", () => {
 
   describe("Widgets", () => {
     it("mantém a rota da vitrine pública", async () => {
+      vi.spyOn(prisma.widget, "findMany").mockResolvedValue([]);
+
       const response = await app.inject({
         method: "GET",
         url: "/widgets/home",
@@ -399,18 +401,17 @@ describe("Segurança das rotas administrativas", () => {
     });
 
     it("permite viewer listar laboratórios", async () => {
-      const adminId = "00000000-0000-0000-0000-000000000005";
-      const email = "viewer@example.com";
-
       mockActiveAdmin({
-        id: adminId,
-        email,
+        id: "admin-viewer-id",
+        email: "viewer@example.com",
         role: "viewer",
       });
 
-      const viewerToken = signAdminToken({
-        sub: adminId,
-        email,
+      vi.spyOn(prisma.laboratory, "findMany").mockResolvedValue([]);
+
+      const token = signAdminToken({
+        sub: "admin-viewer-id",
+        email: "viewer@example.com",
         role: "viewer",
       });
 
@@ -418,7 +419,7 @@ describe("Segurança das rotas administrativas", () => {
         method: "GET",
         url: "/admin/laboratories",
         headers: {
-          authorization: `Bearer ${viewerToken}`,
+          authorization: `Bearer ${token}`,
         },
       });
 
@@ -434,6 +435,8 @@ describe("Segurança das rotas administrativas", () => {
         email,
         role: "owner",
       });
+
+      vi.spyOn(prisma.widget, "findMany").mockResolvedValue([]);
 
       const ownerToken = signAdminToken({
         sub: adminId,
