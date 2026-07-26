@@ -194,7 +194,7 @@ function buildStatusDates(status: LaboratoryOrderStatus) {
   }
 }
 
-function mapLaboratoryStatusToOrderStatus(status: LaboratoryOrderStatus) {
+export function mapLaboratoryStatusToOrderStatus(status: LaboratoryOrderStatus) {
   switch (status) {
     case "pending":
       return "pending";
@@ -207,10 +207,8 @@ function mapLaboratoryStatusToOrderStatus(status: LaboratoryOrderStatus) {
     case "ready":
     case "received_at_store":
     case "mounted":
-      return "preparing";
-
     case "delivered":
-      return "delivered";
+      return "preparing";
   }
 }
 

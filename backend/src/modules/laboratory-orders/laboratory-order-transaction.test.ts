@@ -29,7 +29,7 @@ describe("Transação do pedido laboratorial", () => {
 
     const orderUpdate = vi.fn().mockResolvedValue({
       id: orderId,
-      status: "delivered",
+      status: "preparing",
     });
 
     const laboratoryOrderUpdate = vi.fn().mockResolvedValue({
@@ -72,9 +72,7 @@ describe("Transação do pedido laboratorial", () => {
         id: orderId,
       },
       data: {
-        status: "delivered",
-        externalOrderNumber: undefined,
-        notes: undefined,
+        status: "preparing",
       },
     });
 
