@@ -12,6 +12,7 @@ import {
   getAdminOrdersController,
   updateOrderStatusController,
   refundManualOrderPaymentController,
+  getOrderPaymentEventsController,
 } from "./orders.controller.js";
 import type {
   ConfirmManualPaymentBody,
@@ -65,6 +66,18 @@ export async function ordersRoutes(app: FastifyInstance) {
       ],
     },
     getAdminOrderByIdController,
+  );
+  app.get<{
+    Params: OrderIdParams;
+  }>(
+    "/admin/orders/:id/payment-events",
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator", "viewer"]),
+      ],
+    },
+    getOrderPaymentEventsController,
   );
 
   app.post<{

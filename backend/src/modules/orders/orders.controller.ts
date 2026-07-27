@@ -9,6 +9,7 @@ import {
   updateOrderStatus,
   confirmManualOrderPayment,
   refundManualOrderPayment,
+  listOrderPaymentEvents,
 } from "./orders.service.js";
 import { mapOrderToHttp } from "./orders.mapper.js";
 import {
@@ -201,7 +202,11 @@ export async function confirmManualOrderPaymentController(
     "Confirming manual order payment",
   );
 
-  const order = await confirmManualOrderPayment(id, body);
+  const order = await confirmManualOrderPayment(id, body, {
+    adminId: request.admin?.sub,
+    adminEmail: request.admin?.email,
+    adminRole: request.admin?.role,
+  });
 
   await createAdminAuditLog({
     adminId: request.admin?.sub,
@@ -243,7 +248,11 @@ export async function refundManualOrderPaymentController(
     "Refunding manual order payment",
   );
 
-  const order = await refundManualOrderPayment(id, body);
+  const order = await refundManualOrderPayment(id, body, {
+    adminId: request.admin?.sub,
+    adminEmail: request.admin?.email,
+    adminRole: request.admin?.role,
+  });
 
   await createAdminAuditLog({
     adminId: request.admin?.sub,
@@ -261,5 +270,42 @@ export async function refundManualOrderPaymentController(
   return reply.send({
     data: mapOrderToHttp(order),
     message: "Pagamento manual estornado com sucesso.",
+  });
+}
+export async function getOrderPaymentEventsController(
+  request: FastifyRequest<{
+    Params: OrderIdParams;
+  }>,
+  reply: FastifyReply,
+) {
+  const { id } = orderIdParamsSchema.parse(request.params);
+
+  request.log.info(
+    {
+      id,
+    },
+    "Listing order payment events",
+  );
+
+  const events = await listOrderPaymentEvents(id);
+
+  return reply.send({
+    data: events.map((event) => ({
+      id: event.id,
+      eventType: event.eventType,
+      status: event.status,
+      amount: event.amount?.toFixed(2) ?? null,
+      method: event.method,
+      provider: event.provider,
+      reference: event.reference,
+      installments: event.installments,
+      notes: event.notes,
+      reason: event.reason,
+      occurredAt: event.occurredAt.toISOString(),
+      adminId: event.adminId,
+      adminEmail: event.adminEmail,
+      adminRole: event.adminRole,
+      createdAt: event.createdAt.toISOString(),
+    })),
   });
 }

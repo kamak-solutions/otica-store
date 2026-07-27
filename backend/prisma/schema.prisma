@@ -234,11 +234,46 @@ model Order {
   createdByAdminId String?
   createdByAdmin   AdminUser? @relation("OrderCreatedByAdmin", fields: [createdByAdminId], references: [id])
 
-  items OrderItem[]
+  items         OrderItem[]
+  paymentEvents OrderPaymentEvent[]
 
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   laboratoryOrders LaboratoryOrder[]
+}
+
+model OrderPaymentEvent {
+  id String @id @default(uuid())
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  eventType String
+  status    String
+
+  amount Decimal? @db.Decimal(10, 2)
+
+  method    String?
+  provider  String?
+  reference String?
+
+  installments Int?
+
+  notes  String?
+  reason String?
+
+  occurredAt DateTime @default(now())
+
+  adminId    String?
+  adminEmail String?
+  adminRole  String?
+
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([eventType])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model OrderItem {

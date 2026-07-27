@@ -9,10 +9,7 @@ import {
 } from "vitest";
 
 import { app } from "../../app.js";
-import {
-  signAdminToken,
-  type AdminRole,
-} from "../../lib/admin-jwt.js";
+import { signAdminToken, type AdminRole } from "../../lib/admin-jwt.js";
 import { prisma } from "../../lib/prisma.js";
 
 const ORDER_ID = "11111111-1111-4111-8111-111111111111";
@@ -97,15 +94,37 @@ function createOrder(overrides: Record<string, unknown> = {}) {
 }
 
 function mockOrderUpdate() {
-  return vi
-    .spyOn(prisma.order, "update")
-    .mockResolvedValue({} as never);
+  return vi.spyOn(prisma.order, "update").mockResolvedValue({} as never);
 }
 
 function mockAuditCreate() {
   return vi
     .spyOn(prisma.adminAuditLog, "create")
     .mockResolvedValue({} as never);
+}
+
+function mockPaymentTransaction(updatedOrder: ReturnType<typeof createOrder>) {
+  const orderUpdateSpy = vi.fn().mockResolvedValue(updatedOrder);
+  const paymentEventCreateSpy = vi.fn().mockResolvedValue({});
+
+  const transactionSpy = vi
+    .spyOn(prisma, "$transaction")
+    .mockImplementation(async (callback: any) => {
+      return callback({
+        order: {
+          update: orderUpdateSpy,
+        },
+        orderPaymentEvent: {
+          create: paymentEventCreateSpy,
+        },
+      });
+    });
+
+  return {
+    transactionSpy,
+    orderUpdateSpy,
+    paymentEventCreateSpy,
+  };
 }
 
 async function postManualPayment(
@@ -177,9 +196,8 @@ describe("POST /admin/orders/:id/manual-payment", () => {
       paymentStatus: "pending",
     } as never);
 
-    const updateSpy = vi
-      .spyOn(prisma.order, "update")
-      .mockResolvedValue(createOrder() as never);
+    const { transactionSpy, orderUpdateSpy, paymentEventCreateSpy } =
+      mockPaymentTransaction(createOrder());
 
     const auditSpy = mockAuditCreate();
 
@@ -197,7 +215,9 @@ describe("POST /admin/orders/:id/manual-payment", () => {
       message: "Pagamento manual confirmado com sucesso.",
     });
 
-    expect(updateSpy).toHaveBeenCalledWith(
+    expect(transactionSpy).toHaveBeenCalledTimes(1);
+
+    expect(orderUpdateSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         where: {
           id: ORDER_ID,
@@ -211,6 +231,21 @@ describe("POST /admin/orders/:id/manual-payment", () => {
         }),
       }),
     );
+
+    expect(paymentEventCreateSpy).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        orderId: ORDER_ID,
+        eventType: "manual_payment_confirmed",
+        status: "paid",
+        amount: 199.9,
+        method: "pix_manual",
+        provider: "manual",
+        reference: "E2E123456",
+        adminId: ADMIN_ID,
+        adminEmail: "admin@otica.com",
+        adminRole: "owner",
+      }),
+    });
 
     expect(auditSpy).toHaveBeenCalled();
   });
@@ -286,8 +321,7 @@ describe("POST /admin/orders/:id/manual-payment", () => {
 
     expect(response.json()).toMatchObject({
       error: "Conflict",
-      message:
-        "Não é possível registrar pagamento em um pedido cancelado.",
+      message: "Não é possível registrar pagamento em um pedido cancelado.",
     });
 
     expect(updateSpy).not.toHaveBeenCalled();

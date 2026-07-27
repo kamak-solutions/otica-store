@@ -403,9 +403,15 @@ export async function createOrderPaymentLink(id: string) {
     },
   });
 }
+type PaymentEventAdminContext = {
+  adminId?: string;
+  adminEmail?: string;
+  adminRole?: string;
+};
 export async function confirmManualOrderPayment(
   id: string,
   data: ConfirmManualPaymentBody,
+  admin: PaymentEventAdminContext,
 ) {
   const order = await prisma.order.findUnique({
     where: {
@@ -464,27 +470,50 @@ export async function confirmManualOrderPayment(
     );
   }
 
-  return prisma.order.update({
-    where: {
-      id,
-    },
-    data: {
-      paymentStatus: "paid",
-      paymentMethod: data.method,
-      paymentProvider: "manual",
-      paymentProviderId: data.reference ?? null,
-      paymentUrl: null,
-      paidAt,
-    },
-    include: {
-      customer: true,
-      items: true,
-    },
+  return prisma.$transaction(async (tx) => {
+    const updatedOrder = await tx.order.update({
+      where: {
+        id,
+      },
+      data: {
+        paymentStatus: "paid",
+        paymentMethod: data.method,
+        paymentProvider: "manual",
+        paymentProviderId: data.reference ?? null,
+        paymentUrl: null,
+        paidAt,
+      },
+      include: {
+        customer: true,
+        items: true,
+      },
+    });
+
+    await tx.orderPaymentEvent.create({
+      data: {
+        orderId: id,
+        eventType: "manual_payment_confirmed",
+        status: "paid",
+        amount: data.amount,
+        method: data.method,
+        provider: "manual",
+        reference: data.reference ?? null,
+        installments: data.installments ?? null,
+        notes: data.notes ?? null,
+        occurredAt: paidAt,
+
+        adminId: admin.adminId ?? null,
+        adminEmail: admin.adminEmail ?? null,
+        adminRole: admin.adminRole ?? null,
+      },
+    });
+    return updatedOrder;
   });
 }
 export async function refundManualOrderPayment(
   id: string,
   data: RefundManualPaymentBody,
+  admin: PaymentEventAdminContext,
 ) {
   const order = await prisma.order.findUnique({
     where: {
@@ -526,17 +555,66 @@ export async function refundManualOrderPayment(
     );
   }
 
-  return prisma.order.update({
+  return prisma.$transaction(async (tx) => {
+    const updatedOrder = await tx.order.update({
+      where: {
+        id,
+      },
+      data: {
+        paymentStatus: "refunded",
+        paidAt: null,
+      },
+      include: {
+        customer: true,
+        items: true,
+      },
+    });
+
+    await tx.orderPaymentEvent.create({
+      data: {
+        orderId: id,
+        eventType: "manual_payment_refunded",
+        status: "refunded",
+        method: updatedOrder.paymentMethod,
+        provider: updatedOrder.paymentProvider,
+        reference: updatedOrder.paymentProviderId,
+        reason: data.reason,
+        occurredAt: new Date(),
+
+        adminId: admin.adminId ?? null,
+        adminEmail: admin.adminEmail ?? null,
+        adminRole: admin.adminRole ?? null,
+      },
+    });
+
+    return updatedOrder;
+  });
+}
+export async function listOrderPaymentEvents(id: string) {
+  const order = await prisma.order.findUnique({
     where: {
       id,
     },
-    data: {
-      paymentStatus: "refunded",
-      paidAt: null,
+    select: {
+      id: true,
     },
-    include: {
-      customer: true,
-      items: true,
+  });
+
+  if (!order) {
+    throw new AppError("Pedido não encontrado.", 404, "Not found");
+  }
+
+  return prisma.orderPaymentEvent.findMany({
+    where: {
+      orderId: id,
     },
+    orderBy: [
+      {
+        occurredAt: "desc",
+      },
+      {
+        createdAt: "desc",
+      },
+    ],
   });
 }
