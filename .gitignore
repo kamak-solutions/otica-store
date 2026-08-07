@@ -30,4 +30,5 @@ docker/postgres-data/
 .vscode/
 .idea/docker/
 backend/src/modules/whatsapp/
-docker/
+docker/coverage/
+backend/coverage/

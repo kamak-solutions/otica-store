@@ -744,3 +744,75 @@ model StockMovement {
   @@index([movementType])
   @@index([createdAt])
 }
+
+// --- MÓDULO LANDING PAGES ---
+
+model LandingPage {
+  id     String  @id @default(uuid())
+  title  String // Ex: "Promoção Óculos R$ 99"
+  slug   String  @unique // Ex: "promocao-99"
+  active Boolean @default(true)
+
+  // Customização Visual (Layout, Cores e Tipografia)
+  theme           String @default("luxo") // "luxo", "minimalista", "moderno"
+  primaryColor    String @default("#D4AF37")
+  secondaryColor  String @default("#1A1A1A")
+  backgroundColor String @default("#0F0F0F")
+  textColor       String @default("#FFFFFF")
+  fontFamily      String @default("Playfair Display")
+
+  // Conteúdo Principal (Hero)
+  heroTitle     String
+  heroSubtitle  String?
+  heroBannerUrl String?
+
+  // Contato / Conversão
+  ctaText         String  @default("Faça seu orçamento online")
+  whatsappNumber  String // Ex: "5511963208855"
+  whatsappMessage String?
+
+  // Seções da Página
+  sections LandingPageSection[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("landing_pages")
+}
+
+model LandingPageSection {
+  id            String      @id @default(uuid())
+  landingPageId String      @map("landing_page_id")
+  landingPage   LandingPage @relation(fields: [landingPageId], references: [id], onDelete: Cascade)
+
+  type       String // "banner_9_16", "features", "gallery", "testimonials", "cta"
+  title      String?
+  subtitle   String?
+  content    String?
+  imageUrl   String?
+  buttonText String?
+  buttonLink String?
+
+  bgColor   String?
+  textColor String?
+  order     Int     @default(0)
+  active    Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("landing_page_sections")
+}
+
+model LandingPageLead {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String
+  email     String?
+  message   String?
+  status    String   @default("PENDING") // PENDING, CONTACTED, CONVERTED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("landing_page_leads")
+}

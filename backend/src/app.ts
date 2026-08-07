@@ -32,6 +32,7 @@ import { suppliersRoutes } from "./modules/suppliers/suppliers.routes.js";
 import { productCollectionsRoutes } from "./modules/product-collections/product-collections.routes.js";
 import { frameDetailsRoutes } from "./modules/frame-details/frame-details.routes.js";
 import { laboratoryOrdersRoutes } from "./modules/laboratory-orders/laboratory-orders.routes.js";
+import { landingPageRoutes } from "./modules/landing-page/landing-page.routes.js";
 
 export const app = Fastify({
   logger: {
@@ -130,3 +131,4 @@ app.register(laboratoryOrdersRoutes);
 app.register(suppliersRoutes);
 app.register(productCollectionsRoutes);
 app.register(frameDetailsRoutes);
+app.register(landingPageRoutes);
