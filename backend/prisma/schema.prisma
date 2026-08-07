@@ -8,17 +8,18 @@ datasource db {
 }
 
 model Product {
-  id          String   @id @default(uuid())
-  name        String
-  slug        String   @unique
-  description String?
-  price       Decimal  @db.Decimal(10, 2)
-  salePrice   Decimal? @db.Decimal(10, 2)
-  sku         String?  @unique
-  brand       String?
-  stock       Int      @default(0)
-  active      Boolean  @default(true)
-  featured    Boolean  @default(false)
+  id            String   @id @default(uuid())
+  name          String
+  slug          String   @unique
+  description   String?
+  price         Decimal  @db.Decimal(10, 2)
+  salePrice     Decimal? @db.Decimal(10, 2)
+  sku           String?  @unique
+  brand         String?
+  stock         Int      @default(0)
+  reservedStock Int      @default(0)
+  active        Boolean  @default(true)
+  featured      Boolean  @default(false)
 
   categoryId String?
   category   Category? @relation(fields: [categoryId], references: [id])
@@ -32,8 +33,9 @@ model Product {
   brandId  String?
   brandRef Brand?  @relation(fields: [brandId], references: [id])
 
-  images     ProductImage[]
-  orderItems OrderItem[]
+  images         ProductImage[]
+  orderItems     OrderItem[]
+  stockMovements StockMovement[]
 
   costPrice    Decimal? @db.Decimal(10, 2)
   minimumStock Int      @default(0)
@@ -234,8 +236,9 @@ model Order {
   createdByAdminId String?
   createdByAdmin   AdminUser? @relation("OrderCreatedByAdmin", fields: [createdByAdminId], references: [id])
 
-  items         OrderItem[]
-  paymentEvents OrderPaymentEvent[]
+  items          OrderItem[]
+  paymentEvents  OrderPaymentEvent[]
+  stockMovements StockMovement[]
 
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
@@ -706,4 +709,38 @@ model LaboratoryOrder {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model StockMovement {
+  id String @id @default(uuid())
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  orderId String?
+  order   Order?  @relation(fields: [orderId], references: [id])
+
+  movementType String
+
+  quantity Int
+
+  stockBefore    Int
+  stockAfter     Int
+  reservedBefore Int
+  reservedAfter  Int
+
+  reason    String?
+  reference String?
+
+  adminId    String?
+  adminEmail String?
+  adminRole  String?
+
+  occurredAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  @@index([productId])
+  @@index([orderId])
+  @@index([movementType])
+  @@index([createdAt])
 }

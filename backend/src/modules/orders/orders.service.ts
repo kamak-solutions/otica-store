@@ -74,8 +74,14 @@ export async function createOrder(data: CreateOrderBody) {
         throw new Error("Produto não encontrado no pedido.");
       }
 
-      if (product.stock < item.quantity) {
-        throw new Error(`Estoque insuficiente para o produto ${product.name}.`);
+      const availableStock = product.stock - product.reservedStock;
+
+      if (availableStock < item.quantity) {
+        throw new AppError(
+          `Estoque disponível insuficiente para o produto ${product.name}.`,
+          400,
+          "Bad Request",
+        );
       }
 
       const unitPrice = product.salePrice ?? product.price;
@@ -216,9 +222,11 @@ export async function createAdminOrder(data: CreateAdminOrderInput) {
         );
       }
 
-      if (product.stock < item.quantity) {
+      const availableStock = product.stock - product.reservedStock;
+
+      if (availableStock < item.quantity) {
         throw new AppError(
-          `Estoque insuficiente para o produto ${product.name}.`,
+          `Estoque disponível insuficiente para o produto ${product.name}.`,
           400,
           "Bad Request",
         );
@@ -237,6 +245,23 @@ export async function createAdminOrder(data: CreateAdminOrderInput) {
     const subtotal = orderItems.reduce((total, item) => {
       return total + Number(item.unitPrice) * item.quantity;
     }, 0);
+    for (const item of data.items) {
+      const product = products.find(
+        (currentProduct) => currentProduct.id === item.productId,
+      );
+
+      if (!product) continue;
+      await tx.product.update({
+        where: {
+          id: product.id,
+        },
+        data: {
+          reservedStock: {
+            increment: item.quantity,
+          },
+        },
+      });
+    }
 
     const order = await tx.order.create({
       data: {
@@ -255,6 +280,33 @@ export async function createAdminOrder(data: CreateAdminOrderInput) {
         items: true,
       },
     });
+    for (const item of data.items) {
+      const product = products.find(
+        (currentProduct) => currentProduct.id === item.productId,
+      );
+
+      if (!product) continue;
+
+      await tx.stockMovement.create({
+        data: {
+          productId: product.id,
+          orderId: order.id,
+
+          movementType: "order_reservation",
+          quantity: item.quantity,
+
+          stockBefore: product.stock,
+          stockAfter: product.stock,
+
+          reservedBefore: product.reservedStock,
+          reservedAfter: product.reservedStock + item.quantity,
+
+          adminId: data.createdByAdminId ?? null,
+
+          reason: "Reserva de estoque para pedido administrativo.",
+        },
+      });
+    }
     if (data.attendanceId) {
       await tx.customerAttendance.update({
         where: {

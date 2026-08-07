@@ -1,0 +1,7 @@
+# Arquivos temporários e pastas de build
+dist/
+node_modules/
+.env
+.env.local
+*.log
+.DS_Store
