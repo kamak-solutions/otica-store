@@ -1,0 +1,44 @@
+services:
+  evolution-api:
+    image: atendai/evolution-api:latest
+    container_name: evolution_api
+    restart: always
+    environment:
+      - SERVER_URL=http://localhost:8082
+      - API_KEY=ChaveSecretaGlobalDoSeuMotor123
+      - AUTHENTICATION_TYPE=apikey
+      
+      # ◄ Adicionado para resolver o erro do Log:
+      - DATABASE_ENABLED=true
+      - DATABASE_PROVIDER=sqlite
+      - DATABASE_CONNECTION_URI=file:/evolution/instances/data.db
+      
+      # Configurações do Redis
+      - CACHE_REDIS_ENABLED=true
+      - CACHE_REDIS_URI=redis://redis:6379/0
+      - WEBHOOK_GLOBAL_ENABLED=false
+    ports:
+      - "8082:8080"
+    volumes:
+      - evolution_instances:/evolution/instances
+    depends_on:
+      - redis
+    networks:
+      - otica-whatsapp-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: evolution_redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - otica-whatsapp-network
+
+volumes:
+  evolution_instances:
+  redis_data:
+
+networks:
+  otica-whatsapp-network:
+    driver: bridge

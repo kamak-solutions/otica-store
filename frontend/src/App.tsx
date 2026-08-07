@@ -45,6 +45,8 @@ import { AdminCustomerOrderCreate } from "./pages/admin/AdminCustomerOrderCreate
 import { AdminBrands } from "./pages/admin/AdminBrands";
 import { AdminBrandCreate } from "./pages/admin/AdminBrandCreate";
 import { AdminCustomerPrescriptionCreate } from "./pages/admin/AdminCustomerPrescriptionCreate";
+import { LandingPageDetail } from "./pages/public/LandingPageDetail";
+import { AdminLandingPages } from "./pages/admin/AdminLandingPages";
 
 export default function App() {
   return (
@@ -64,15 +66,16 @@ export default function App() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
           <Route path="/blog/:slug" element={<BlogPostDetail />} />
+          <Route path="/l/:slug" element={<LandingPageDetail />} />
         </Route>
         <Route element={<AdminLayout />}>
+          <Route path="/admin/landing-pages" element={<AdminLandingPages />} />
           <Route path="/admin/orcamentos" element={<AdminQuoteRequests />} />
           <Route path="/admin/auditoria" element={<AdminAuditLogs />} />
           <Route path="/admin/pedidos" element={<AdminOrders />} />
           <Route path="/admin/produtos" element={<AdminProducts />} />
           <Route path="/admin/categorias" element={<AdminCategories />} />
           <Route path="/admin/produtos/novo" element={<AdminProductCreate />} />
-          <Route path="/admin/categorias" element={<AdminCategories />} />
           <Route
             path="/admin/produtos/:id/editar"
             element={<AdminProductEdit />}
@@ -90,7 +93,7 @@ export default function App() {
           <Route
             path="/admin/vitrine/banners"
             element={<AdminStorefrontBanners />}
-          />{" "}
+          />
           <Route path="/admin/clientes" element={<AdminCustomers />} />
           <Route path="/admin/clientes/:id" element={<AdminCustomerDetail />} />
           <Route path="/admin/usuarios" element={<AdminUsers />} />
