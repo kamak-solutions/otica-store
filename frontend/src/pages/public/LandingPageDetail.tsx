@@ -1,112 +1,101 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { landingPagesService, type LandingPage } from '../../services/landing-pages.service';
+import { landingPagesService, type LandingPage, type LandingPageSection } from '../../services/landing-pages.service'
+import { Seo } from '../../components/seo/Seo';
 
 export function LandingPageDetail() {
   const { slug } = useParams<{ slug: string }>();
-  const [page, setPage] = useState<LandingPage | null>(null);
+  const [landingPage, setLandingPage] = useState<LandingPage | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (!slug) return;
-    let isMounted = true;
-
-    async function fetchLandingPage() {
+    async function loadPage() {
+      if (!slug) return;
       try {
-        const data = await landingPagesService.getBySlug(slug!);
-        if (isMounted) {
-          setPage(data);
-          setError(null);
-        }
-      } catch {
-        if (isMounted) {
-          setError('Página não encontrada.');
-        }
+        setLoading(true);
+        const data = await landingPagesService.getBySlug(slug);
+        setLandingPage(data);
+      } catch (err) {
+        console.error('Erro ao carregar landing page:', err);
+        setError(true);
       } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
     }
-
-    fetchLandingPage();
-
-    return () => {
-      isMounted = false;
-    };
+    loadPage();
   }, [slug]);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+      <div style={{ textAlign: 'center', padding: '100px 20px', color: '#fff', background: '#0f172a', minHeight: '60vh' }}>
+        <p>Carregando oferta...</p>
       </div>
     );
   }
 
-  if (error || !page) {
+  if (error || !landingPage) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">404</h1>
-        <p className="text-gray-600">{error || 'Página não encontrada'}</p>
+      <div style={{ textAlign: 'center', padding: '100px 20px', color: '#fff', background: '#0f172a', minHeight: '60vh' }}>
+        <h2>Página não encontrada</h2>
+        <p>A promoção que você está procurando não existe ou foi desativada.</p>
       </div>
     );
   }
 
-  const whatsappLink = page.whatsappNumber
-    ? `https://wa.me/${page.whatsappNumber}?text=${encodeURIComponent(
-        page.whatsappMessage || 'Olá! Gostaria de mais informações.'
-      )}`
-    : null;
+  const whatsappLink = landingPage.whatsappNumber
+    ? `https://wa.me/${landingPage.whatsappNumber}?text=${encodeURIComponent(landingPage.whatsappMessage || 'Olá! Vim pela Landing Page.')}`
+    : '#';
 
   return (
-    <div
-      style={{
-        backgroundColor: page.backgroundColor || '#0F0F0F',
-        color: page.textColor || '#FFFFFF',
-        fontFamily: page.fontFamily || 'sans-serif',
-      }}
-      className="min-h-screen py-16 px-4 sm:px-6 lg:px-8"
-    >
-      <div className="max-w-4xl mx-auto text-center">
-        <h1
-          className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl"
-          style={{ color: page.primaryColor || '#D4AF37' }}
-        >
-          {page.heroTitle || page.title}
-        </h1>
+    <div className="landing-page-container">
+      <Seo 
+        title={landingPage.title} 
+        description={landingPage.heroSubtitle || 'Aproveite nossa promoção especial.'} 
+        imageUrl={landingPage.heroBannerUrl} 
+      />
 
-        {page.heroSubtitle && (
-          <p className="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">
-            {page.heroSubtitle}
-          </p>
-        )}
+      {/* Hero Section */}
+      <div 
+        className="landing-hero"
+        style={landingPage.heroBannerUrl ? { backgroundImage: `url(${landingPage.heroBannerUrl})` } : {}}
+      >
+        <div className="landing-hero-overlay" />
+        <div className="landing-hero-content">
+          <h1 className="landing-title">
+            {landingPage.heroTitle || landingPage.title}
+          </h1>
+          {landingPage.heroSubtitle && (
+            <p className="landing-subtitle">{landingPage.heroSubtitle}</p>
+          )}
 
-        {page.heroBannerUrl && (
-          <div className="mt-8">
-            <img
-              src={page.heroBannerUrl}
-              alt={page.title}
-              className="rounded-lg shadow-2xl mx-auto max-h-96 object-cover"
-            />
-          </div>
-        )}
-
-        {whatsappLink && (
-          <div className="mt-10">
-            <a
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block px-8 py-4 text-lg font-medium rounded-md text-black transition-transform transform hover:scale-105"
-              style={{ backgroundColor: page.primaryColor || '#D4AF37' }}
+          {landingPage.whatsappNumber && (
+            <a 
+              href={whatsappLink} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="landing-whatsapp-btn"
             >
-              {page.ctaText || 'Faça seu orçamento online'}
+              💬 {landingPage.ctaText || 'Garantir Oferta no WhatsApp'}
             </a>
-          </div>
-        )}
+          )}
+        </div>
       </div>
+
+      {/* Conteúdo Dinâmico / Seções */}
+      {landingPage.sections && landingPage.sections.length > 0 && (
+        <div className="landing-sections">
+          {landingPage.sections.map((section: LandingPageSection, index: number) => {
+            const content = section.content as { title?: string; text?: string; content?: string };
+            return (
+              <div key={section.id || index} className="landing-section-card">
+                {content.title && <h3 className="landing-section-title">{content.title}</h3>}
+                <p className="landing-section-text">{content.text || content.content || ''}</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

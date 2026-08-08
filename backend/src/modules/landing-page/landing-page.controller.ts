@@ -7,6 +7,7 @@ import {
 import {
   getPublicLandingPageBySlug,
   listAllLandingPages,
+  getLandingPageById,
   createLandingPage,
   updateLandingPage,
   deleteLandingPage,
@@ -24,6 +25,24 @@ export async function getPublicLandingPageController(
   }
 
   return reply.send(landingPage);
+}
+export async function getLandingPageByIdController(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  const { id } = landingPageParamsSchema.parse(request.params);
+
+  const landingPage = await getLandingPageById(id);
+
+  if (!landingPage) {
+    return reply.status(404).send({
+      message: "Landing page não encontrada.",
+    });
+  }
+
+  return reply.send({
+    data: landingPage,
+  });
 }
 
 export async function listLandingPagesController(

@@ -4,13 +4,31 @@ import {
   createLandingPageSchema,
   updateLandingPageSchema,
 } from "./landing-page.schema.js";
+import { deleteLandingPageImageFile } from "../uploads/uploads.service.js";
 
 export async function getPublicLandingPageBySlug(slug: string) {
   return prisma.landingPage.findFirst({
-    where: { slug, active: true },
+    where: {
+      slug,
+      active: true,
+    },
     include: {
       sections: {
-        where: { active: true },
+        where: {
+          active: true,
+        },
+        orderBy: {
+          order: "asc",
+        },
+      },
+    },
+  });
+}
+export async function getLandingPageById(id: string) {
+  return prisma.landingPage.findUnique({
+    where: { id },
+    include: {
+      sections: {
         orderBy: { order: "asc" },
       },
     },
@@ -19,8 +37,16 @@ export async function getPublicLandingPageBySlug(slug: string) {
 
 export async function listAllLandingPages() {
   return prisma.landingPage.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { _count: { select: { sections: true } } },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      _count: {
+        select: {
+          sections: true,
+        },
+      },
+    },
   });
 }
 
@@ -29,12 +55,39 @@ export async function createLandingPage(
   adminId?: string,
 ) {
   const slugExists = await prisma.landingPage.findUnique({
-    where: { slug: data.slug },
+    where: {
+      slug: data.slug,
+    },
   });
-  if (slugExists) throw new Error("SLUG_EXISTS");
+
+  if (slugExists) {
+    throw new Error("SLUG_EXISTS");
+  }
+
+  const { sections, ...landingPageData } = data;
 
   return prisma.$transaction(async (tx) => {
-    const lp = await tx.landingPage.create({ data });
+    const lp = await tx.landingPage.create({
+      data: {
+        ...landingPageData,
+
+        ...(sections?.length
+          ? {
+              sections: {
+                create: sections.map((section, index) => ({
+                  title: section.title,
+                  content: section.content,
+                  type: "features",
+                  order: index,
+                })),
+              },
+            }
+          : {}),
+      },
+      include: {
+        sections: true,
+      },
+    });
 
     if (adminId) {
       await tx.adminAuditLog.create({
@@ -55,20 +108,55 @@ export async function updateLandingPage(
   data: z.infer<typeof updateLandingPageSchema>,
   adminId?: string,
 ) {
-  const lpExists = await prisma.landingPage.findUnique({ where: { id } });
-  if (!lpExists) throw new Error("NOT_FOUND");
+  const lpExists = await prisma.landingPage.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!lpExists) {
+    throw new Error("NOT_FOUND");
+  }
 
   if (data.slug && data.slug !== lpExists.slug) {
     const slugExists = await prisma.landingPage.findUnique({
-      where: { slug: data.slug },
+      where: {
+        slug: data.slug,
+      },
     });
-    if (slugExists) throw new Error("SLUG_EXISTS");
+
+    if (slugExists) {
+      throw new Error("SLUG_EXISTS");
+    }
   }
+
+  const { sections, ...landingPageData } = data;
 
   return prisma.$transaction(async (tx) => {
     const updated = await tx.landingPage.update({
-      where: { id },
-      data,
+      where: {
+        id,
+      },
+      data: {
+        ...landingPageData,
+
+        ...(sections
+          ? {
+              sections: {
+                deleteMany: {},
+                create: sections.map((section, index) => ({
+                  title: section.title,
+                  content: section.content,
+                  type: "features",
+                  order: index,
+                })),
+              },
+            }
+          : {}),
+      },
+      include: {
+        sections: true,
+      },
     });
 
     if (adminId) {
@@ -85,12 +173,24 @@ export async function updateLandingPage(
   });
 }
 
+
 export async function deleteLandingPage(id: string, adminId?: string) {
-  const lpExists = await prisma.landingPage.findUnique({ where: { id } });
-  if (!lpExists) throw new Error("NOT_FOUND");
+  const lpExists = await prisma.landingPage.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!lpExists) {
+    throw new Error("NOT_FOUND");
+  }
 
   return prisma.$transaction(async (tx) => {
-    const deleted = await tx.landingPage.delete({ where: { id } });
+    const deleted = await tx.landingPage.delete({
+      where: {
+        id,
+      },
+    });
 
     if (adminId) {
       await tx.adminAuditLog.create({

@@ -58,7 +58,15 @@ export function AdminCategories() {
   }
 
   useEffect(() => {
-    loadCategories();
+    async function loadData() {
+      try {
+        await loadCategories();
+      } catch (error) {
+        console.error("Erro ao carregar:", error);
+      }
+    }
+
+    void loadData();
   }, []);
 
   function updateField(field: keyof FormData, value: string) {

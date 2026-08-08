@@ -93,7 +93,15 @@ export function Home() {
     }
   }
   useEffect(() => {
-    loadCampaigns();
+    async function fetchData() {
+      try {
+        await loadCampaigns();
+      } catch (error) {
+        console.error("Erro ao carregar campanhas:", error);
+      }
+    }
+
+    void fetchData();
   }, []);
 
   const homeBanner = banners.find((banner) => banner.key === "home_banner");

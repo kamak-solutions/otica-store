@@ -47,6 +47,8 @@ import { AdminBrandCreate } from "./pages/admin/AdminBrandCreate";
 import { AdminCustomerPrescriptionCreate } from "./pages/admin/AdminCustomerPrescriptionCreate";
 import { LandingPageDetail } from "./pages/public/LandingPageDetail";
 import { AdminLandingPages } from "./pages/admin/AdminLandingPages";
+import { AdminLandingPageCreate } from "./pages/admin/AdminLandingPageCreate";
+import { AdminLandingPageEdit } from "./pages/admin/AdminLandingPageEdit";
 
 export default function App() {
   return (
@@ -70,6 +72,14 @@ export default function App() {
         </Route>
         <Route element={<AdminLayout />}>
           <Route path="/admin/landing-pages" element={<AdminLandingPages />} />
+          <Route
+            path="/admin/landing-pages/nova"
+            element={<AdminLandingPageCreate />}
+          />
+          <Route
+            path="/admin/landing-pages/:id/editar"
+            element={<AdminLandingPageEdit />}
+          />
           <Route path="/admin/orcamentos" element={<AdminQuoteRequests />} />
           <Route path="/admin/auditoria" element={<AdminAuditLogs />} />
           <Route path="/admin/pedidos" element={<AdminOrders />} />

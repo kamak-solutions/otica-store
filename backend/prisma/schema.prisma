@@ -762,9 +762,11 @@ model LandingPage {
   fontFamily      String @default("Playfair Display")
 
   // Conteúdo Principal (Hero)
-  heroTitle     String
-  heroSubtitle  String?
-  heroBannerUrl String?
+  heroBadge          String  @default("OFERTA ESPECIAL")
+  heroTitle          String
+  heroSubtitle       String?
+  heroBannerUrl      String?
+  heroBannerPublicId String?
 
   // Contato / Conversão
   ctaText         String  @default("Faça seu orçamento online")

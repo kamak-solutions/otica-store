@@ -7,6 +7,7 @@ import {
   uploadStorefrontImageFile,
   uploadCampaignImageFile,
   uploadBlogImageFile,
+  uploadLandingPageImageFile,
 } from "./uploads.service.js";
 
 const allowedMimeTypes = [
@@ -224,5 +225,83 @@ export async function uploadBlogImageController(
       url: uploadedFile.secure_url,
       publicId: uploadedFile.public_id,
     },
+  });
+}
+
+export async function uploadLandingPageImageController(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  const file = await request.file();
+
+  if (!file) {
+    throw new AppError("Imagem não enviada.", 400, "Bad Request");
+  }
+
+  if (!allowedProductImageMimeTypes.includes(file.mimetype)) {
+    throw new AppError(
+      "Tipo de imagem inválido. Envie JPG, PNG ou WEBP.",
+      400,
+      "Bad Request",
+    );
+  }
+
+  const buffer = await file.toBuffer();
+
+  const signatureValidation = validateFileSignature({
+    buffer,
+    allowedTypes: ["jpg", "png", "webp"],
+  });
+
+  if (!signatureValidation.valid || !signatureValidation.detectedType) {
+    throw new AppError(
+      "Imagem inválida. A assinatura do arquivo não corresponde a JPG, PNG ou WEBP.",
+      400,
+      "Bad Request",
+    );
+  }
+
+  const expectedMimeTypes: Record<"jpg" | "png" | "webp", string> = {
+    jpg: "image/jpeg",
+    png: "image/png",
+    webp: "image/webp",
+  };
+
+  const detectedType = signatureValidation.detectedType;
+
+  if (
+    detectedType !== "jpg" &&
+    detectedType !== "png" &&
+    detectedType !== "webp"
+  ) {
+    throw new AppError(
+      "Tipo de imagem detectado não é permitido.",
+      400,
+      "Bad Request",
+    );
+  }
+
+  const expectedMimeType = expectedMimeTypes[detectedType];
+
+  if (expectedMimeType !== file.mimetype) {
+    throw new AppError(
+      "O tipo MIME informado não corresponde ao conteúdo real da imagem.",
+      400,
+      "Bad Request",
+    );
+  }
+
+  const uploadedFile = await uploadLandingPageImageFile({
+    buffer,
+  });
+
+  return reply.status(201).send({
+    data: {
+      url: uploadedFile.secure_url,
+      publicId: uploadedFile.public_id,
+      originalFilename: file.filename,
+      mimetype: file.mimetype,
+    },
+    message: "Imagem da Landing Page enviada com sucesso.",
   });
 }

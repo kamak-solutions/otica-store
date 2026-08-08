@@ -6,6 +6,7 @@ import {
 import {
   getPublicLandingPageController,
   listLandingPagesController,
+  getLandingPageByIdController,
   createLandingPageController,
   updateLandingPageController,
   deleteLandingPageController,
@@ -18,7 +19,20 @@ import type {
 
 export async function landingPageRoutes(app: FastifyInstance) {
   // Rota pública
-  app.get<{ Params: { slug: string } }>("/:slug", getPublicLandingPageController);
+  app.get<{ Params: { slug: string } }>(
+    "/:slug",
+    getPublicLandingPageController,
+  );
+  app.get<{ Params: LandingPageParams }>(
+    "/admin/landing-pages/:id",
+    {
+      preHandler: [
+        requireAdminAuth,
+        requireAdminRole(["owner", "admin", "collaborator", "viewer"]),
+      ],
+    },
+    getLandingPageByIdController,
+  );
 
   // Rotas administrativas com middlewares
   app.get(
@@ -29,7 +43,7 @@ export async function landingPageRoutes(app: FastifyInstance) {
         requireAdminRole(["owner", "admin", "collaborator", "viewer"]),
       ],
     },
-    listLandingPagesController
+    listLandingPagesController,
   );
 
   app.post<{ Body: CreateLandingPageBody }>(
@@ -40,7 +54,7 @@ export async function landingPageRoutes(app: FastifyInstance) {
         requireAdminRole(["owner", "admin", "collaborator"]),
       ],
     },
-    createLandingPageController
+    createLandingPageController,
   );
 
   app.put<{ Params: LandingPageParams; Body: UpdateLandingPageBody }>(
@@ -51,17 +65,14 @@ export async function landingPageRoutes(app: FastifyInstance) {
         requireAdminRole(["owner", "admin", "collaborator"]),
       ],
     },
-    updateLandingPageController
+    updateLandingPageController,
   );
 
   app.delete<{ Params: LandingPageParams }>(
     "/admin/landing-pages/:id",
     {
-      preHandler: [
-        requireAdminAuth,
-        requireAdminRole(["owner", "admin"]),
-      ],
+      preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
     },
-    deleteLandingPageController
+    deleteLandingPageController,
   );
 }

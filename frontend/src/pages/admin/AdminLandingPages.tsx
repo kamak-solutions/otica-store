@@ -1,110 +1,152 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { landingPagesService, type LandingPage } from '../../services/landing-pages.service';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  landingPagesService,
+  type LandingPage,
+} from "../../services/landing-pages.service";
 
 export function AdminLandingPages() {
-  const [pages, setPages] = useState<LandingPage[]>([]);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [landingPages, setLandingPages] = useState<LandingPage[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
 
-    async function fetchPages() {
+    async function fetchLandingPages() {
       try {
-        const data = await landingPagesService.list();
+        const response = await landingPagesService.list();
+
         if (isMounted) {
-          setPages(data);
+          // Garante que o estado receba um array válido, mesmo que a API envie um objeto envelopado ({ data: [...] })
+          if (Array.isArray(response)) {
+            setLandingPages(response);
+          } else if (
+            response &&
+            typeof response === "object" &&
+            "data" in response &&
+            Array.isArray((response as { data: LandingPage[] }).data)
+          ) {
+            setLandingPages((response as { data: LandingPage[] }).data);
+          } else {
+            setLandingPages([]);
+          }
         }
-      } catch (err) {
-        console.error('Erro ao carregar landing pages:', err);
+      } catch (error) {
+        console.error("Erro ao carregar landing pages:", error);
+        if (isMounted) setLandingPages([]);
       } finally {
         if (isMounted) {
-          setLoading(false);
+          setIsLoading(false);
         }
       }
     }
 
-    fetchPages();
+    void fetchLandingPages();
 
     return () => {
       isMounted = false;
     };
   }, []);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Deseja realmente excluir esta landing page?')) return;
+  const handleDelete = async (id: string, title: string) => {
+    if (!confirm(`Tem certeza que deseja excluir a landing page "${title}"?`)) {
+      return;
+    }
+
     try {
       await landingPagesService.delete(id);
-      setPages((prev) => prev.filter((p) => p.id !== id));
-    } catch {
-      alert('Erro ao excluir landing page.');
+      setLandingPages((prev) => prev.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("Erro ao deletar landing page:", error);
+      alert("Não foi possível excluir a landing page.");
     }
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Landing Pages</h1>
-        <Link
-          to="/admin/landing-pages/nova"
-          className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800"
+    <div className="admin-container">
+      <div className="admin-header">
+        <div>
+          <h1 className="admin-title">Landing Pages</h1>
+          <p className="admin-subtitle">
+            Gerencie as páginas de captura do seu catálogo
+          </p>
+        </div>
+        <button
+          onClick={() => navigate("/admin/landing-pages/nova")}
+          className="btn-primary"
         >
-          Nova Landing Page
-        </Link>
+          + Nova Landing Page
+        </button>
       </div>
 
-      {loading ? (
-        <p>Carregando...</p>
+      {isLoading ? (
+        <div style={{ textAlign: "center", padding: "48px", color: "#666" }}>
+          Carregando landing pages...
+        </div>
+      ) : landingPages.length === 0 ? (
+        <div
+          style={{
+            textAlign: "center",
+            padding: "48px",
+            backgroundColor: "#fff",
+            borderRadius: "8px",
+            border: "1px dashed #ccc",
+          }}
+        >
+          <p style={{ color: "#666" }}>
+            Nenhuma landing page cadastrada ainda.
+          </p>
+        </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="admin-table-card">
+          <table className="admin-table">
+            <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Título</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Slug</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Ações</th>
+                <th>Título</th>
+                <th>URL (Slug)</th>
+                <th>Status</th>
+                <th className="text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
-              {pages.map((p) => (
-                <tr key={p.id}>
-                  <td className="px-6 py-4 whitespace-nowrap font-medium">{p.title}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-500">/{p.slug}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+            <tbody>
+              {landingPages.map((lp) => (
+                <tr key={lp.id}>
+                  <td style={{ fontWeight: 600, color: "#111827" }}>
+                    {lp.title}
+                  </td>
+                  <td className="font-mono">/l/{lp.slug}</td>
+                  <td>
                     <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        p.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}
+                      className={`badge ${lp.active ? "badge-active" : "badge-inactive"}`}
                     >
-                      {p.active ? 'Ativa' : 'Inativa'}
+                      {lp.active ? "Ativa" : "Inativa"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                    <a
-                      href={`/l/${p.slug}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-blue-600 hover:underline mr-4"
+                  <td className="text-right">
+                    <button
+                      onClick={() => window.open(`/l/${lp.slug}`, "_blank")}
+                      className="action-btn view"
                     >
                       Ver
-                    </a>
+                    </button>
                     <button
-                      onClick={() => handleDelete(p.id)}
-                      className="text-red-600 hover:underline"
+                      onClick={() =>
+                        navigate(`/admin/landing-pages/${lp.id}/editar`)
+                      }
+                      className="action-btn edit"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDelete(lp.id, lp.title)}
+                      className="action-btn delete"
                     >
                       Excluir
                     </button>
                   </td>
                 </tr>
               ))}
-              {pages.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
-                    Nenhuma landing page encontrada.
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>

@@ -119,37 +119,101 @@ export async function uploadCampaignImageFile({ buffer }: { buffer: Buffer }) {
     uploadStream.end(buffer);
   });
 }
-export async function uploadBlogImageFile({
+export async function uploadBlogImageFile({ buffer }: { buffer: Buffer }) {
+  return new Promise<CloudinaryUploadResult>((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "otica-showroom/blog",
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error || !result) {
+          reject(error ?? new Error("Erro ao enviar imagem do blog."));
+
+          return;
+        }
+
+        resolve({
+          secure_url: result.secure_url,
+          public_id: result.public_id,
+        });
+      },
+    );
+
+    uploadStream.end(buffer);
+  });
+}
+type CloudinaryImageUploadResult = {
+  secure_url: string;
+  public_id: string;
+};
+
+export async function uploadLandingPageImageFile({
   buffer,
 }: {
   buffer: Buffer;
-}) {
-  return new Promise<CloudinaryUploadResult>((resolve, reject) => {
-    const uploadStream =
-      cloudinary.uploader.upload_stream(
-        {
-          folder: "otica-showroom/blog",
-          resource_type: "image",
-        },
-        (error, result) => {
-          if (error || !result) {
-            reject(
-              error ??
-                new Error(
-                  "Erro ao enviar imagem do blog.",
-                ),
-            );
+}): Promise<CloudinaryImageUploadResult> {
+  return new Promise<CloudinaryImageUploadResult>((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "otica-showroom/landing-pages",
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error || !result) {
+          reject(
+            error ??
+              new Error(
+                "Erro ao enviar imagem da Landing Page para o Cloudinary.",
+              ),
+          );
+          return;
+        }
 
-            return;
-          }
-
-          resolve({
-            secure_url: result.secure_url,
-            public_id: result.public_id,
-          });
-        },
-      );
+        resolve({
+          secure_url: result.secure_url,
+          public_id: result.public_id,
+        });
+      },
+    );
 
     uploadStream.end(buffer);
+  });
+}
+
+
+export async function deleteLandingPageImageFile(
+  publicId: string,
+): Promise<void> {
+  await new Promise<void>((resolve, reject) => {
+    cloudinary.uploader.destroy(
+      publicId,
+      {
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error) {
+          reject(
+            error instanceof Error
+              ? error
+              : new Error(
+                  "Erro ao remover imagem da Landing Page do Cloudinary.",
+                ),
+          );
+          return;
+        }
+
+        if (result?.result === "ok" || result?.result === "not found") {
+          resolve();
+          return;
+        }
+
+        reject(
+          new Error(
+            "Cloudinary não confirmou a remoção da imagem da Landing Page.",
+          ),
+        );
+      },
+    );
   });
 }

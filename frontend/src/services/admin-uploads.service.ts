@@ -35,3 +35,4 @@ export function uploadStorefrontImage(file: File) {
     body: formData,
   });
 }
+

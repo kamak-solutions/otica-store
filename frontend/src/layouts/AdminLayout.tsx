@@ -22,6 +22,12 @@ export function AdminLayout() {
   const [isBlogMenuOpen, setIsBlogMenuOpen] = useState(
     location.pathname.startsWith("/admin/blog"),
   );
+
+  // 🚀 Estado do menu dropdown de Landing Pages
+  const [isLandingPagesMenuOpen, setIsLandingPagesMenuOpen] = useState(
+    location.pathname.startsWith("/admin/landing-pages"),
+  );
+
   const isBlogActive = location.pathname.startsWith("/admin/blog");
 
   if (!isAuthenticated) {
@@ -34,9 +40,13 @@ export function AdminLayout() {
     location.pathname.startsWith("/admin/produtos") ||
     location.pathname.startsWith("/admin/categorias") ||
     location.pathname.startsWith("/admin/marcas");
+    
   const isCrmActive =
     location.pathname.startsWith("/admin/crm") ||
     location.pathname.startsWith("/admin/clientes");
+
+  // 🚀 Verificador de rota ativa para Landing Pages
+  const isLandingPagesActive = location.pathname.startsWith("/admin/landing-pages");
 
   return (
     <div className="admin-shell">
@@ -73,9 +83,7 @@ export function AdminLayout() {
             {isStorefrontMenuOpen && (
               <div className="admin-nav-submenu">
                 <Link to="/admin/vitrine/slides">Slides principais</Link>
-
                 <Link to="/admin/vitrine/banners">Banners secundários</Link>
-
                 <Link to="/admin/vitrine/cores">Cores</Link>
               </div>
             )}
@@ -99,13 +107,12 @@ export function AdminLayout() {
             {isProductsMenuOpen && (
               <div className="admin-nav-submenu">
                 <Link to="/admin/produtos">Lista de produtos</Link>
-
                 <Link to="/admin/categorias">Categorias</Link>
-
                 <Link to="/admin/marcas">Marcas</Link>
               </div>
             )}
           </div>
+
           {/* BLOG */}
           <div className="admin-nav-group">
             <button
@@ -116,23 +123,42 @@ export function AdminLayout() {
               onClick={() => setIsBlogMenuOpen((currentValue) => !currentValue)}
             >
               <span>Blog</span>
-
               <strong>{isBlogMenuOpen ? "⌄" : "›"}</strong>
             </button>
 
             {isBlogMenuOpen && (
               <div className="admin-nav-submenu">
                 <Link to="/admin/blog">Artigos</Link>
-
                 <Link to="/admin/blog/novo">Novo artigo</Link>
-
                 <Link to="/admin/blog/categorias">Categorias</Link>
+              </div>
+            )}
+          </div>
+
+          {/* 🚀 LANDING PAGES */}
+          <div className="admin-nav-group">
+            <button
+              type="button"
+              className={`admin-nav-dropdown-button ${
+                isLandingPagesActive ? "active" : ""
+              }`}
+              onClick={() => setIsLandingPagesMenuOpen((currentValue) => !currentValue)}
+            >
+              <span>Landing Pages</span>
+              <strong>{isLandingPagesMenuOpen ? "⌄" : "›"}</strong>
+            </button>
+
+            {isLandingPagesMenuOpen && (
+              <div className="admin-nav-submenu">
+                <Link to="/admin/landing-pages">Gerenciar LPs</Link>
+                <Link to="/admin/landing-pages/nova">Nova Landing Page</Link>
               </div>
             )}
           </div>
 
           <Link to="/admin/pedidos">Pedidos</Link>
 
+          {/* CRM */}
           <div className="admin-nav-group">
             <button
               type="button"
@@ -148,20 +174,16 @@ export function AdminLayout() {
             {isCrmMenuOpen && (
               <div className="admin-nav-submenu">
                 <Link to="/admin/crm">Dashboard CRM</Link>
-
                 <Link to="/admin/clientes">Clientes</Link>
               </div>
             )}
           </div>
 
           <Link to="/admin/usuarios">Usuários</Link>
-
           <Link to="/admin/orcamentos">Orçamentos</Link>
-
           <Link to="/admin/auditoria">Auditoria</Link>
-
-          <Link to="/">Ver vitrine</Link>
           <Link to="/admin/campanhas">Campanhas</Link>
+          <Link to="/">Ver vitrine</Link>
         </nav>
 
         <button className="admin-logout-button" type="button" onClick={signOut}>

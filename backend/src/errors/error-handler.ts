@@ -20,6 +20,15 @@ function isPrismaRecordNotFoundError(error: unknown) {
   );
 }
 
+function isFileTooLargeError(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === "FST_REQ_FILE_TOO_LARGE"
+  );
+}
+
 export function errorHandler(
   error: FastifyError | Error,
   request: FastifyRequest,
@@ -39,6 +48,13 @@ export function errorHandler(
     return reply.status(error.statusCode).send({
       error: error.error,
       message: error.message,
+    });
+  }
+
+  if (isFileTooLargeError(error)) {
+    return reply.status(413).send({
+      error: "Payload Too Large",
+      message: "O arquivo excede o limite máximo de 5 MB.",
     });
   }
 
@@ -71,3 +87,4 @@ export function errorHandler(
     message: "Erro interno do servidor.",
   });
 }
+

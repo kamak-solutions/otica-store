@@ -102,3 +102,26 @@ export async function uploadBlogImageFile(
 
   return data;
 }
+export async function uploadLandingPageImageFile(file: File) {
+  const formData = new FormData();
+
+  formData.append("file", file);
+
+  const token = window.localStorage.getItem("@otica-showroom:admin-token");
+
+  const response = await fetch(`${API_URL}/admin/landing-pages/upload-image`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data?.message || "Erro ao enviar imagem da Landing Page.");
+  }
+
+  return data as UploadPrescriptionResponse;
+}
