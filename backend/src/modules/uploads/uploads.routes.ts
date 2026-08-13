@@ -13,8 +13,25 @@ import {
 } from "../admin-auth/admin-auth.middleware.js";
 
 export async function uploadsRoutes(app: FastifyInstance) {
-  app.post("/uploads/prescription", uploadPrescriptionController);
-  app.post("/uploads/product-image", uploadProductImageController);
+  app.post(
+    "/uploads/prescription",
+    {
+      config: {
+        rateLimit: {
+          max: 10,
+          timeWindow: "15 minutes",
+        },
+      },
+    },
+    uploadPrescriptionController,
+  );
+  app.post(
+    "/uploads/product-image",
+    {
+      preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
+    },
+    uploadProductImageController,
+  );
   app.post(
     "/admin/storefront/upload-image",
     {

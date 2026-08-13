@@ -3,8 +3,18 @@ import { apiFetch } from "./api";
 export interface LandingPageSection {
   id?: string;
   type: string;
+  title?: string;
+  subtitle?: string;
+  content?: string;
+  imageUrl?: string;
+  buttonText?: string;
+  buttonLink?: string;
+  bgColor?: string;
+  textColor?: string;
   order: number;
-  content: Record<string, unknown>;
+  active?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface LandingPage {
@@ -72,8 +82,10 @@ export const landingPagesService = {
     return res.data;
   },
 
-  list: (): Promise<LandingPage[]> => {
-    return apiFetch<LandingPage[]>("/admin/landing-pages");
+  list: async (): Promise<LandingPage[]> => {
+    const res = await apiFetch<{ data: LandingPage[] }>("/admin/landing-pages");
+
+    return res.data;
   },
 
   create: async (data: CreateLandingPageInput): Promise<LandingPage> => {

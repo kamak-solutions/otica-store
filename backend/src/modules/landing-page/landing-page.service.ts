@@ -5,6 +5,7 @@ import {
   updateLandingPageSchema,
 } from "./landing-page.schema.js";
 import { deleteLandingPageImageFile } from "../uploads/uploads.service.js";
+import { AppError } from "../../errors/app-error.js";
 
 export async function getPublicLandingPageBySlug(slug: string) {
   return prisma.landingPage.findFirst({
@@ -115,7 +116,7 @@ export async function updateLandingPage(
   });
 
   if (!lpExists) {
-    throw new Error("NOT_FOUND");
+    throw new AppError("Landing page não encontrada.", 404, "Not found");
   }
 
   if (data.slug && data.slug !== lpExists.slug) {
@@ -173,20 +174,23 @@ export async function updateLandingPage(
   });
 }
 
-
 export async function deleteLandingPage(id: string, adminId?: string) {
   const lpExists = await prisma.landingPage.findUnique({
     where: {
       id,
     },
+    select: {
+      id: true,
+      heroBannerPublicId: true,
+    },
   });
 
   if (!lpExists) {
-    throw new Error("NOT_FOUND");
+    throw new AppError("Landing page não encontrada.", 404, "Not found");
   }
 
-  return prisma.$transaction(async (tx) => {
-    const deleted = await tx.landingPage.delete({
+  const deleted = await prisma.$transaction(async (tx) => {
+    const result = await tx.landingPage.delete({
       where: {
         id,
       },
@@ -202,6 +206,19 @@ export async function deleteLandingPage(id: string, adminId?: string) {
       });
     }
 
-    return deleted;
+    return result;
   });
+
+  if (lpExists.heroBannerPublicId) {
+    try {
+      await deleteLandingPageImageFile(lpExists.heroBannerPublicId);
+    } catch (error) {
+      console.error(
+        "Falha ao remover imagem da Landing Page do Cloudinary após exclusão:",
+        error,
+      );
+    }
+  }
+
+  return deleted;
 }

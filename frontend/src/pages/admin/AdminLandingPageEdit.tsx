@@ -110,19 +110,11 @@ export function AdminLandingPageEdit() {
         );
 
         setSections(
-          (data.sections || []).map((section: LandingPageSection) => {
-            const content = section.content as {
-              title?: string;
-              text?: string;
-              content?: string;
-            };
-
-            return {
-              id: section.id,
-              title: content.title || "",
-              content: content.text || content.content || "",
-            };
-          }),
+          (data.sections || []).map((section: LandingPageSection) => ({
+            id: section.id,
+            title: section.title || "",
+            content: section.content || "",
+          })),
         );
       } catch (error) {
         console.error("Erro ao carregar landing page:", error);

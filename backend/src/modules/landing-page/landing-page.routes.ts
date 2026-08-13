@@ -49,10 +49,7 @@ export async function landingPageRoutes(app: FastifyInstance) {
   app.post<{ Body: CreateLandingPageBody }>(
     "/admin/landing-pages",
     {
-      preHandler: [
-        requireAdminAuth,
-        requireAdminRole(["owner", "admin", "collaborator"]),
-      ],
+      preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
     },
     createLandingPageController,
   );
@@ -60,10 +57,7 @@ export async function landingPageRoutes(app: FastifyInstance) {
   app.put<{ Params: LandingPageParams; Body: UpdateLandingPageBody }>(
     "/admin/landing-pages/:id",
     {
-      preHandler: [
-        requireAdminAuth,
-        requireAdminRole(["owner", "admin", "collaborator"]),
-      ],
+      preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
     },
     updateLandingPageController,
   );
@@ -71,7 +65,7 @@ export async function landingPageRoutes(app: FastifyInstance) {
   app.delete<{ Params: LandingPageParams }>(
     "/admin/landing-pages/:id",
     {
-      preHandler: [requireAdminAuth, requireAdminRole(["owner", "admin"])],
+      preHandler: [requireAdminAuth, requireAdminRole(["owner"])],
     },
     deleteLandingPageController,
   );

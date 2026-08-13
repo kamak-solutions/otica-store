@@ -37,8 +37,13 @@ export async function uploadProductImageFile(file: File) {
 
   formData.append("file", file);
 
+  const token = window.localStorage.getItem("@otica-showroom:admin-token");
+
   const response = await fetch(`${API_URL}/uploads/product-image`, {
     method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     body: formData,
   });
 
