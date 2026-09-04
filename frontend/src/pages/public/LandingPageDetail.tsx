@@ -80,13 +80,12 @@ export function LandingPageDetail() {
       {/* Hero Section */}
       <div
         className="landing-hero"
-        style={
-          landingPage.heroBannerUrl
-            ? { backgroundImage: `url(${landingPage.heroBannerUrl})` }
-            : {}
-        }
+        style={{
+          backgroundImage: landingPage.heroBannerUrl
+            ? `linear-gradient(135deg, ${landingPage.primaryColor || "#0f172a"} 0%, rgba(15, 23, 42, 0.35) 45%, rgba(15, 23, 42, 0.92) 100%), url("${landingPage.heroBannerUrl}")`
+            : `linear-gradient(135deg, ${landingPage.primaryColor || "#0f172a"} 0%, #111827 100%)`,
+        }}
       >
-        <div className="landing-hero-overlay" />
         <div className="landing-hero-content">
           <h1 className="landing-title">
             {landingPage.heroTitle || landingPage.title}
@@ -101,6 +100,7 @@ export function LandingPageDetail() {
               target="_blank"
               rel="noopener noreferrer"
               className="landing-whatsapp-btn"
+              style={{ backgroundColor: landingPage.primaryColor || "#25d366" }}
             >
               💬 {landingPage.ctaText || "Garantir Oferta no WhatsApp"}
             </a>
@@ -111,17 +111,99 @@ export function LandingPageDetail() {
       {/* Conteúdo Dinâmico / Seções */}
       {landingPage.sections && landingPage.sections.length > 0 && (
         <div className="landing-sections">
-          {landingPage.sections.map(
-            (section: LandingPageSection, index: number) => (
-              <div key={section.id || index} className="landing-section-card">
-                {section.title && (
-                  <h3 className="landing-section-title">{section.title}</h3>
-                )}
+          {[...landingPage.sections]
+            .filter((section) => section.active !== false)
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+            .map((section: LandingPageSection, index: number) => {
+              const sectionStyle = {
+                backgroundColor: section.bgColor || undefined,
+                color: section.textColor || undefined,
+              };
 
-                <p className="landing-section-text">{section.content || ""}</p>
-              </div>
-            ),
-          )}
+              const isBanner = section.type === "banner_9_16";
+              const isGallery = section.type === "gallery";
+              const isTestimonials = section.type === "testimonials";
+              const isCta = section.type === "cta";
+
+              return (
+                <article
+                  key={section.id || index}
+                  className={`landing-section-card landing-section-${section.type || "features"}`}
+                  style={sectionStyle}
+                >
+                  {section.imageUrl && (
+                    <div className="landing-section-image-wrapper">
+                      <img
+                        src={section.imageUrl}
+                        alt={section.title || "Imagem da campanha"}
+                        className={
+                          isBanner
+                            ? "landing-section-image landing-section-image-banner"
+                            : "landing-section-image"
+                        }
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+
+                  <div className="landing-section-content">
+                    {section.title && (
+                      <h3 className="landing-section-title">
+                        {section.title}
+                      </h3>
+                    )}
+
+                    {section.subtitle && (
+                      <p className="landing-section-subtitle">
+                        {section.subtitle}
+                      </p>
+                    )}
+
+                    {section.content && (
+                      <p className="landing-section-text">
+                        {section.content}
+                      </p>
+                    )}
+
+                    {section.buttonText && (
+                      <a
+                        href={section.buttonLink || "#"}
+                        className="landing-section-button"
+                        style={{
+                          backgroundColor:
+                            landingPage.primaryColor || "#25d366",
+                        }}
+                        onClick={(event) => {
+                          if (!section.buttonLink) {
+                            event.preventDefault();
+                          }
+                        }}
+                      >
+                        {section.buttonText}
+                      </a>
+                    )}
+
+                    {isGallery && !section.imageUrl && (
+                      <p className="landing-section-text">
+                        Galeria da campanha.
+                      </p>
+                    )}
+
+                    {isTestimonials && !section.content && (
+                      <p className="landing-section-text">
+                        Depoimentos dos nossos clientes.
+                      </p>
+                    )}
+
+                    {isCta && !section.content && (
+                      <p className="landing-section-text">
+                        Aproveite esta oportunidade.
+                      </p>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
         </div>
       )}
     </div>

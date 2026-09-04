@@ -5,8 +5,17 @@ export const landingPageParamsSchema = z.object({
 });
 
 export const landingPageSectionInputSchema = z.object({
-  title: z.string().optional(),
-  content: z.string().optional(),
+  type: z.string().max(50).optional(),
+  title: z.string().max(200).optional(),
+  subtitle: z.string().max(500).optional(),
+  content: z.string().max(5000).optional(),
+  imageUrl: z.string().url().max(2048).nullable().optional().or(z.literal("")),
+  buttonText: z.string().max(200).optional(),
+  buttonLink: z.string().max(2048).optional(),
+  bgColor: z.string().max(100).optional(),
+  textColor: z.string().max(100).optional(),
+  order: z.number().int().min(0).optional(),
+  active: z.boolean().optional(),
 });
 
 export const createLandingPageSchema = z.object({
@@ -27,7 +36,10 @@ export const createLandingPageSchema = z.object({
 
   primaryColor: z
     .string()
-    .regex(/^#[0-9A-Fa-f]{6}$/, "Cor primária inválida.")
+    .regex(
+      /^(#[0-9A-Fa-f]{6}|rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\)|rgba\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*(0|1|0?\.\d+)\s*\))$/,
+      "Cor primária inválida.",
+    )
     .optional(),
 
   secondaryColor: z
@@ -57,6 +69,7 @@ export const createLandingPageSchema = z.object({
     .string()
     .url("URL da imagem do Hero inválida.")
     .max(2048)
+    .nullable()
     .optional(),
 
   heroBannerPublicId: z.string().max(255).nullable().optional(),

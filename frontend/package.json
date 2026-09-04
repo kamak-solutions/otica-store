@@ -16,6 +16,7 @@
     "@tiptap/react": "^3.26.0",
     "@tiptap/starter-kit": "^3.26.0",
     "react": "^19.2.5",
+    "react-colorful": "^5.8.0",
     "react-dom": "^19.2.5",
     "react-router-dom": "^7.14.2"
   },

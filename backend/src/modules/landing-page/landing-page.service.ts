@@ -76,9 +76,15 @@ export async function createLandingPage(
           ? {
               sections: {
                 create: sections.map((section, index) => ({
+                  type: section.type || "features",
                   title: section.title,
+                  subtitle: section.subtitle,
                   content: section.content,
-                  type: "features",
+                  imageUrl: section.imageUrl,
+                  buttonText: section.buttonText,
+                  buttonLink: section.buttonLink,
+                  bgColor: section.bgColor,
+                  textColor: section.textColor,
                   order: index,
                 })),
               },
@@ -113,6 +119,11 @@ export async function updateLandingPage(
     where: {
       id,
     },
+    select: {
+      id: true,
+      slug: true,
+      heroBannerPublicId: true,
+    },
   });
 
   if (!lpExists) {
@@ -133,7 +144,7 @@ export async function updateLandingPage(
 
   const { sections, ...landingPageData } = data;
 
-  return prisma.$transaction(async (tx) => {
+  const updated = await prisma.$transaction(async (tx) => {
     const updated = await tx.landingPage.update({
       where: {
         id,
@@ -146,9 +157,15 @@ export async function updateLandingPage(
               sections: {
                 deleteMany: {},
                 create: sections.map((section, index) => ({
+                  type: section.type || "features",
                   title: section.title,
+                  subtitle: section.subtitle,
                   content: section.content,
-                  type: "features",
+                  imageUrl: section.imageUrl,
+                  buttonText: section.buttonText,
+                  buttonLink: section.buttonLink,
+                  bgColor: section.bgColor,
+                  textColor: section.textColor,
                   order: index,
                 })),
               },
@@ -172,6 +189,23 @@ export async function updateLandingPage(
 
     return updated;
   });
+
+  if (
+    data.heroBannerPublicId !== undefined &&
+    data.heroBannerPublicId !== lpExists.heroBannerPublicId &&
+    lpExists.heroBannerPublicId
+  ) {
+    try {
+      await deleteLandingPageImageFile(lpExists.heroBannerPublicId);
+    } catch (error) {
+      console.error(
+        "Falha ao remover imagem anterior da Landing Page do Cloudinary após atualização:",
+        error,
+      );
+    }
+  }
+
+  return updated;
 }
 
 export async function deleteLandingPage(id: string, adminId?: string) {

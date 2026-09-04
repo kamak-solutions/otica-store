@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { RgbaStringColorPicker } from "react-colorful";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   landingPagesService,
@@ -9,8 +10,17 @@ import { uploadLandingPageImageFile } from "../../services/uploads.service";
 
 interface EditorSection {
   id?: string;
+  type: string;
   title: string;
+  subtitle: string;
   content: string;
+  imageUrl: string;
+  buttonText: string;
+  buttonLink: string;
+  bgColor: string;
+  textColor: string;
+  order: number;
+  active: boolean;
 }
 
 export function AdminLandingPageEdit() {
@@ -32,6 +42,37 @@ export function AdminLandingPageEdit() {
   const [uploadingHeroImage, setUploadingHeroImage] = useState(false);
 
   const [primaryColor, setPrimaryColor] = useState("#D4AF37");
+  const [showColorPicker, setShowColorPicker] = useState(false);
+
+  const rgbaColor = (() => {
+    const value = primaryColor.trim();
+
+    if (value.startsWith("rgba(")) {
+      return value;
+    }
+
+    if (value.startsWith("rgb(")) {
+      const match = value.match(
+        /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/
+      );
+
+      if (match) {
+        return `rgba(${match[1]}, ${match[2]}, ${match[3]}, 1)`;
+      }
+    }
+
+    const hex = value.replace("#", "");
+
+    if (/^[0-9A-Fa-f]{6}$/.test(hex)) {
+      const r = parseInt(hex.slice(0, 2), 16);
+      const g = parseInt(hex.slice(2, 4), 16);
+      const b = parseInt(hex.slice(4, 6), 16);
+
+      return `rgba(${r}, ${g}, ${b}, 1)`;
+    }
+
+    return "rgba(212, 175, 55, 1)";
+  })();
 
   const [whatsappNumber, setWhatsappNumber] = useState("");
   const [whatsappMessage, setWhatsappMessage] = useState(
@@ -97,9 +138,6 @@ export function AdminLandingPageEdit() {
         setHeroTitle(data.heroTitle || "");
         setHeroSubtitle(data.heroSubtitle || "");
         setHeroImage(data.heroBannerUrl || "");
-        setHeroTitle(data.heroTitle || "");
-        setHeroSubtitle(data.heroSubtitle || "");
-        setHeroImage(data.heroBannerUrl || "");
         setHeroImagePublicId(data.heroBannerPublicId || "");
 
         setPrimaryColor(data.primaryColor || "#D4AF37");
@@ -110,10 +148,19 @@ export function AdminLandingPageEdit() {
         );
 
         setSections(
-          (data.sections || []).map((section: LandingPageSection) => ({
+          (data.sections || []).map((section: LandingPageSection, index: number) => ({
             id: section.id,
+            type: section.type || "features",
             title: section.title || "",
+            subtitle: section.subtitle || "",
             content: section.content || "",
+            imageUrl: section.imageUrl || "",
+            buttonText: section.buttonText || "",
+            buttonLink: section.buttonLink || "",
+            bgColor: section.bgColor || "",
+            textColor: section.textColor || "",
+            order: section.order ?? index,
+            active: section.active ?? true,
           })),
         );
       } catch (error) {
@@ -158,8 +205,17 @@ export function AdminLandingPageEdit() {
     setSections((current) => [
       ...current,
       {
+        type: "features",
         title: "",
+        subtitle: "",
         content: "",
+        imageUrl: "",
+        buttonText: "",
+        buttonLink: "",
+        bgColor: "",
+        textColor: "",
+        order: current.length,
+        active: true,
       },
     ]);
   };
@@ -212,9 +268,18 @@ export function AdminLandingPageEdit() {
         whatsappNumber,
         whatsappMessage,
 
-        sections: sections.map((section) => ({
+        sections: sections.map((section, index) => ({
+          type: section.type || "features",
           title: section.title,
+          subtitle: section.subtitle,
           content: section.content,
+          imageUrl: section.imageUrl || undefined,
+          buttonText: section.buttonText || undefined,
+          buttonLink: section.buttonLink || undefined,
+          bgColor: section.bgColor || undefined,
+          textColor: section.textColor || undefined,
+          order: section.order ?? index,
+          active: section.active ?? true,
         })),
       });
 
@@ -441,14 +506,29 @@ export function AdminLandingPageEdit() {
                   <label htmlFor="primary-color">Cor da campanha</label>
 
                   <div className="landing-color-picker">
-                    <input
-                      id="primary-color"
-                      type="color"
-                      value={primaryColor}
-                      onChange={(e) => setPrimaryColor(e.target.value)}
+                    {showColorPicker && (
+                      <div className="landing-color-picker-popover">
+                        <RgbaStringColorPicker
+                          color={rgbaColor}
+                          onChange={setPrimaryColor}
+                        />
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      className="landing-color-swatch"
+                      style={{ backgroundColor: primaryColor }}
+                      onClick={() => setShowColorPicker((value) => !value)}
+                      aria-label="Abrir seletor de cor"
                     />
 
-                    <span>{primaryColor}</span>
+                    <input
+                      type="text"
+                      value={primaryColor}
+                      onChange={(e) => setPrimaryColor(e.target.value)}
+                      placeholder="#D4AF37 ou rgba(212, 175, 55, 0.5)"
+                    />
                   </div>
                 </div>
               </div>
@@ -538,19 +618,49 @@ export function AdminLandingPageEdit() {
 
                       <div className="landing-form-grid">
                         <div className="landing-field">
+                          <label>Tipo da seção</label>
+
+                          <select
+                            value={section.type}
+                            onChange={(e) =>
+                              handleSectionChange(index, "type", e.target.value)
+                            }
+                          >
+                            <option value="features">Conteúdo</option>
+                            <option value="banner_9_16">Banner</option>
+                            <option value="gallery">Galeria</option>
+                            <option value="testimonials">Depoimentos</option>
+                            <option value="cta">Chamada para ação</option>
+                          </select>
+                        </div>
+
+                        <div className="landing-field">
                           <label>Título</label>
 
                           <input
                             type="text"
                             value={section.title}
                             onChange={(e) =>
+                              handleSectionChange(index, "title", e.target.value)
+                            }
+                            placeholder="Título da seção"
+                          />
+                        </div>
+
+                        <div className="landing-field">
+                          <label>Subtítulo</label>
+
+                          <input
+                            type="text"
+                            value={section.subtitle}
+                            onChange={(e) =>
                               handleSectionChange(
                                 index,
-                                "title",
+                                "subtitle",
                                 e.target.value,
                               )
                             }
-                            placeholder="Título da seção"
+                            placeholder="Uma frase complementar"
                           />
                         </div>
 
@@ -569,6 +679,128 @@ export function AdminLandingPageEdit() {
                             }
                             placeholder="Conteúdo da seção"
                           />
+                        </div>
+
+                        <div className="landing-field">
+                          <label>Imagem da seção</label>
+
+                          <input
+                            type="url"
+                            value={section.imageUrl}
+                            onChange={(e) =>
+                              handleSectionChange(
+                                index,
+                                "imageUrl",
+                                e.target.value,
+                              )
+                            }
+                            placeholder="URL da imagem"
+                          />
+                        </div>
+
+                        <div className="landing-field">
+                          <label>Overlay / gradiente</label>
+
+                          <select
+                            value={section.bgColor ? "custom" : "none"}
+                            onChange={(e) =>
+                              handleSectionChange(
+                                index,
+                                "bgColor",
+                                e.target.value === "none" ? "" : section.bgColor,
+                              )
+                            }
+                          >
+                            <option value="none">Sem overlay</option>
+                            <option value="custom">Com overlay</option>
+                          </select>
+                        </div>
+
+                        <div className="landing-form-grid">
+                          <div className="landing-field">
+                            <label>Texto do botão</label>
+
+                            <input
+                              type="text"
+                              value={section.buttonText}
+                              onChange={(e) =>
+                                handleSectionChange(
+                                  index,
+                                  "buttonText",
+                                  e.target.value,
+                                )
+                              }
+                              placeholder="Ex: Quero aproveitar"
+                            />
+                          </div>
+
+                          <div className="landing-field">
+                            <label>Link do botão</label>
+
+                            <input
+                              type="url"
+                              value={section.buttonLink}
+                              onChange={(e) =>
+                                handleSectionChange(
+                                  index,
+                                  "buttonLink",
+                                  e.target.value,
+                                )
+                              }
+                              placeholder="https://..."
+                            />
+                          </div>
+                        </div>
+
+                        <div className="landing-field">
+                          <label>Cor de fundo / overlay</label>
+
+                          <input
+                            type="text"
+                            value={section.bgColor}
+                            onChange={(e) =>
+                              handleSectionChange(
+                                index,
+                                "bgColor",
+                                e.target.value,
+                              )
+                            }
+                            placeholder="Ex: rgba(0,0,0,0.55)"
+                          />
+                        </div>
+
+                        <div className="landing-field">
+                          <label>Cor do texto</label>
+
+                          <input
+                            type="text"
+                            value={section.textColor}
+                            onChange={(e) =>
+                              handleSectionChange(
+                                index,
+                                "textColor",
+                                e.target.value,
+                              )
+                            }
+                            placeholder="Ex: #FFFFFF"
+                          />
+                        </div>
+
+                        <div className="landing-field">
+                          <label>
+                            <input
+                              type="checkbox"
+                              checked={section.active}
+                              onChange={(e) =>
+                                handleSectionChange(
+                                  index,
+                                  "active",
+                                  e.target.checked ? "true" : "false",
+                                )
+                              }
+                            />
+                            {" "}Seção ativa
+                          </label>
                         </div>
                       </div>
                     </article>
@@ -617,7 +849,7 @@ export function AdminLandingPageEdit() {
                 className="landing-live-hero"
                 style={{
                   backgroundImage: heroImage
-                    ? `linear-gradient(135deg, rgba(0,0,0,.68), rgba(0,0,0,.25)), url("${heroImage}")`
+                    ? `linear-gradient(135deg, ${rgbaColor}, ${rgbaColor}), url("${heroImage}")`
                     : `linear-gradient(135deg, ${primaryColor}, #111827)`,
                 }}
               >
@@ -667,16 +899,62 @@ export function AdminLandingPageEdit() {
                     <article
                       className="landing-live-section"
                       key={`${index}-${section.title}`}
+                      style={{
+                        color: section.textColor || undefined,
+                        backgroundColor:
+                          section.imageUrl
+                            ? undefined
+                            : section.bgColor || undefined,
+                      }}
                     >
+                      {section.imageUrl && (
+                        <div
+                          className="landing-live-section-image"
+                          style={{
+                            backgroundImage: `url(${section.imageUrl})`,
+                          }}
+                        >
+                          {section.bgColor && (
+                            <div
+                              className="landing-live-section-overlay"
+                              style={{
+                                background: section.bgColor,
+                              }}
+                            />
+                          )}
+                        </div>
+                      )}
+
                       <span>0{index + 1}</span>
 
-                      <div>
+                      <div className="landing-live-section-content">
                         <h3>{section.title || "Título da seção"}</h3>
+
+                        {section.subtitle && (
+                          <h4>{section.subtitle}</h4>
+                        )}
 
                         <p>
                           {section.content ||
                             "O conteúdo desta seção aparecerá aqui."}
                         </p>
+
+                        {section.buttonText && (
+                          <a
+                            href={section.buttonLink || "#"}
+                            className="landing-live-section-button"
+                            onClick={(e) => {
+                              if (!section.buttonLink) {
+                                e.preventDefault();
+                              }
+                            }}
+                            style={{
+                              backgroundColor: primaryColor,
+                            }}
+                          >
+                            {section.buttonText}
+                          </a>
+                        )}
                       </div>
                     </article>
                   ))
