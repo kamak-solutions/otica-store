@@ -28,6 +28,14 @@
   ],
   "rewrites": [
     {
+      "source": "/visao99",
+      "destination": "/visao99/index.html"
+    },
+    {
+      "source": "/visao99/",
+      "destination": "/visao99/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
