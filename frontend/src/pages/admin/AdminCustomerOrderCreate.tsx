@@ -34,7 +34,7 @@ export function AdminCustomerOrderCreate() {
   const [searchTerm, setSearchTerm] = useState("");
   const [items, setItems] = useState<OrderItemDraft[]>([]);
   const [notes, setNotes] = useState("");
-  const [orderType, setOrderType] = useState("LENSES_ONLY");
+
 
   useEffect(() => {
     async function loadProducts() {
@@ -163,51 +163,7 @@ export function AdminCustomerOrderCreate() {
           <button type="button">Voltar ao CRM</button>
         </Link>
       </div>
-      <section className="admin-form-card">
-        <h2>Tipo de atendimento</h2>
 
-        <div className="admin-order-type-grid">
-          <button
-            type="button"
-            className={orderType === "LENSES_ONLY" ? "is-active" : ""}
-            onClick={() => setOrderType("LENSES_ONLY")}
-          >
-            Somente lentes
-          </button>
-
-          <button
-            type="button"
-            className={orderType === "FRAME_AND_LENSES" ? "is-active" : ""}
-            onClick={() => setOrderType("FRAME_AND_LENSES")}
-          >
-            Armação + lentes
-          </button>
-
-          <button
-            type="button"
-            className={orderType === "FRAME_ONLY" ? "is-active" : ""}
-            onClick={() => setOrderType("FRAME_ONLY")}
-          >
-            Somente armação
-          </button>
-
-          <button
-            type="button"
-            className={orderType === "SUNGLASSES" ? "is-active" : ""}
-            onClick={() => setOrderType("SUNGLASSES")}
-          >
-            Óculos de sol
-          </button>
-
-          <button
-            type="button"
-            className={orderType === "CONTACT_LENSES" ? "is-active" : ""}
-            onClick={() => setOrderType("CONTACT_LENSES")}
-          >
-            Lentes de contato
-          </button>
-        </div>
-      </section>
 
       <div className="admin-order-create-layout">
         <section className="admin-form-card">

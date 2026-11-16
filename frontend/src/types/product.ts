@@ -25,6 +25,10 @@ export type Product = {
   sku: string | null;
   brand: string | null;
   stock: number;
+  weightGrams?: number | null;
+  packageHeightCm?: number | null;
+  packageWidthCm?: number | null;
+  packageLengthCm?: number | null;
   active: boolean;
   featured: boolean;
   audience: string | null;

@@ -111,6 +111,11 @@ export function mapProductToAdminHttp(product: AdminProduct) {
     stock: product.stock,
     minimumStock: product.minimumStock,
 
+    weightGrams: product.weightGrams,
+    packageHeightCm: product.packageHeightCm?.toNumber() ?? null,
+    packageWidthCm: product.packageWidthCm?.toNumber() ?? null,
+    packageLengthCm: product.packageLengthCm?.toNumber() ?? null,
+
     active: product.active,
     featured: product.featured,
 

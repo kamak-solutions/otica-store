@@ -31,6 +31,10 @@ export const createProductBodySchema = z.object({
   frameShape: z.string().trim().max(80).optional(),
   frameUse: z.string().trim().max(80).optional(),
   color: z.string().trim().max(80).optional(),
+  weightGrams: z.number().int().positive().nullable().optional(),
+  packageHeightCm: z.number().positive().nullable().optional(),
+  packageWidthCm: z.number().positive().nullable().optional(),
+  packageLengthCm: z.number().positive().nullable().optional(),
 });
 
 export type CreateProductBody = z.infer<typeof createProductBodySchema>;

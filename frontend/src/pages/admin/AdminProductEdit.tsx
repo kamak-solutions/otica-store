@@ -21,6 +21,10 @@ type ProductFormData = {
   sku: string;
   brand: string;
   stock: string;
+  weightGrams: string;
+  packageHeightCm: string;
+  packageWidthCm: string;
+  packageLengthCm: string;
   audience: string;
   productType: string;
   frameUse: string;
@@ -40,6 +44,10 @@ const initialFormData: ProductFormData = {
   sku: "",
   brand: "",
   stock: "0",
+  weightGrams: "",
+  packageHeightCm: "",
+  packageWidthCm: "",
+  packageLengthCm: "",
   audience: "",
   productType: "",
   frameUse: "",
@@ -113,6 +121,20 @@ export function AdminProductEdit() {
           sku: product.sku ?? "",
           brand: product.brand ?? "",
           stock: String(product.stock),
+          weightGrams:
+            product.weightGrams != null ? String(product.weightGrams) : "",
+          packageHeightCm:
+            product.packageHeightCm != null
+              ? String(product.packageHeightCm)
+              : "",
+          packageWidthCm:
+            product.packageWidthCm != null
+              ? String(product.packageWidthCm)
+              : "",
+          packageLengthCm:
+            product.packageLengthCm != null
+              ? String(product.packageLengthCm)
+              : "",
           audience: product.audience ?? "",
           productType: product.productType ?? "",
           frameUse: product.frameUse ?? "",
@@ -288,6 +310,16 @@ export function AdminProductEdit() {
         sku: formData.sku || undefined,
         brand: formData.brand || undefined,
         stock: Number(formData.stock),
+        weightGrams: formData.weightGrams ? Number(formData.weightGrams) : null,
+        packageHeightCm: formData.packageHeightCm
+          ? Number(formData.packageHeightCm)
+          : null,
+        packageWidthCm: formData.packageWidthCm
+          ? Number(formData.packageWidthCm)
+          : null,
+        packageLengthCm: formData.packageLengthCm
+          ? Number(formData.packageLengthCm)
+          : null,
         audience: formData.audience || undefined,
         productType: formData.productType || undefined,
         frameUse: formData.frameUse || undefined,
@@ -428,6 +460,71 @@ export function AdminProductEdit() {
                 type="text"
                 value={formData.sku}
                 onChange={(event) => updateField("sku", event.target.value)}
+              />
+            </label>
+          </div>
+        </section>
+
+        <section>
+          <h2>Dimensões para envio</h2>
+          <p>
+            Informe o peso e as medidas do produto embalado para transporte.
+          </p>
+
+          <div className="admin-form-grid">
+            <label>
+              Peso (gramas)
+              <input
+                type="number"
+                min="1"
+                step="1"
+                value={formData.weightGrams}
+                onChange={(event) =>
+                  updateField("weightGrams", event.target.value)
+                }
+                placeholder="Ex.: 350"
+              />
+            </label>
+
+            <label>
+              Altura (cm)
+              <input
+                type="number"
+                min="0.01"
+                step="0.01"
+                value={formData.packageHeightCm}
+                onChange={(event) =>
+                  updateField("packageHeightCm", event.target.value)
+                }
+                placeholder="Ex.: 8"
+              />
+            </label>
+
+            <label>
+              Largura (cm)
+              <input
+                type="number"
+                min="0.01"
+                step="0.01"
+                value={formData.packageWidthCm}
+                onChange={(event) =>
+                  updateField("packageWidthCm", event.target.value)
+                }
+                placeholder="Ex.: 15"
+              />
+            </label>
+
+            <label>
+              Comprimento (cm)
+              <input
+                type="number"
+                min="0.01"
+                step="0.01"
+                value={formData.packageLengthCm}
+                onChange={(event) =>
+                  updateField("packageLengthCm", event.target.value)
+                }
+                placeholder="Ex.: 20"
               />
             </label>
           </div>

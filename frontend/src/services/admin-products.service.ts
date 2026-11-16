@@ -38,6 +38,10 @@ type CreateAdminProductPayload = {
   sku?: string | null;
   brand?: string | null;
   stock: number;
+  weightGrams?: number | null;
+  packageHeightCm?: number | null;
+  packageWidthCm?: number | null;
+  packageLengthCm?: number | null;
   active: boolean;
   featured: boolean;
   audience?: string | null;
@@ -67,6 +71,10 @@ export function updateAdminProduct(
     sku: string | null;
     brand: string | null;
     stock: number;
+    weightGrams: number | null;
+    packageHeightCm: number | null;
+    packageWidthCm: number | null;
+    packageLengthCm: number | null;
     active: boolean;
     featured: boolean;
     audience: string | null;
